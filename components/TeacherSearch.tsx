@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { Teacher, Currency, Language } from '../types';
+// Fix: Corrected import path for types.
+import { Teacher, Language } from '../types';
 import TeacherCard from './TeacherCard';
 
 interface TeacherSearchProps {
     teachers: Teacher[];
     subjects: string[];
     onSelectTeacher: (id: number) => void;
-    currency: Currency;
-    exchangeRate: number;
     isHomePageVersion?: boolean;
     strings: { [key: string]: string };
     language: Language;
 }
 
-const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSelectTeacher, currency, exchangeRate, isHomePageVersion, strings, language }) => {
+const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSelectTeacher, isHomePageVersion, strings, language }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSubject, setSelectedSubject] = useState('الكل');
 
@@ -57,7 +56,7 @@ const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSel
                
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {teachersToShow.map(teacher => (
-                        <TeacherCard key={teacher.id} teacher={teacher} onSelect={onSelectTeacher} currency={currency} exchangeRate={exchangeRate} strings={strings} language={language} />
+                        <TeacherCard key={teacher.id} teacher={teacher} onSelect={onSelectTeacher} strings={strings} language={language} isHomePageVersion={isHomePageVersion} />
                     ))}
                 </div>
 

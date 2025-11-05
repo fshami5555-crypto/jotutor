@@ -1,4 +1,5 @@
 import React from 'react';
+// Fix: Corrected import path for types.
 import { SiteContent } from '../types';
 
 interface ContactPageProps {

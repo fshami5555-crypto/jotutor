@@ -1,33 +1,49 @@
 import React, { useState, useEffect } from 'react';
+// Fix: Corrected import path for types.
+import { HeroSlide } from '../types';
 
 interface HeroSectionProps {
   onSignupClick: () => void;
-  heroImages: string[];
+  heroSlides: HeroSlide[];
   strings: { [key: string]: string };
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroImages = [], strings }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [], strings }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (heroImages.length <= 1) return;
+    if (heroSlides.length <= 1) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % heroSlides.length);
     }, 5000); // Change image every 5 seconds
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [heroImages]);
+  }, [heroSlides]);
+
+  const currentSlide = heroSlides[currentIndex];
+
+  const Title: React.FC<{ text: string }> = ({ text }) => {
+    if (!text) return null;
+    const words = text.split(' ');
+    const lastWord = words.pop();
+    const mainText = words.join(' ');
+    return (
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+            {mainText} <span className="text-green-400">{lastWord}</span>
+        </h1>
+    );
+  };
 
   return (
     <section className="relative text-white" style={{ minHeight: '500px' }}>
        <div className="absolute inset-0 z-0">
-          {heroImages.map((src, index) => (
+          {heroSlides.map((slide, index) => (
             <div
               key={index}
               className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
               style={{
-                backgroundImage: `url(${src})`,
+                backgroundImage: `url(${slide.imageUrl})`,
                 opacity: index === currentIndex ? 1 : 0,
               }}
             />
@@ -36,13 +52,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroImages = [
         </div>
 
       <div className="container mx-auto px-6 py-20 lg:py-32 flex flex-col lg:flex-row items-center relative z-10">
-        <div className="lg:w-1/2 text-center lg:text-right">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-            {strings.heroTitle1} <span className="text-green-400">{strings.heroTitle2}</span>
-          </h1>
-          <p className="mt-6 text-lg text-gray-200 max-w-xl mx-auto lg:mx-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
-            {strings.heroDescription}
-          </p>
+        <div className="lg:w-2/3 text-center lg:text-right">
+          {currentSlide && <Title text={currentSlide.title} />}
+          {currentSlide && (
+            <p className="mt-6 text-lg text-gray-200 max-w-2xl mx-auto lg:mx-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+              {currentSlide.description}
+            </p>
+          )}
           <div className="mt-8 flex justify-center lg:justify-start">
             <button onClick={onSignupClick} className="bg-green-500 text-white font-bold text-lg py-3 px-8 rounded-full hover:bg-green-600 transition-transform duration-300 transform hover:scale-105 shadow-xl flex items-center space-x-2 space-x-reverse">
               <span>{strings.heroButton}</span>

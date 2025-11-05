@@ -1,4 +1,5 @@
 import React from 'react';
+// Fix: Corrected import path for types.
 import { Course, Currency, Language } from '../types';
 
 interface PaymentPageProps {

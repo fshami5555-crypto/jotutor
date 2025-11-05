@@ -1,5 +1,6 @@
 
 import React from 'react';
+// Fix: Corrected import path for types.
 import { Testimonial } from '../types';
 
 interface TestimonialsSectionProps {

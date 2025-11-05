@@ -1,4 +1,5 @@
 import React from 'react';
+// Fix: Corrected import path for types.
 import { UserProfile } from '../../types';
 
 interface UserProfileProps {
@@ -10,9 +11,9 @@ const UserProfileView: React.FC<UserProfileProps> = ({ userProfile }) => {
         <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-6">الملف الشخصي</h1>
             <div className="bg-white p-8 rounded-lg shadow-md">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-500">اسم المستخدم</label>
+                        <label className="block text-sm font-medium text-gray-500">الاسم الكامل</label>
                         <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.username}</p>
                     </div>
                     <div>
@@ -24,8 +25,20 @@ const UserProfileView: React.FC<UserProfileProps> = ({ userProfile }) => {
                         <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.userType}</p>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500">المستوى التعليمي</label>
-                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.educationLevel}</p>
+                        <label className="block text-sm font-medium text-gray-500">تاريخ الميلاد</label>
+                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.dob}</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-500">الخدمة المطلوبة</label>
+                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.serviceType}</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-500">المرحلة التعليمية</label>
+                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.educationStage}</p>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-500">الصف الدراسي</label>
+                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.grade}</p>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-500">المنهاج</label>

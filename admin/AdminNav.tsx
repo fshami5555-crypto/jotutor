@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type AdminView = 'content' | 'users' | 'teachers' | 'courses' | 'testimonials' | 'blog' | 'heroImages' | 'onboarding';
+export type AdminView = 'content' | 'users' | 'teachers' | 'courses' | 'testimonials' | 'blog' | 'heroImages' | 'onboarding' | 'staff' | 'payments';
 
 interface AdminNavProps {
     activeView: AdminView;
@@ -11,9 +11,11 @@ interface AdminNavProps {
 const AdminNav: React.FC<AdminNavProps> = ({ activeView, setActiveView, onLogout }) => {
     const navItems = [
         { id: 'content', label: 'إدارة المحتوى' },
-        { id: 'heroImages', label: 'إدارة صور الرئيسية' },
+        { id: 'heroImages', label: 'إدارة بنر الرئيسية' },
         { id: 'onboarding', label: 'مراحل التسجيل' },
         { id: 'users', label: 'إدارة المستخدمين' },
+        { id: 'staff', label: 'إدارة الموظفين' },
+        { id: 'payments', label: 'إدارة الدفعات' },
         { id: 'teachers', label: 'إدارة المعلمين' },
         { id: 'courses', label: 'إدارة الدورات' },
         { id: 'testimonials', label: 'إدارة الشهادات' },

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// Fix: Corrected import path for types.
 import { OnboardingOptions } from '../../types';
 
 interface ManageOnboardingProps {
@@ -81,9 +82,15 @@ const ManageOnboarding: React.FC<ManageOnboardingProps> = ({ options, onUpdate }
             
             <div className="space-y-8">
                 <OptionManager 
+                    title="نوع الخدمة" 
+                    items={localOptions.serviceTypes}
+                    setItems={(newList) => handleUpdateList('serviceTypes', newList)}
+                />
+                {/* Fix: Corrected property name from 'levels' to 'educationStages' to match the type definition. */}
+                <OptionManager 
                     title="المرحلة الدراسية" 
-                    items={localOptions.levels}
-                    setItems={(newList) => handleUpdateList('levels', newList)}
+                    items={localOptions.educationStages}
+                    setItems={(newList) => handleUpdateList('educationStages', newList)}
                 />
                  <OptionManager 
                     title="المنهاج التعليمي" 
@@ -91,9 +98,14 @@ const ManageOnboarding: React.FC<ManageOnboardingProps> = ({ options, onUpdate }
                     setItems={(newList) => handleUpdateList('curriculums', newList)}
                 />
                  <OptionManager 
-                    title="المواد التي تهمك" 
+                    title="المواد الدراسية" 
                     items={localOptions.subjects}
                     setItems={(newList) => handleUpdateList('subjects', newList)}
+                />
+                 <OptionManager 
+                    title="اللغات (لخيار تعلم لغات جديدة)" 
+                    items={localOptions.languages || []}
+                    setItems={(newList) => handleUpdateList('languages', newList)}
                 />
             </div>
             

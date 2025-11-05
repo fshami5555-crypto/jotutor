@@ -1,41 +1,39 @@
-
-// Fix: Removed circular and conflicting self-import.
-export type Language = 'ar' | 'en';
-
-export type Page = 'home' | 'teachers' | 'courses' | 'blog' | 'about' | 'contact' | 'join' | 'faq' | 'privacy' | 'terms' | 'dashboard' | 'admin' | 'teacher-profile' | 'course-profile' | 'article' | 'payment' | 'short-player' | 'videos';
+export type Page = 
+  'home' | 'teachers' | 'teacher-profile' | 'courses' | 'course-profile' | 
+  'payment' | 'videos' | 'short-player' | 'blog' | 'article' | 'about' | 
+  'contact' | 'join' | 'faq' | 'privacy' | 'terms' | 
+  'dashboard' | 'admin-dashboard' | 'admin-user-view';
 
 export type Currency = 'JOD' | 'USD';
+export type Language = 'ar' | 'en';
 
-export interface UserProfile {
-    username: string;
-    email: string;
-    password?: string; // Only used during signup process
-    userType: 'Student' | 'Parent' | 'Teacher' | 'Admin';
-    educationLevel: string;
-    curriculum: string;
-    subjects: string[];
+export interface HeroSlide {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
 }
 
 export interface Teacher {
-    id: number;
-    name: string;
-    avatarUrl: string;
-    level: string; // e.g., 'ابتدائي', 'ثانوي'
-    experience: number; // in years
-    specialties: string[]; // e.g., 'الرياضيات', 'الفيزياء'
-    pricePerHour: number; // in JOD
-    rating: number; // 0-5
-    reviews: number;
-    bio: string;
-    qualifications: string[];
+  id: number;
+  name: string;
+  avatarUrl: string;
+  level: string; // e.g., "ابتدائي ومتوسط"
+  experience: number; // years
+  specialties: string[];
+  rating: number;
+  reviews: number;
+  pricePerHour: number;
+  bio: string;
+  qualifications: string[];
 }
 
 export interface Testimonial {
-    id: number;
-    name: string;
-    role: string; // e.g., 'ولي أمر', 'طالب'
-    avatarUrl: string;
-    quote: string;
+  id: number;
+  name: string;
+  role: string; // e.g., "ولي أمر"
+  avatarUrl: string;
+  quote: string;
 }
 
 export interface Course {
@@ -44,47 +42,100 @@ export interface Course {
     description: string;
     teacher: string;
     price: number; // in JOD
-    duration: string; // e.g., '4 أسابيع'
-    level: 'مبتدئ' | 'متوسط' | 'متقدم';
+    duration: string;
+    level: string;
     imageUrl: string;
     category: string;
 }
 
-export interface BlogPost {
+export interface UserProfile {
     id: number;
-    type: 'article' | 'short';
-    title: string;
-    author: string;
-    date: string; // ISO format string
-    excerpt: string;
-    content: string; // Can be HTML string
-    imageUrl: string;
-    tags: string[];
-    youtubeVideoId?: string;
-}
-
-export interface FAQItem {
-    id: number;
-    question: string;
-    answer: string;
+    username: string;
+    email: string;
+    phone: string;
+    password?: string;
+    userType: 'Student' | 'Parent';
+    serviceType: string;
+    educationStage: string;
+    grade: string;
+    curriculum: string;
+    subjects: string[];
+    dob: string; // YYYY-MM-DD
 }
 
 export interface OnboardingOptions {
-    levels: string[];
+    serviceTypes: string[];
+    educationStages: string[];
     curriculums: string[];
     subjects: string[];
+    languages: string[];
+}
+
+export interface FAQItem {
+  id: number;
+  question: string;
+  answer: string;
+}
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  author: string;
+  date: string; // ISO string
+  excerpt: string;
+  content: string;
+  imageUrl: string;
+  tags: string[];
+  type: 'article' | 'short';
+  youtubeVideoId?: string;
+}
+
+export interface ContactContent {
+  email: string;
+  phone: string;
+  address: string;
+}
+
+export interface AboutContent {
+  heroImage: string;
+  vision: string;
+  visionImage: string;
+  mission: string;
+  teacherCommunity: string;
+  whyJoTutor: string[];
 }
 
 export interface SiteContent {
-    about: string;
-    faq: FAQItem[];
-    contact: {
-        email: string;
-        phone: string;
-        address: string;
-    };
-    privacy: string;
-    terms: string;
-    heroImages: string[];
-    onboardingOptions: OnboardingOptions;
+  about: AboutContent;
+  faq: FAQItem[];
+  contact: ContactContent;
+  privacy: string;
+  terms: string;
+}
+
+export interface ChatMessage {
+    sender: 'user' | 'bot';
+    text: string;
+    courses?: Course[];
+}
+
+export type StaffPermission = 'Full Control' | 'Manage Teachers' | 'Manage Users' | 'Manage Blog';
+
+export interface StaffMember {
+    id: number;
+    name: string;
+    email: string;
+    permissions: StaffPermission;
+}
+
+export interface Payment {
+    id: number;
+    date: string; // ISO String
+    userId: number;
+    userName: string;
+    courseId: number;
+    courseName: string;
+    amount: number;
+    currency: 'JOD' | 'USD';
+    status: 'Success' | 'Failed';
 }

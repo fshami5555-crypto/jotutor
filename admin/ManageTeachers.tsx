@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// Fix: Corrected import path for types.
 import { Teacher } from '../../types';
 
 interface ManageTeachersProps {

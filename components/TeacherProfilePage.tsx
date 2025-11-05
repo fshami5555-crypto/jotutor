@@ -1,20 +1,14 @@
 import React from 'react';
-import { Teacher, Currency, Language } from '../types';
+// Fix: Corrected import path for types.
+import { Teacher, Language } from '../types';
 
 interface TeacherProfilePageProps {
     teacher: Teacher;
-    onBook: (teacherId: number) => void;
-    currency: Currency;
-    exchangeRate: number;
     strings: { [key: string]: string };
     language: Language;
 }
 
-const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ teacher, onBook, currency, exchangeRate, strings }) => {
-    const displayPrice = currency === 'USD' 
-        ? (teacher.pricePerHour / exchangeRate).toFixed(2) 
-        : teacher.pricePerHour.toFixed(2);
-    const currencySymbol = currency === 'USD' ? strings.usd : strings.jod;
+const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ teacher, strings }) => {
 
     return (
         <div className="py-12 bg-gray-100">
@@ -30,12 +24,6 @@ const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ teacher, onBook
                                 <span className="text-yellow-400 text-2xl">★</span>
                                 <span className="font-bold text-xl ml-2">{teacher.rating}</span>
                                 <span className="text-gray-500 text-lg ml-1">({teacher.reviews} مراجعة)</span>
-                            </div>
-                            <div className="mt-6">
-                                <p className="text-3xl font-extrabold text-green-500">{currencySymbol}{displayPrice}<span className="text-lg font-normal text-gray-500">{strings.perHour}</span></p>
-                                <button onClick={() => onBook(teacher.id)} className="w-full mt-4 bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors">
-                                    احجز حصة تجريبية
-                                </button>
                             </div>
                         </div>
 

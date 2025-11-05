@@ -1,6 +1,7 @@
 
+
 import React, { useState } from 'react';
-// Fix: Corrected import paths for types and constants.
+// Fix: Corrected import paths for types.
 import { Course } from '../../types';
 
 interface ManageCoursesProps {
@@ -120,7 +121,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, subj
                                 <tr key={course.id} className="border-b">
                                     <td className="py-3 px-4">{course.title}</td>
                                     <td className="py-3 px-4">{course.teacher}</td>
-                                    <td className="py-3 px-4">${course.price}</td>
+                                    <td className="py-3 px-4">{course.price} د.أ</td>
                                     <td className="py-3 px-4 whitespace-nowrap">
                                         <button onClick={() => handleOpenModal(course)} className="text-blue-500 hover:underline mr-4">تعديل</button>
                                         <button onClick={() => handleRemoveCourse(course.id)} className="text-red-500 hover:underline">حذف</button>

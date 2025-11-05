@@ -1,77 +1,58 @@
 import React, { useState } from 'react';
-import { UserProfile, OnboardingOptions } from '../types';
-import OnboardingWizard from './OnboardingWizard';
 
 interface AuthModalProps {
-  mode: 'login' | 'signup';
-  onClose: () => void;
-  onSwitchMode: (mode: 'login' | 'signup') => void;
-  onLoginSuccess: (profile: UserProfile, role: 'user' | 'admin') => void;
-  onboardingOptions: OnboardingOptions;
-  strings: { [key: string]: string };
+    initialView: 'login' | 'signup';
+    onClose: () => void;
+    onLogin: (email: string, password: string) => boolean;
+    onSwitchToOnboarding: () => void;
+    strings: { [key: string]: string };
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitchMode, onLoginSuccess, onboardingOptions, strings }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ initialView, onClose, onLogin, onSwitchToOnboarding, strings }) => {
+    const [view, setView] = useState(initialView);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLoginSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        // Dummy validation
-        if (email === 'admin@jotutor.com' && password === 'admin123') {
-            onLoginSuccess({ username: 'Admin', email, userType: 'Admin', educationLevel: '', curriculum: '', subjects: [] }, 'admin');
-        } else if (email === 'user@jotutor.com' && password === 'user123') {
-            onLoginSuccess({ username: 'Ahmad', email, userType: 'Student', educationLevel: 'ثانوي (10-12)', curriculum: 'المنهج الوطني الأردني', subjects: ['الرياضيات', 'الفيزياء'] }, 'user');
-        } else {
-            setError('بيانات الدخول غير صحيحة.');
+        const loginSuccess = onLogin(email, password);
+        if (!loginSuccess) {
+            setError('Invalid credentials');
         }
-    };
-    
-    const handleSignupSuccess = (profile: UserProfile) => {
-        // In a real app, this would also register the user in the backend.
-        onLoginSuccess(profile, 'user');
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
-                <div className="p-8 relative">
-                    <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
+        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md relative">
+                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
 
-                    {mode === 'login' ? (
+                <div className="p-8">
+                    <div className="flex border-b mb-6">
+                        <button onClick={() => setView('login')} className={`flex-1 py-2 text-center font-semibold ${view === 'login' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500'}`}>{strings.login}</button>
+                        <button onClick={() => setView('signup')} className={`flex-1 py-2 text-center font-semibold ${view === 'signup' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500'}`}>{strings.signup}</button>
+                    </div>
+
+                    {view === 'login' ? (
                         <div>
-                            <h2 className="text-3xl font-bold text-center text-blue-900 mb-6">{strings.loginTitle}</h2>
-                            <form onSubmit={handleLogin} className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">{strings.email}</label>
-                                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full p-3 border border-gray-300 rounded-md" required />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">{strings.password}</label>
-                                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full p-3 border border-gray-300 rounded-md" required />
-                                </div>
-                                {error && <p className="text-red-500 text-sm">{error}</p>}
-                                <button type="submit" className="w-full bg-green-500 text-white font-bold py-3 rounded-md hover:bg-green-600">{strings.loginButton}</button>
+                            <h2 className="text-2xl font-bold text-center text-blue-900 mb-6">{strings.loginWelcome}</h2>
+                            <form onSubmit={handleLoginSubmit} className="space-y-4">
+                                <input type="email" placeholder={strings.email} value={email} onChange={e => setEmail(e.target.value)} className="w-full p-3 border rounded-md" required />
+                                <input type="password" placeholder={strings.password} value={password} onChange={e => setPassword(e.target.value)} className="w-full p-3 border rounded-md" required />
+                                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                                <button type="submit" className="w-full bg-green-500 text-white font-bold py-3 rounded-md hover:bg-green-600">{strings.login}</button>
+                                <p className="text-xs text-gray-500 text-center">Use a registered account or `admin@jotutor.com` with password `admin123`.</p>
                             </form>
-                            <div className="text-center mt-4">
-                                <button onClick={() => onSwitchMode('signup')} className="text-sm text-green-600 hover:underline">
-                                    {strings.switchToSignup} {strings.signup}
-                                </button>
-                            </div>
                         </div>
                     ) : (
-                        <div>
-                            <h2 className="text-3xl font-bold text-center text-blue-900 mb-4">{strings.signupTitle}</h2>
-                            <OnboardingWizard options={onboardingOptions} onSignupSuccess={handleSignupSuccess} strings={strings} />
-                            <div className="text-center mt-4">
-                                <button onClick={() => onSwitchMode('login')} className="text-sm text-green-600 hover:underline">
-                                    {strings.switchToLogin} {strings.login}
-                                </button>
-                            </div>
+                        <div className="text-center">
+                            <h2 className="text-2xl font-bold text-blue-900 mb-4">{strings.signupTitle}</h2>
+                            <p className="text-gray-600 mb-6">{strings.signupDesc}</p>
+                            <button onClick={onSwitchToOnboarding} className="w-full bg-green-500 text-white font-bold py-3 rounded-md hover:bg-green-600">{strings.signupNewStudent}</button>
+                             <button className="w-full mt-3 bg-blue-900 text-white font-bold py-3 rounded-md hover:bg-blue-800">{strings.signupJoinTeacher}</button>
                         </div>
                     )}
                 </div>

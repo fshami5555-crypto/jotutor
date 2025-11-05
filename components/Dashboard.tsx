@@ -1,27 +1,52 @@
 import React, { useState } from 'react';
-import { UserProfile } from '../types';
+// Fix: Corrected import path for types.
+import { UserProfile, Course, Currency, Language } from '../types';
 import DashboardNav from './dashboard/DashboardNav';
 import UserProfileView from './dashboard/UserProfile';
 import CoursesView from './dashboard/Courses';
 import WalletView from './dashboard/Wallet';
 import AIAssistantView from './dashboard/AIAssistant';
 
+export type DashboardView = 'profile' | 'courses' | 'wallet' | 'ai-assistant';
+
 interface DashboardProps {
     userProfile: UserProfile;
     onLogout: () => void;
+    initialView?: DashboardView;
+    courses: Course[];
+    onSelectCourse: (id: number) => void;
+    currency: Currency;
+    exchangeRate: number;
+    strings: { [key: string]: string };
+    language: Language;
 }
 
-export type DashboardView = 'profile' | 'courses' | 'wallet' | 'ai-assistant';
-
-const Dashboard: React.FC<DashboardProps> = ({ userProfile, onLogout }) => {
-    const [activeView, setActiveView] = useState<DashboardView>('profile');
+const Dashboard: React.FC<DashboardProps> = ({ 
+    userProfile, 
+    onLogout, 
+    initialView = 'profile',
+    courses,
+    onSelectCourse,
+    currency,
+    exchangeRate,
+    strings,
+    language
+}) => {
+    const [activeView, setActiveView] = useState<DashboardView>(initialView);
 
     const renderContent = () => {
         switch (activeView) {
             case 'profile':
                 return <UserProfileView userProfile={userProfile} />;
             case 'courses':
-                return <CoursesView />;
+                return <CoursesView 
+                            userProfile={userProfile} 
+                            allCourses={courses}
+                            onSelectCourse={onSelectCourse}
+                            currency={currency}
+                            exchangeRate={exchangeRate}
+                            strings={strings}
+                        />;
             case 'wallet':
                 return <WalletView />;
             case 'ai-assistant':

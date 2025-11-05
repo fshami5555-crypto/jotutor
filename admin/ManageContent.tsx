@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { SiteContent, FAQItem } from '../../types';
+// Fix: Corrected import path for types.
+import { SiteContent, FAQItem, AboutContent, ContactContent } from '../../types';
 
 interface ManageContentProps {
   content: SiteContent;
@@ -10,23 +11,32 @@ type ContentTab = 'about' | 'faq' | 'contact' | 'privacy' | 'terms';
 
 const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
   const [activeTab, setActiveTab] = useState<ContentTab>('about');
-  const [localContent, setLocalContent] = useState<SiteContent>(content);
+  const [localContent, setLocalContent] = useState<SiteContent>(JSON.parse(JSON.stringify(content))); // Deep copy
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
-    setLocalContent(content);
+    setLocalContent(JSON.parse(JSON.stringify(content)));
   }, [content]);
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, section: keyof SiteContent | 'contact') => {
+  
+  const handleAboutChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    if (section === 'contact') {
-        setLocalContent(prev => ({
-            ...prev,
-            contact: { ...prev.contact, [name]: value }
-        }));
-    } else {
-        setLocalContent(prev => ({ ...prev, [name]: value }));
-    }
+    setLocalContent(prev => ({
+        ...prev,
+        about: { ...prev.about, [name]: value }
+    }));
+  };
+  
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+     setLocalContent(prev => ({
+        ...prev,
+        contact: { ...prev.contact, [name]: value }
+    }));
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>, section: 'privacy' | 'terms') => {
+    const { name, value } = e.target;
+    setLocalContent(prev => ({ ...prev, [name]: value }));
   };
   
   const handleFaqChange = (id: number, field: 'question' | 'answer', value: string) => {
@@ -55,9 +65,13 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
     switch(activeTab) {
       case 'about':
         return (
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">محتوى صفحة "عن JoTutor"</label>
-                <textarea name="about" value={localContent.about} onChange={(e) => handleTextChange(e, 'about')} rows={10} className="w-full p-2 border rounded-md"></textarea>
+            <div className="space-y-4">
+                 <h3 className="text-lg font-semibold">قسم الرؤية</h3>
+                 <textarea name="vision" value={localContent.about.vision} onChange={handleAboutChange} rows={4} className="w-full p-2 border rounded-md" placeholder="رؤيتنا..."></textarea>
+                 <input name="visionImage" value={localContent.about.visionImage} onChange={handleAboutChange} className="w-full p-2 border rounded-md" placeholder="رابط صورة الرؤية"/>
+                 
+                 <h3 className="text-lg font-semibold">قسم الرسالة</h3>
+                 <textarea name="mission" value={localContent.about.mission} onChange={handleAboutChange} rows={6} className="w-full p-2 border rounded-md" placeholder="رسالتنا..."></textarea>
             </div>
         );
       case 'faq':
@@ -84,15 +98,15 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
             <div className="space-y-4">
                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-                    <input type="email" name="email" value={localContent.contact.email} onChange={(e) => handleTextChange(e, 'contact')} className="w-full p-2 border rounded-md"/>
+                    <input type="email" name="email" value={localContent.contact.email} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
-                    <input type="text" name="phone" value={localContent.contact.phone} onChange={(e) => handleTextChange(e, 'contact')} className="w-full p-2 border rounded-md"/>
+                    <input type="text" name="phone" value={localContent.contact.phone} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">العنوان</label>
-                    <input type="text" name="address" value={localContent.contact.address} onChange={(e) => handleTextChange(e, 'contact')} className="w-full p-2 border rounded-md"/>
+                    <input type="text" name="address" value={localContent.contact.address} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
                 </div>
             </div>
         );

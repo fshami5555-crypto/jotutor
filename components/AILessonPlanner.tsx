@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { generateLessonPlan } from '../services/geminiService';
+// Fix: Corrected import path for types.
 import { Language } from '../types';
 
 interface AILessonPlannerProps {

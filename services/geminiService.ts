@@ -1,4 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
+// Fix: Corrected import path for types.
+import { Course } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -32,7 +34,7 @@ export const generateLessonPlan = async (subject: string, level: string, topic: 
     try {
         const response = await ai.models.generateContent({
             model,
-            contents: prompt,
+            contents: [{ parts: [{ text: prompt }] }],
         });
         
         return response.text;
@@ -69,7 +71,7 @@ export const translateContent = async (content: object, targetLanguage: string):
     try {
         const response = await ai.models.generateContent({
             model,
-            contents: prompt,
+            contents: [{ parts: [{ text: prompt }] }],
             config: {
                 responseMimeType: "application/json",
             },
@@ -87,5 +89,65 @@ export const translateContent = async (content: object, targetLanguage: string):
     } catch (error) {
         console.error('Error translating content:', error);
         throw new Error('Failed to translate content using Gemini API.');
+    }
+};
+
+export const getChatbotResponse = async (message: string, courses: Course[]): Promise<{ responseText: string; recommendedCourseIds: number[] }> => {
+    const model = 'gemini-2.5-flash';
+
+    const prompt = `
+        أنت "مساعد JoTutor"، روبوت محادثة ودود ومتعاون لمنصة تعليمية. هدفك هو مساعدة الطلاب في العثور على الدورات المناسبة.
+        
+        المهمة:
+        بناءً على رسالة المستخدم وقائمة الدورات المتاحة، قدم ردًا مفيدًا. إذا كان ذلك مناسبًا، قم بترشيح دورات محددة تتناسب مع احتياجات المستخدم.
+        
+        قائمة الدورات المتاحة (JSON):
+        ${JSON.stringify(courses.map(c => ({id: c.id, title: c.title, description: c.description, category: c.category, level: c.level, price: c.price})), null, 2)}
+
+        رسالة المستخدم:
+        "${message}"
+
+        التعليمات:
+        1.  تحدث باللغة العربية بأسلوب ودود ومساعد.
+        2.  حلل رسالة المستخدم لفهم ما يبحث عنه (مثل مادة معينة، مستوى، هدف).
+        3.  إذا كانت هناك دورات ذات صلة في قائمة JSON، قم بتضمين أرقام معرفاتها (IDs) في ردك.
+        4.  يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، ولا شيء غير ذلك.
+    `;
+
+    try {
+        const response = await ai.models.generateContent({
+            model,
+            contents: [{ parts: [{ text: prompt }] }],
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        responseText: {
+                            type: Type.STRING,
+                            description: "Your friendly, conversational response to the user in Arabic."
+                        },
+                        recommendedCourseIds: {
+                            type: Type.ARRAY,
+                            description: "An array of course ID numbers that are relevant to the user's query. Return an empty array if no courses are relevant.",
+                            items: {
+                                type: Type.NUMBER,
+                            }
+                        }
+                    },
+                    required: ["responseText", "recommendedCourseIds"]
+                }
+            }
+        });
+        
+        const jsonStr = response.text.trim();
+        return JSON.parse(jsonStr);
+
+    } catch (error) {
+        console.error('Error getting chatbot response:', error);
+        return {
+            responseText: "عذرًا، أواجه مشكلة فنية في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقًا.",
+            recommendedCourseIds: []
+        };
     }
 };
