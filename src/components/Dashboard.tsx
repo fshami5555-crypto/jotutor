@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Course, Currency, Language, DashboardView } from '../types';
 import DashboardNav from './dashboard/DashboardNav';
-import UserProfileView from './dashboard/UserProfile';
+import ProfileView from './dashboard/Profile';
 import CoursesView from './dashboard/Courses';
 import WalletView from './dashboard/Wallet';
 import AIAssistantView from './dashboard/AIAssistant';
@@ -44,7 +45,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     const renderContent = () => {
         switch (activeView) {
             case 'profile':
-                return <UserProfileView userProfile={userProfile} />;
+                return <ProfileView userProfile={userProfile} />;
             case 'courses':
                 return <CoursesView 
                             userProfile={userProfile} 
@@ -59,7 +60,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             case 'ai-assistant':
                 return <AIAssistantView />;
             default:
-                return <UserProfileView userProfile={userProfile} />;
+                return <ProfileView userProfile={userProfile} />;
         }
     };
 
