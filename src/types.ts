@@ -4,7 +4,6 @@ export type Page =
   'contact' | 'faq' | 'privacy' | 'terms' | 
   'dashboard' | 'admin-dashboard' | 'admin-user-view';
 
-// Fix: Moved DashboardView type here to break a circular dependency.
 export type DashboardView = 'profile' | 'courses' | 'wallet' | 'ai-assistant';
 
 export type Currency = 'JOD' | 'USD';

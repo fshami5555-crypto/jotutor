@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { arStrings, enStrings } from '../localization';
 import { JOD_TO_USD_RATE } from '../constants';
+// Fix: Imported DashboardView from types.ts to resolve module error.
 import { 
     Page, Currency, Language, SiteContent, HeroSlide, Teacher, Testimonial, Course, BlogPost, 
-    OnboardingOptions, UserProfile, Payment, StaffMember 
+    OnboardingOptions, UserProfile, Payment, StaffMember, DashboardView
 } from '../types';
 
 // Component Imports
@@ -19,7 +20,8 @@ import AILessonPlanner from './AILessonPlanner';
 import Footer from './Footer';
 import AuthModal from './AuthModal';
 import OnboardingWizard from './OnboardingWizard';
-import Dashboard, { DashboardView } from './Dashboard';
+// Fix: Removed DashboardView from this import as it's now imported from types.ts.
+import Dashboard from './Dashboard';
 import AdminDashboard from './AdminDashboard';
 import TeacherProfilePage from './TeacherProfilePage';
 import CourseProfilePage from './CourseProfilePage';

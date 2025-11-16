@@ -1,14 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-// Fix: Added DashboardView to import from types.ts to break circular dependency.
 import { UserProfile, Course, Currency, Language, DashboardView } from '../types';
 import DashboardNav from './dashboard/DashboardNav';
 import UserProfileView from './dashboard/UserProfile';
 import CoursesView from './dashboard/Courses';
 import WalletView from './dashboard/Wallet';
 import AIAssistantView from './dashboard/AIAssistant';
-
-// Fix: Moved DashboardView type to types.ts to break a circular dependency.
 
 interface DashboardProps {
     userProfile: UserProfile;
