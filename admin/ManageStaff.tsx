@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // Fix: Corrected import path for types.
-import { StaffMember, StaffPermission } from '../../types';
+import { StaffMember, StaffPermission } from '../types';
 
 interface ManageStaffProps {
     staff: StaffMember[];
@@ -24,7 +24,7 @@ const StaffFormModal: React.FC<{ staffMember: StaffMember | null; onSave: (staff
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalStaffMember: StaffMember = {
-            id: staffMember?.id || Date.now(),
+            id: staffMember?.id || Date.now().toString(),
             ...formData,
             permissions: formData.permissions as StaffPermission,
         };
@@ -77,7 +77,7 @@ const ManageStaff: React.FC<ManageStaffProps> = ({ staff, setStaff }) => {
         handleCloseModal();
     };
 
-    const handleRemoveStaff = (id: number) => {
+    const handleRemoveStaff = (id: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذا الموظف؟')) {
             setStaff(prev => prev.filter(s => s.id !== id));
         }

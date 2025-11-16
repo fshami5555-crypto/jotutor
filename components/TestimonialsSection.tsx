@@ -1,20 +1,21 @@
 
 import React from 'react';
 // Fix: Corrected import path for types.
-import { Testimonial } from '../types';
+import { Testimonial, HomepageContent } from '../types';
 
 interface TestimonialsSectionProps {
   testimonials: Testimonial[];
+  content: HomepageContent;
   strings: { [key: string]: string };
 }
 
-const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials, strings }) => {
+const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials, content, strings }) => {
   return (
     <section className="py-20 bg-blue-900 text-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-extrabold">{strings.testimonialsTitle}</h2>
-          <p className="mt-4 text-lg text-blue-200">{strings.testimonialsSubtitle}</p>
+          <h2 className="text-4xl font-extrabold">{content?.testimonialsTitle || strings.testimonialsTitle}</h2>
+          <p className="mt-4 text-lg text-blue-200">{content?.testimonialsSubtitle || strings.testimonialsSubtitle}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HeroSlide } from '../../types';
+import { HeroSlide } from '../types';
 
 interface ManageHeroSlidesProps {
     heroSlides: HeroSlide[];
@@ -21,7 +21,7 @@ const SlideFormModal: React.FC<{ slide: HeroSlide | null; onSave: (slide: HeroSl
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalSlide: HeroSlide = {
-            id: slide?.id || Date.now(),
+            id: slide?.id || Date.now().toString(),
             ...formData,
         };
         onSave(finalSlide);
@@ -71,7 +71,7 @@ const ManageHeroSlides: React.FC<ManageHeroSlidesProps> = ({ heroSlides, setHero
         handleCloseModal();
     };
 
-    const handleRemoveSlide = (id: number) => {
+    const handleRemoveSlide = (id: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذه الشريحة؟')) {
             setHeroSlides(prev => prev.filter(s => s.id !== id));
         }

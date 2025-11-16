@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 // Fix: Corrected import path for types.
-import { Teacher, Language } from '../types';
+import { Teacher, Language, HomepageContent } from '../types';
 import TeacherCard from './TeacherCard';
 
 interface TeacherSearchProps {
     teachers: Teacher[];
     subjects: string[];
-    onSelectTeacher: (id: number) => void;
+    onSelectTeacher: (id: string) => void;
     isHomePageVersion?: boolean;
+    content: HomepageContent;
     strings: { [key: string]: string };
     language: Language;
 }
 
-const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSelectTeacher, isHomePageVersion, strings, language }) => {
+const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSelectTeacher, isHomePageVersion, content, strings, language }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSubject, setSelectedSubject] = useState('الكل');
 
@@ -28,8 +29,8 @@ const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSel
         <section id="teachers" className="py-20 bg-gray-50">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-extrabold text-blue-900">{strings.teacherSearchTitle}</h2>
-                    <p className="mt-4 text-lg text-gray-600">{strings.teacherSearchSubtitle}</p>
+                    <h2 className="text-4xl font-extrabold text-blue-900">{content?.teacherSearchTitle || strings.teacherSearchTitle}</h2>
+                    <p className="mt-4 text-lg text-gray-600">{content?.teacherSearchSubtitle || strings.teacherSearchSubtitle}</p>
                 </div>
 
                 {!isHomePageVersion && (
@@ -63,7 +64,7 @@ const TeacherSearch: React.FC<TeacherSearchProps> = ({ teachers, subjects, onSel
                 {isHomePageVersion && (
                      <div className="text-center mt-12">
                         <button onClick={() => alert('Navigate to all teachers page!')} className="bg-green-500 text-white font-bold text-lg py-3 px-8 rounded-full hover:bg-green-600 transition-transform duration-300 transform hover:scale-105 shadow-xl">
-                            {strings.discoverMoreTeachers}
+                            {content?.discoverMoreTeachers || strings.discoverMoreTeachers}
                         </button>
                     </div>
                 )}

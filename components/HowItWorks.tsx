@@ -1,23 +1,26 @@
 
 import React from 'react';
+import { HomepageContent } from '../types';
+
 
 interface HowItWorksProps {
+    content: HomepageContent;
     strings: { [key: string]: string };
 }
 
-const HowItWorks: React.FC<HowItWorksProps> = ({ strings }) => {
+const HowItWorks: React.FC<HowItWorksProps> = ({ content, strings }) => {
   const steps = [
-    { number: '01', title: strings.step1Title, description: strings.step1Desc },
-    { number: '02', title: strings.step2Title, description: strings.step2Desc },
-    { number: '03', title: strings.step3Title, description: strings.step3Desc },
+    { number: '01', title: content?.step1Title || strings.step1Title, description: content?.step1Desc || strings.step1Desc },
+    { number: '02', title: content?.step2Title || strings.step2Title, description: content?.step2Desc || strings.step2Desc },
+    { number: '03', title: content?.step3Title || strings.step3Title, description: content?.step3Desc || strings.step3Desc },
   ];
 
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-extrabold text-blue-900">{strings.howItWorksTitle}</h2>
-          <p className="mt-4 text-lg text-gray-600">{strings.howItWorksSubtitle}</p>
+          <h2 className="text-4xl font-extrabold text-blue-900">{content?.howItWorksTitle || strings.howItWorksTitle}</h2>
+          <p className="mt-4 text-lg text-gray-600">{content?.howItWorksSubtitle || strings.howItWorksSubtitle}</p>
         </div>
         <div className="relative">
           <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-green-200" style={{ transform: 'translateY(-50%)' }}></div>

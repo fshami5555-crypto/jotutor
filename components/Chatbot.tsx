@@ -6,7 +6,7 @@ import { JOD_TO_USD_RATE } from '../constants';
 
 interface ChatbotProps {
     courses: Course[];
-    onSelectCourse: (id: number) => void;
+    onSelectCourse: (id: string) => void;
     strings: { [key: string]: string };
     language: Language;
 }
@@ -67,7 +67,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
             const response = await getChatbotResponse(trimmedInput, courses);
             
             const recommendedCourses = courses.filter(course => 
-                response.recommendedCourseIds.includes(course.id)
+                response.recommendedCourseIds.includes(Number(course.id)) // Gemini may return numbers
             );
             
             const botMessage: ChatMessage = {

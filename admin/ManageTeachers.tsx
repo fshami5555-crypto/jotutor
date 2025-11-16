@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // Fix: Corrected import path for types.
-import { Teacher } from '../../types';
+import { Teacher } from '../types';
 
 interface ManageTeachersProps {
     teachers: Teacher[];
@@ -33,7 +33,7 @@ const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Te
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalTeacher: Teacher = {
-            id: teacher?.id || Date.now(),
+            id: teacher?.id || Date.now().toString(),
             rating: teacher?.rating || 0,
             reviews: teacher?.reviews || 0,
             ...formData
@@ -96,7 +96,7 @@ const ManageTeachers: React.FC<ManageTeachersProps> = ({ teachers, setTeachers }
         handleCloseModal();
     };
 
-    const handleRemoveTeacher = (id: number) => {
+    const handleRemoveTeacher = (id: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذا المعلم؟')) {
             setTeachers(prev => prev.filter(t => t.id !== id));
         }

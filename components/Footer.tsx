@@ -8,16 +8,17 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ onNavigate, strings }) => {
-  const footerLinks = [
-    { label: strings.navAbout, page: 'about' as Page },
-    { label: strings.footerJoinTeacher, page: 'join' as Page },
-    { label: strings.footerFAQ, page: 'faq' as Page },
-    { label: strings.navBlog, page: 'blog' as Page },
+  // Fix: Correctly typed footerLinks to allow for the special 'join' case, resolving the type error.
+  const footerLinks: { label: string; page: Page | 'join' }[] = [
+    { label: strings.navAbout, page: 'about' },
+    { label: strings.footerJoinTeacher, page: 'join' },
+    { label: strings.footerFAQ, page: 'faq' },
+    { label: strings.navBlog, page: 'blog' },
   ];
 
-  const legalLinks = [
-    { label: strings.privacyTitle, page: 'privacy' as Page },
-    { label: strings.termsTitle, page: 'terms' as Page },
+  const legalLinks: { label: string; page: Page }[] = [
+    { label: strings.privacyTitle, page: 'privacy' },
+    { label: strings.termsTitle, page: 'terms' },
   ];
 
   const socialLinks = [
@@ -25,6 +26,8 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, strings }) => {
     { name: 'Twitter', url: '#'},
     { name: 'LinkedIn', url: '#'},
   ];
+
+  const joinTeacherUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdR8nxLM30CJgzGiBLyeY9Txcug_YfrRXa2xMVYOUe0ldSUZw/viewform?usp=sf_link";
 
   return (
     <footer className="bg-blue-900 text-white">
@@ -47,7 +50,13 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, strings }) => {
             <ul className="space-y-2">
               {footerLinks.map(link => (
                 <li key={link.page}>
-                  <button onClick={() => onNavigate(link.page)} className="text-blue-200 hover:text-white transition-colors">{link.label}</button>
+                  {link.page === 'join' ? (
+                    <a href={joinTeacherUrl} target="_blank" rel="noopener noreferrer" className="text-blue-200 hover:text-white transition-colors">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <button onClick={() => onNavigate(link.page)} className="text-blue-200 hover:text-white transition-colors">{link.label}</button>
+                  )}
                 </li>
               ))}
             </ul>

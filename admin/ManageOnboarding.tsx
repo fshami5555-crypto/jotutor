@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // Fix: Corrected import path for types.
-import { OnboardingOptions } from '../../types';
+import { OnboardingOptions } from '../types';
 
 interface ManageOnboardingProps {
   options: OnboardingOptions;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UserProfile } from '../../types';
+import { UserProfile } from '../types';
 
 interface ManageUsersProps {
     users: UserProfile[];
@@ -15,7 +15,7 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ users, setUsers, onViewUser }
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleRemoveUser = (id: number) => {
+    const handleRemoveUser = (id: string) => {
         if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
             setUsers(prev => prev.filter(user => user.id !== id));
         }

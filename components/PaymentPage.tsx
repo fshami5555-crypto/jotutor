@@ -8,9 +8,10 @@ interface PaymentPageProps {
     exchangeRate: number;
     strings: { [key: string]: string };
     language: Language;
+    onEnroll: (course: Course) => void;
 }
 
-const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, exchangeRate, strings }) => {
+const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, exchangeRate, strings, onEnroll }) => {
     const displayPrice = currency === 'USD'
         ? (course.price / exchangeRate).toFixed(2)
         : course.price.toFixed(2);
@@ -18,8 +19,8 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, exchangeRat
 
     const handlePayment = (e: React.FormEvent) => {
         e.preventDefault();
-        alert(`${strings.paymentSuccess} You have enrolled in ${course.title}.`);
-        // Here you would typically navigate the user to their dashboard or course page.
+        // Call the passed-in enrollment function instead of just showing an alert
+        onEnroll(course);
     };
 
     return (

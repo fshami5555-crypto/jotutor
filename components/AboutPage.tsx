@@ -15,7 +15,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, strings }) => {
       <section className="relative h-72 bg-cover bg-center" style={{ backgroundImage: `url(${content.heroImage})` }}>
         <div className="absolute inset-0 bg-blue-900 bg-opacity-60"></div>
         <div className="container mx-auto px-6 h-full flex items-center justify-center relative z-10">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-white text-center">{strings.aboutTitle}</h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white text-center">{content.aboutTitle}</h1>
         </div>
       </section>
 
@@ -24,7 +24,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, strings }) => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
-              <h2 className="text-3xl font-bold text-blue-900 mb-4">{strings.aboutVisionTitle}</h2>
+              <h2 className="text-3xl font-bold text-blue-900 mb-4">{content.visionTitle}</h2>
               <p className="text-xl text-gray-600 italic leading-relaxed">
                   "{content.vision}"
               </p>
@@ -39,7 +39,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, strings }) => {
       {/* Mission Section */}
       <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-6 max-w-4xl text-center">
-              <h2 className="text-3xl font-bold text-blue-900 mb-4">{strings.aboutMissionTitle}</h2>
+              <h2 className="text-3xl font-bold text-blue-900 mb-4">{content.missionTitle}</h2>
               <p className="text-lg text-gray-700 leading-loose">
                   {content.mission}
               </p>
@@ -49,7 +49,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, strings }) => {
       {/* Teacher Community Section */}
        <section className="py-20 bg-white">
         <div className="container mx-auto px-6 max-w-4xl text-center">
-            <h2 className="text-3xl font-bold text-blue-900 mb-4">{strings.aboutTeacherCommunityTitle}</h2>
+            <h2 className="text-3xl font-bold text-blue-900 mb-4">{content.teacherCommunityTitle}</h2>
             <p className="text-lg text-gray-700 leading-loose">
                 {content.teacherCommunity}
             </p>
@@ -60,7 +60,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ content, strings }) => {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
             <div className="text-center mb-16">
-                <h2 className="text-4xl font-extrabold text-blue-900">{strings.aboutWhyJoTutorTitle}</h2>
+                <h2 className="text-4xl font-extrabold text-blue-900">{content.whyJoTutorTitle}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
               {content.whyJoTutor.map((point, index) => (

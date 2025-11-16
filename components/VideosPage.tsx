@@ -4,7 +4,7 @@ import { BlogPost, Language } from '../types';
 
 interface VideosPageProps {
   shorts: BlogPost[];
-  onSelectShort: (id: number) => void;
+  onSelectShort: (id: string) => void;
   strings: { [key: string]: string };
   language: Language;
 }

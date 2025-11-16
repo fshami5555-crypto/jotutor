@@ -1,3 +1,8 @@
+
+
+
+
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { arStrings, enStrings } from '../localization';
 import { JOD_TO_USD_RATE } from '../constants';
@@ -18,7 +23,7 @@ import AILessonPlanner from './AILessonPlanner';
 import Footer from './Footer';
 import AuthModal from './AuthModal';
 import OnboardingWizard from './OnboardingWizard';
-import Dashboard from './Dashboard';
+import Dashboard, { DashboardView } from './Dashboard';
 import AdminDashboard from './AdminDashboard';
 import TeacherProfilePage from './TeacherProfilePage';
 import CourseProfilePage from './CourseProfilePage';
@@ -30,22 +35,31 @@ import BlogPage from './BlogPage';
 import ArticlePage from './ArticlePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
-import JoinTeacherPage from './JoinTeacherPage';
 import FAQPage from './FAQPage';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
 import TermsPage from './TermsPage';
 import Chatbot from './Chatbot';
 
 // Data and Services
+import { initialData } from '../mockData';
 import { translateContent } from '../services/geminiService';
-import { fetchAllData, appendRow, overwriteSheet, updateConfig, isGoogleSheetConfigured } from '../googleSheetService';
-import { initialData } from '../mockData'; 
+// Fix: Use Firebase v8 compat imports and syntax to resolve module errors.
+import { 
+    fetchPublicData,
+    fetchAdminData,
+    overwriteCollection, 
+    updateConfig, 
+    setDocument,
+    auth,
+    db,
+    onAuthStateChangedListener,
+} from '../googleSheetService'; // This is now firebaseService.ts
 
 
 const App: React.FC = () => {
     // === STATE MANAGEMENT ===
     const [page, setPage] = useState<Page>('home');
-    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -61,91 +75,139 @@ const App: React.FC = () => {
     const [isTranslating, setIsTranslating] = useState(false);
     const [currency, setCurrency] = useState<Currency>('JOD');
 
-    // Data State (initialized from local mock data as a fallback)
-    const [users, setUsers] = useState<UserProfile[]>(initialData.users);
-    const [staff, setStaff] = useState<StaffMember[]>(initialData.staff);
-    const [payments, setPayments] = useState<Payment[]>(initialData.payments);
+    // Data State (initialized with mock data, loaded from Firebase)
+    const [users, setUsers] = useState<UserProfile[]>([]);
+    const [staff, setStaff] = useState<StaffMember[]>([]);
+    const [payments, setPayments] = useState<Payment[]>([]);
     const [teachers, setTeachers] = useState<Teacher[]>(initialData.teachers);
     const [courses, setCourses] = useState<Course[]>(initialData.courses);
     const [testimonials, setTestimonials] = useState<Testimonial[]>(initialData.testimonials);
     const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialData.blogPosts);
     const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(initialData.heroSlides);
-    const [siteContent, setSiteContent] = useState<SiteContent | null>(initialData.siteContent);
-    const [onboardingOptions, setOnboardingOptions] = useState<OnboardingOptions | null>(initialData.onboardingOptions);
+    const [siteContent, setSiteContent] = useState<SiteContent>(initialData.siteContent);
+    const [onboardingOptions, setOnboardingOptions] = useState<OnboardingOptions>(initialData.onboardingOptions);
 
     // Loading & Error State
-    const [isLoading, setIsLoading] = useState(true);
+    const [isDataLoading, setIsDataLoading] = useState(true);
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     
-    // === DATA FETCHING ON LOAD ===
-    useEffect(() => {
-        const loadData = async () => {
-            if (!isGoogleSheetConfigured()) {
-                console.warn("Google Sheets not configured. Running on local mock data.");
-                setIsLoading(false);
-                return;
-            }
+    // State for one-time dashboard view redirect
+    const [initialDashboardView, setInitialDashboardView] = useState<DashboardView | undefined>();
 
+    // === DATA FETCHING ON MOUNT ===
+    useEffect(() => {
+        const loadPublicData = async () => {
+            setIsDataLoading(true);
             try {
-                const data = await fetchAllData();
-                setUsers(data.users || []);
-                setStaff(data.staff || []);
-                setPayments(data.payments || []);
-                setTeachers(data.teachers || []);
-                setCourses(data.courses || []);
-                setTestimonials(data.testimonials || []);
-                setBlogPosts(data.blog || []);
-                setHeroSlides(data.heroSlides || []);
-                if (data.config.siteContent) setSiteContent(data.config.siteContent);
-                if (data.config.onboardingOptions) setOnboardingOptions(data.config.onboardingOptions);
-                setError(null);
-            } catch (e) {
-                console.error("Failed to load data from Google Sheets:", e);
-                setError("Failed to load application data. Please check your connection or the Google Sheet configuration.");
+                const response = await fetchPublicData();
+                if(response.success){
+                    const data = response.data;
+                    setTeachers(data.teachers || []);
+                    setCourses(data.courses || []);
+                    setTestimonials(data.testimonials || []);
+                    setBlogPosts(data.blog || []);
+                    setHeroSlides(data.heroSlides || []);
+                    if (data.config?.siteContent) setSiteContent(data.config.siteContent);
+                    if (data.config?.onboardingOptions) setOnboardingOptions(data.config.onboardingOptions);
+                    setError(null);
+                } else {
+                     throw new Error("Failed to fetch public data from Firebase");
+                }
+            } catch (e: any) {
+                console.error("Failed to load public data from Firebase:", e.message);
+                setError("Failed to load public data from Firebase. Displaying sample data instead. Please check your Firebase security rules to allow public read access.");
+                // Fallback to mock data on error is handled by initial state
             } finally {
-                setIsLoading(false);
+                setIsDataLoading(false);
             }
         };
 
-        loadData();
+        loadPublicData();
     }, []);
 
+    // === AUTHENTICATION STATE LISTENER ===
+    useEffect(() => {
+        const unsubscribe = onAuthStateChangedListener(async (user) => {
+            if (user) {
+                setIsLoggedIn(true);
+                if (user.email === 'admin@jotutor.com') {
+                    setIsAdmin(true);
+                    setUserProfile(null);
+                    
+                    // Fetch admin-specific data
+                    const response = await fetchAdminData();
+                    const data = response.data; // Data can be partial, so we always set it.
+                    setUsers(data.users || []);
+                    setStaff(data.staff || []);
+                    setPayments(data.payments || []);
 
-    // === PERSISTENCE WRAPPERS (Saves state locally AND to Google Sheets if configured) ===
+                    if (!response.success && response.failedCollections && response.failedCollections.length > 0) {
+                        const failedList = response.failedCollections.join(', ');
+                        const exampleCollection = response.failedCollections[0];
+                        const errorMessage = `Failed to load admin data for the following sections due to Firestore permissions: ${failedList}. Please ensure your Firestore Security Rules allow the admin ('admin@jotutor.com') to read these collections. For example, the rule for '${exampleCollection}' should be: match /${exampleCollection}/{docId} { allow read, write: if request.auth.token.email == 'admin@jotutor.com'; }`;
+                        setError(errorMessage);
+                        console.error(errorMessage);
+                    } else {
+                        setError(null); // Clear previous errors on full success
+                    }
+
+                } else {
+                    // Fix: Use Firebase v8 compat syntax to resolve module errors.
+                    const userDocRef = db.collection('users').doc(user.uid);
+                    const userDocSnap = await userDocRef.get();
+                    if (userDocSnap.exists) {
+                        setUserProfile({ ...userDocSnap.data(), id: user.uid } as UserProfile);
+                    }
+                    setIsAdmin(false);
+                }
+            } else {
+                setIsLoggedIn(false);
+                setIsAdmin(false);
+                setUserProfile(null);
+            }
+            setIsAuthLoading(false);
+        });
+
+        return unsubscribe; // Cleanup on unmount
+    }, []);
+    
+
+    // === PERSISTENCE WRAPPERS (Saves state to Firestore) ===
     const handleSetUsers = (newUsers: React.SetStateAction<UserProfile[]>) => {
         const updatedUsers = typeof newUsers === 'function' ? newUsers(users) : newUsers;
         setUsers(updatedUsers);
-        overwriteSheet('Users', updatedUsers).catch(e => console.error("Failed to save users:", e));
+        overwriteCollection('Users', updatedUsers).catch(e => console.error("Failed to save users:", e));
     };
     const handleSetStaff = (newStaff: React.SetStateAction<StaffMember[]>) => {
         const updatedStaff = typeof newStaff === 'function' ? newStaff(staff) : newStaff;
         setStaff(updatedStaff);
-        overwriteSheet('Staff', updatedStaff).catch(e => console.error("Failed to save staff:", e));
+        overwriteCollection('Staff', updatedStaff).catch(e => console.error("Failed to save staff:", e));
     };
     const handleSetTeachers = (newTeachers: React.SetStateAction<Teacher[]>) => {
         const updatedTeachers = typeof newTeachers === 'function' ? newTeachers(teachers) : newTeachers;
         setTeachers(updatedTeachers);
-        overwriteSheet('Teachers', updatedTeachers).catch(e => console.error("Failed to save teachers:", e));
+        overwriteCollection('Teachers', updatedTeachers).catch(e => console.error("Failed to save teachers:", e));
     };
     const handleSetCourses = (newCourses: React.SetStateAction<Course[]>) => {
         const updatedCourses = typeof newCourses === 'function' ? newCourses(courses) : newCourses;
         setCourses(updatedCourses);
-        overwriteSheet('Courses', updatedCourses).catch(e => console.error("Failed to save courses:", e));
+        overwriteCollection('Courses', updatedCourses).catch(e => console.error("Failed to save courses:", e));
     };
     const handleSetTestimonials = (newTestimonials: React.SetStateAction<Testimonial[]>) => {
         const updatedTestimonials = typeof newTestimonials === 'function' ? newTestimonials(testimonials) : newTestimonials;
         setTestimonials(updatedTestimonials);
-        overwriteSheet('Testimonials', updatedTestimonials).catch(e => console.error("Failed to save testimonials:", e));
+        overwriteCollection('Testimonials', updatedTestimonials).catch(e => console.error("Failed to save testimonials:", e));
     };
      const handleSetBlogPosts = (newPosts: React.SetStateAction<BlogPost[]>) => {
         const updatedPosts = typeof newPosts === 'function' ? newPosts(blogPosts) : newPosts;
         setBlogPosts(updatedPosts);
-        overwriteSheet('Blog', updatedPosts).catch(e => console.error("Failed to save blog posts:", e));
+        overwriteCollection('Blog', updatedPosts).catch(e => console.error("Failed to save blog posts:", e));
     };
     const handleSetHeroSlides = (newSlides: React.SetStateAction<HeroSlide[]>) => {
         const updatedSlides = typeof newSlides === 'function' ? newSlides(heroSlides) : newSlides;
         setHeroSlides(updatedSlides);
-        overwriteSheet('HeroSlides', updatedSlides).catch(e => console.error("Failed to save hero slides:", e));
+        overwriteCollection('HeroSlides', updatedSlides).catch(e => console.error("Failed to save hero slides:", e));
     };
     const handleSetConfig = (newContent?: SiteContent, newOptions?: OnboardingOptions) => {
         const finalContent = newContent || siteContent;
@@ -155,13 +217,13 @@ const App: React.FC = () => {
         updateConfig({ siteContent: finalContent, onboardingOptions: finalOptions })
             .catch(e => console.error("Failed to save config:", e));
     };
-     const handleSetSiteContent = (newContent: React.SetStateAction<SiteContent | null>) => {
+     const handleSetSiteContent = (newContent: React.SetStateAction<SiteContent>) => {
         const updatedContent = typeof newContent === 'function' ? newContent(siteContent!) : newContent;
         if (updatedContent) {
           handleSetConfig(updatedContent, undefined);
         }
     };
-    const handleSetOnboardingOptions = (newOptions: React.SetStateAction<OnboardingOptions | null>) => {
+    const handleSetOnboardingOptions = (newOptions: React.SetStateAction<OnboardingOptions>) => {
         const updatedOptions = typeof newOptions === 'function' ? newOptions(onboardingOptions!) : newOptions;
         if(updatedOptions) {
           handleSetConfig(undefined, updatedOptions);
@@ -175,54 +237,108 @@ const App: React.FC = () => {
     }, [language]);
 
     // === NAVIGATION & AUTH HANDLERS ===
-    const handleNavigate = (newPage: Page, id: number | null = null) => {
+    const handleNavigate = (newPage: Page, id: string | null = null) => {
         setPage(newPage);
         setSelectedId(id);
         window.scrollTo(0, 0);
     };
 
-    const handleLogin = (email: string, password: string): boolean => {
-        const lowercasedEmail = email.toLowerCase();
-        if (lowercasedEmail === 'admin@jotutor.com' && password === 'admin123') {
-            setIsAdmin(true);
-            setIsLoggedIn(true);
-            setUserProfile(null);
-            handleNavigate('admin-dashboard');
+    const handleLogin = async (email: string, password: string): Promise<boolean> => {
+        try {
+            // Fix: Use Firebase v8 compat syntax to resolve module errors.
+            await auth.signInWithEmailAndPassword(email, password);
             setAuthModalOpen(false);
+            if (email.toLowerCase() === 'admin@jotutor.com') {
+                handleNavigate('admin-dashboard');
+            } else {
+                handleNavigate('dashboard');
+            }
             return true;
+        } catch (error) {
+            console.error("Login failed:", error);
+            return false;
         }
-
-        const user = users.find(u => u.email.toLowerCase() === lowercasedEmail);
-        if (user && user.password === password) {
-            setUserProfile(user);
-            setIsLoggedIn(true);
-            setIsAdmin(false);
-            handleNavigate('dashboard');
-            setAuthModalOpen(false);
-            return true;
-        }
-        return false;
     };
 
     const handleLogout = () => {
-        setIsLoggedIn(false); setIsAdmin(false); setUserProfile(null); handleNavigate('home');
+        // Fix: Use Firebase v8 compat syntax to resolve module errors.
+        auth.signOut();
+        handleNavigate('home');
     };
     
-    const handleSignupSuccess = (profile: UserProfile) => {
-        const newUser: UserProfile = { ...profile, id: Date.now(), email: profile.email.toLowerCase() };
-        
-        handleSetUsers(prevUsers => [newUser, ...prevUsers]);
-        
-        appendRow('Users', newUser).then(response => {
-            if (!response.success) {
-                console.error("Failed to save new user to sheet:", response.error);
+    const handleSignupSuccess = async (profile: UserProfile): Promise<string | null> => {
+        if (!profile.email || !profile.password) {
+            console.error("Email or password missing for signup.");
+            return "Email or password missing for signup.";
+        }
+    
+        try {
+            // Fix: Use Firebase v8 compat syntax to resolve module errors.
+            const { user } = await auth.createUserWithEmailAndPassword(profile.email, profile.password);
+            
+            const { password, ...profileData } = profile;
+            const finalProfile = { ...profileData, id: user!.uid, enrolledCourses: [] };
+    
+            await setDocument('Users', user!.uid, finalProfile);
+            
+            // The onAuthStateChanged listener will handle setting the user profile and login state.
+            setShowOnboarding(false);
+            setInitialDashboardView('courses'); // Set the initial view for the dashboard
+            handleNavigate('dashboard');
+            return null; // Return null on success
+        } catch (error: any) {
+            console.error("Error during signup process:", error);
+            if (error.code === 'auth/email-already-in-use') {
+                return strings.errorEmailInUse;
             }
-        });
-        
-        setUserProfile(newUser);
-        setIsLoggedIn(true);
-        setShowOnboarding(false);
-        handleNavigate('dashboard');
+            return strings.errorSignupGeneric;
+        }
+    };
+
+    const handleEnrollInCourse = async (course: Course) => {
+        if (!userProfile) {
+            alert("Please log in to enroll in a course.");
+            setAuthModalOpen(true);
+            return;
+        }
+
+        try {
+            // 1. Update user profile with new course
+            const currentEnrolled = userProfile.enrolledCourses || [];
+            if (currentEnrolled.includes(course.id)) {
+                alert("You are already enrolled in this course.");
+                handleNavigate('dashboard');
+                return;
+            }
+            const updatedProfile: UserProfile = {
+                ...userProfile,
+                enrolledCourses: [...currentEnrolled, course.id]
+            };
+            await setDocument('Users', userProfile.id, updatedProfile);
+            setUserProfile(updatedProfile); // Update local state immediately
+
+            // 2. Create a payment record for admin tracking
+            const newPayment: Payment = {
+                id: `${userProfile.id}-${course.id}-${Date.now()}`,
+                date: new Date().toISOString(),
+                userId: userProfile.id,
+                userName: userProfile.username,
+                courseId: course.id,
+                courseName: course.title,
+                amount: course.price,
+                currency: 'JOD',
+                status: 'Success'
+            };
+            await setDocument('Payments', newPayment.id, newPayment);
+
+            // 3. Provide feedback and navigate
+            alert(`${strings.paymentSuccess} You have enrolled in ${course.title}.`);
+            handleNavigate('dashboard');
+
+        } catch (error) {
+            console.error("Error enrolling in course:", error);
+            alert("There was an error enrolling you in the course. Please try again.");
+        }
     };
 
     const handleLanguageChange = async () => {
@@ -246,19 +362,8 @@ const App: React.FC = () => {
 
     // === RENDER LOGIC ===
     const renderContent = () => {
-        if (isLoading) {
+        if (isDataLoading || isAuthLoading) {
             return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-500"></div></div>;
-        }
-
-        if(error) {
-            return (
-                <div className="min-h-screen flex items-center justify-center text-center p-4">
-                    <div>
-                        <h2 className="text-2xl font-bold text-red-600 mb-4">Data loading failed:</h2>
-                        <p className="text-gray-700">{error}</p>
-                    </div>
-                </div>
-            )
         }
 
         if (showOnboarding) {
@@ -277,20 +382,20 @@ const App: React.FC = () => {
             case 'home': return (
                 <>
                     <HeroSection onSignupClick={() => { setAuthModalView('signup'); setAuthModalOpen(true); }} heroSlides={heroSlides} strings={strings} />
-                    <FeaturesSection strings={strings} />
-                    <HowItWorks strings={strings} />
-                    <TeacherSearch teachers={teachers} subjects={onboardingOptions!.subjects} onSelectTeacher={(id) => handleNavigate('teacher-profile', id)} isHomePageVersion={true} strings={strings} language={language} />
-                    <CoursesPreview courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} onNavigate={handleNavigate} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} />
-                    <TestimonialsSection testimonials={testimonials} strings={strings} />
-                    <AILessonPlanner strings={strings} language={language} />
+                    <FeaturesSection content={siteContent.homepage} strings={strings} />
+                    <HowItWorks content={siteContent.homepage} strings={strings} />
+                    <TeacherSearch content={siteContent.homepage} teachers={teachers} subjects={onboardingOptions?.subjects || []} onSelectTeacher={(id) => handleNavigate('teacher-profile', id)} isHomePageVersion={true} strings={strings} language={language} />
+                    <CoursesPreview content={siteContent.homepage} courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} onNavigate={handleNavigate} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} />
+                    <TestimonialsSection content={siteContent.homepage} testimonials={testimonials} strings={strings} />
+                    <AILessonPlanner content={siteContent.homepage} strings={strings} language={language} />
                 </>
             );
-            case 'teachers': return <TeacherSearch teachers={teachers} subjects={onboardingOptions!.subjects} onSelectTeacher={(id) => handleNavigate('teacher-profile', id)} strings={strings} language={language}/>;
+            case 'teachers': return <TeacherSearch content={siteContent.homepage} teachers={teachers} subjects={onboardingOptions?.subjects || []} onSelectTeacher={(id) => handleNavigate('teacher-profile', id)} strings={strings} language={language}/>;
             case 'teacher-profile': return selectedTeacher ? <TeacherProfilePage teacher={selectedTeacher} strings={strings} language={language}/> : <p>Teacher not found.</p>;
             
             case 'courses': return <CoursesPage courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/>
             case 'course-profile': return selectedCourse ? <CourseProfilePage course={selectedCourse} onBook={(id) => handleNavigate('payment', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/> : <p>Course not found.</p>;
-            case 'payment': return selectedCourse ? <PaymentPage course={selectedCourse} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/> : <p>Course not found.</p>;
+            case 'payment': return selectedCourse ? <PaymentPage course={selectedCourse} onEnroll={handleEnrollInCourse} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/> : <p>Course not found.</p>;
 
             case 'videos': return <VideosPage shorts={blogPosts.filter(p => p.type === 'short')} onSelectShort={(id) => handleNavigate('short-player', id)} strings={strings} language={language}/>;
             case 'short-player': return selectedPost ? <ShortPlayerPage post={selectedPost} onBack={() => handleNavigate('videos')} strings={strings} language={language}/> : <p>Video not found.</p>;
@@ -298,27 +403,39 @@ const App: React.FC = () => {
             case 'blog': return <BlogPage posts={blogPosts.filter(p=> p.type === 'article')} onSelectPost={(id) => handleNavigate('article', id)} strings={strings} language={language}/>;
             case 'article': return selectedPost ? <ArticlePage post={selectedPost} onBack={() => handleNavigate('blog')} strings={strings} language={language}/> : <p>Article not found.</p>;
 
-            case 'about': return <AboutPage content={siteContent!.about} strings={strings} />;
-            case 'contact': return <ContactPage content={siteContent!.contact} strings={strings} />;
-            case 'join': return <JoinTeacherPage strings={strings} />;
-            case 'faq': return <FAQPage faqs={siteContent!.faq} strings={strings} />;
-            case 'privacy': return <PrivacyPolicyPage content={siteContent!.privacy} strings={strings} />;
-            case 'terms': return <TermsPage content={siteContent!.terms} strings={strings} />;
+            case 'about': return siteContent ? <AboutPage content={siteContent.about} strings={strings} /> : null;
+            case 'contact': return siteContent ? <ContactPage content={siteContent.contact} strings={strings} /> : null;
+            case 'faq': return siteContent ? <FAQPage faqs={siteContent.faq} strings={strings} /> : null;
+            case 'privacy': return siteContent ? <PrivacyPolicyPage content={siteContent.privacy} strings={strings} /> : null;
+            case 'terms': return siteContent ? <TermsPage content={siteContent.terms} strings={strings} /> : null;
 
-            case 'dashboard': return userProfile ? <Dashboard userProfile={userProfile} onLogout={handleLogout} courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language} /> : <p>Please log in.</p>;
+            case 'dashboard': return userProfile ? (
+                <Dashboard 
+                    userProfile={userProfile} 
+                    onLogout={handleLogout} 
+                    courses={courses} 
+                    onSelectCourse={(id) => handleNavigate('course-profile', id)} 
+                    currency={currency} 
+                    exchangeRate={JOD_TO_USD_RATE} 
+                    strings={strings} 
+                    language={language}
+                    initialView={initialDashboardView}
+                    onViewHandled={() => setInitialDashboardView(undefined)}
+                />
+            ) : <p>Please log in.</p>;
             
             case 'admin-dashboard': return isAdmin ? (
                 <AdminDashboard 
                     onLogout={handleLogout}
-                    content={siteContent!} setContent={handleSetSiteContent}
+                    content={siteContent} setContent={handleSetSiteContent}
                     heroSlides={heroSlides} setHeroSlides={handleSetHeroSlides}
-                    onboardingOptions={onboardingOptions!} setOnboardingOptions={handleSetOnboardingOptions}
+                    onboardingOptions={onboardingOptions} setOnboardingOptions={handleSetOnboardingOptions}
                     users={users} setUsers={handleSetUsers}
                     staff={staff} setStaff={handleSetStaff}
                     payments={payments}
                     teachers={teachers} setTeachers={handleSetTeachers}
                     courses={courses} setCourses={handleSetCourses}
-                    subjects={onboardingOptions!.subjects}
+                    subjects={(onboardingOptions).subjects || []}
                     testimonials={testimonials} setTestimonials={handleSetTestimonials}
                     blogPosts={blogPosts} setBlogPosts={handleSetBlogPosts}
                 />
@@ -330,22 +447,13 @@ const App: React.FC = () => {
 
     return (
         <div className={language === 'ar' ? 'rtl' : 'ltr'}>
-            {!isGoogleSheetConfigured() && (
-                <div className="bg-yellow-400 text-yellow-900 p-3 text-center text-sm font-semibold flex items-center justify-center gap-2" role="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M8.257 3.099c.636-1.1 2.252-1.1 2.888 0l6.217 10.768A1.75 1.75 0 0116.25 16.5H3.75a1.75 1.75 0 01-1.112-2.633L8.257 3.099zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                    </svg>
-                    <span>
-                        <strong>وضع العرض فقط:</strong> لم يتم تكوين Google Sheets. لن يتم حفظ التغييرات. يرجى اتباع التعليمات في <code>SETUP_INSTRUCTIONS.md</code>.
-                    </span>
-                </div>
-            )}
             <Header
                 onNavigate={handleNavigate}
                 onLoginClick={() => { setAuthModalView('login'); setAuthModalOpen(true); }}
                 onSignupClick={() => { setAuthModalView('signup'); setAuthModalOpen(true); }}
                 isLoggedIn={isLoggedIn}
-                username={userProfile?.username}
+                isAdmin={isAdmin}
+                username={isAdmin ? 'Admin' : userProfile?.username}
                 onLogout={handleLogout}
                 currency={currency}
                 onCurrencyChange={() => setCurrency(c => c === 'JOD' ? 'USD' : 'JOD')}
@@ -354,12 +462,19 @@ const App: React.FC = () => {
                 isTranslating={isTranslating}
                 strings={strings}
             />
+            
+            {error && (
+                 <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 container mx-auto my-4 rounded-md" role="alert">
+                    <p className="font-bold">Error</p>
+                    <p>{error}</p>
+                </div>
+            )}
 
             <main>
                 {renderContent()}
             </main>
 
-             {!isLoading && (
+             {!(isDataLoading || isAuthLoading) && (
                  <>
                     <Footer onNavigate={handleNavigate} strings={strings} />
                     <Chatbot courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} strings={strings} language={language}/>

@@ -4,7 +4,7 @@ import { BlogPost, Language } from '../types';
 
 interface BlogPageProps {
   posts: BlogPost[];
-  onSelectPost: (id: number) => void;
+  onSelectPost: (id: string) => void;
   strings: { [key: string]: string };
   language: Language;
 }

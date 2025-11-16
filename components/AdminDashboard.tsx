@@ -16,6 +16,7 @@ import ManageStaff from '../admin/ManageStaff';
 import ManagePayments from '../admin/ManagePayments';
 import AdminUserView from '../admin/AdminUserView';
 import ManageHeroSlides from '../admin/ManageHeroSlides';
+import { initialData } from '../mockData';
 
 interface AdminDashboardProps {
     onLogout: () => void;
@@ -72,7 +73,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
             case 'teachers':
                 return <ManageTeachers teachers={props.teachers} setTeachers={props.setTeachers} />;
             case 'courses':
-                return <ManageCourses courses={props.courses} setCourses={props.setCourses} subjects={props.subjects} />;
+                return <ManageCourses 
+                            courses={props.courses} 
+                            setCourses={props.setCourses} 
+                            courseCategories={props.onboardingOptions.serviceTypes} 
+                        />;
             case 'testimonials':
                 return <ManageTestimonials testimonials={props.testimonials} setTestimonials={props.setTestimonials} />;
             case 'blog':

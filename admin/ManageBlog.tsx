@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // Fix: Corrected import path for types.
-import { BlogPost } from '../../types';
+import { BlogPost } from '../types';
 
 interface ManageBlogProps {
     posts: BlogPost[];
@@ -55,7 +55,7 @@ const PostFormModal: React.FC<{ post: BlogPost | null; onSave: (post: BlogPost) 
         }
 
         const finalPost: BlogPost = {
-            id: post?.id || Date.now(),
+            id: post?.id || Date.now().toString(),
             date: post?.date || new Date().toISOString(),
             type: type,
             ...formData,
@@ -129,7 +129,7 @@ const ManageBlog: React.FC<ManageBlogProps> = ({ posts, setPosts }) => {
         handleCloseModal();
     };
 
-    const handleRemovePost = (id: number) => {
+    const handleRemovePost = (id: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذا المنشور؟')) {
             setPosts(prev => prev.filter(p => p.id !== id));
         }

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface AuthModalProps {
     initialView: 'login' | 'signup';
     onClose: () => void;
-    onLogin: (email: string, password: string) => boolean;
+    onLogin: (email: string, password: string) => Promise<boolean>;
     onSwitchToOnboarding: () => void;
     strings: { [key: string]: string };
 }
@@ -14,14 +14,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialView, onClose, onLogin, on
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLoginSubmit = (e: React.FormEvent) => {
+    const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        const loginSuccess = onLogin(email, password);
+        const loginSuccess = await onLogin(email, password);
         if (!loginSuccess) {
             setError('Invalid credentials');
         }
     };
+
+    const joinTeacherUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdR8nxLM30CJgzGiBLyeY9Txcug_YfrRXa2xMVYOUe0ldSUZw/viewform?usp=sf_link";
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
@@ -44,7 +46,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialView, onClose, onLogin, on
                                 <input type="password" placeholder={strings.password} value={password} onChange={e => setPassword(e.target.value)} className="w-full p-3 border rounded-md" required />
                                 {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                                 <button type="submit" className="w-full bg-green-500 text-white font-bold py-3 rounded-md hover:bg-green-600">{strings.login}</button>
-                                <p className="text-xs text-gray-500 text-center">Use a registered account or `admin@jotutor.com` with password `admin123`.</p>
                             </form>
                         </div>
                     ) : (
@@ -52,7 +53,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialView, onClose, onLogin, on
                             <h2 className="text-2xl font-bold text-blue-900 mb-4">{strings.signupTitle}</h2>
                             <p className="text-gray-600 mb-6">{strings.signupDesc}</p>
                             <button onClick={onSwitchToOnboarding} className="w-full bg-green-500 text-white font-bold py-3 rounded-md hover:bg-green-600">{strings.signupNewStudent}</button>
-                             <button className="w-full mt-3 bg-blue-900 text-white font-bold py-3 rounded-md hover:bg-blue-800">{strings.signupJoinTeacher}</button>
+                             <a href={joinTeacherUrl} target="_blank" rel="noopener noreferrer" className="w-full inline-block mt-3 bg-blue-900 text-white font-bold py-3 rounded-md hover:bg-blue-800">{strings.signupJoinTeacher}</a>
                         </div>
                     )}
                 </div>

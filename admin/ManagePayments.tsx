@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 // Fix: Corrected import path for types.
-import { Payment } from '../../types';
+import { Payment } from '../types';
 
 interface ManagePaymentsProps {
     payments: Payment[];

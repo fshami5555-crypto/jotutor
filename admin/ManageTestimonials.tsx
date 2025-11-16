@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // Fix: Corrected import path for types.
-import { Testimonial } from '../../types';
+import { Testimonial } from '../types';
 
 interface ManageTestimonialsProps {
     testimonials: Testimonial[];
@@ -23,7 +23,7 @@ const TestimonialFormModal: React.FC<{ testimonial: Testimonial | null; onSave: 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalTestimonial: Testimonial = {
-            id: testimonial?.id || Date.now(),
+            id: testimonial?.id || Date.now().toString(),
             ...formData,
         };
         onSave(finalTestimonial);
@@ -73,7 +73,7 @@ const ManageTestimonials: React.FC<ManageTestimonialsProps> = ({ testimonials, s
         handleCloseModal();
     };
 
-    const handleRemoveTestimonial = (id: number) => {
+    const handleRemoveTestimonial = (id: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذه الشهادة؟')) {
             setTestimonials(prev => prev.filter(t => t.id !== id));
         }

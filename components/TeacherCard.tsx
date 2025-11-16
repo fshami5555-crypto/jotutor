@@ -4,7 +4,7 @@ import { Teacher, Language } from '../types';
 
 interface TeacherCardProps {
     teacher: Teacher;
-    onSelect: (id: number) => void;
+    onSelect: (id: string) => void;
     strings: { [key: string]: string };
     language: Language;
     isHomePageVersion?: boolean;

@@ -1,16 +1,18 @@
 
 
+
 import React, { useState, useCallback } from 'react';
 import { generateLessonPlan } from '../services/geminiService';
 // Fix: Corrected import path for types.
-import { Language } from '../types';
+import { Language, HomepageContent } from '../types';
 
 interface AILessonPlannerProps {
+    content: HomepageContent;
     strings: { [key: string]: string };
     language: Language;
 }
 
-const AILessonPlanner: React.FC<AILessonPlannerProps> = ({ strings, language }) => {
+const AILessonPlanner: React.FC<AILessonPlannerProps> = ({ content, strings, language }) => {
     const [subject, setSubject] = useState('الرياضيات');
     const [level, setLevel] = useState('ابتدائي');
     const [topic, setTopic] = useState('مقدمة في الجمع');
@@ -42,8 +44,8 @@ const AILessonPlanner: React.FC<AILessonPlannerProps> = ({ strings, language }) 
         <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-extrabold text-blue-900">{strings.aiPlannerTitle}</h2>
-                    <p className="mt-4 text-lg text-gray-600">{strings.aiPlannerSubtitle}</p>
+                    <h2 className="text-4xl font-extrabold text-blue-900">{content?.aiPlannerTitle || strings.aiPlannerTitle}</h2>
+                    <p className="mt-4 text-lg text-gray-600">{content?.aiPlannerSubtitle || strings.aiPlannerSubtitle}</p>
                 </div>
 
                 <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg">

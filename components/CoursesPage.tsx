@@ -5,7 +5,7 @@ import CourseCard from './CourseCard';
 
 interface CoursesPageProps {
   courses: Course[];
-  onSelectCourse: (id: number) => void;
+  onSelectCourse: (id: string) => void;
   currency: Currency;
   exchangeRate: number;
   strings: { [key: string]: string };

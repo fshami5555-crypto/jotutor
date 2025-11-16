@@ -4,7 +4,7 @@ import { UserProfile, OnboardingOptions } from '../types';
 
 interface OnboardingWizardProps {
     options: OnboardingOptions;
-    onSignupSuccess: (profile: UserProfile) => void;
+    onSignupSuccess: (profile: UserProfile) => Promise<string | null>;
     strings: { [key: string]: string };
 }
 
@@ -38,6 +38,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
     });
     const [termsAgreed, setTermsAgreed] = useState(false);
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const validateStep = (currentStep: number): boolean => {
         setError(''); // Clear previous errors
@@ -112,15 +113,22 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
         });
     };
     
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         if (!termsAgreed) {
             setError(strings.errorAgreeToTerms);
             return;
         }
+        
+        // Re-validate the final step before submitting
+        if (!validateStep(7)) {
+            return;
+        }
+
+        setIsSubmitting(true);
         const finalProfile: UserProfile = {
-            id: Date.now(),
+            id: Date.now().toString(), // Will be replaced by Firebase UID in App.tsx
             username: formData.username || '',
             email: formData.email || '',
             phone: formData.phone || '',
@@ -133,7 +141,12 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
             subjects: formData.subjects || [],
             dob: formData.dob || '',
         };
-        onSignupSuccess(finalProfile);
+        const errorMessage = await onSignupSuccess(finalProfile);
+        if (errorMessage) {
+            setError(errorMessage);
+        }
+        // On success, the app navigates away, so no 'else' is needed.
+        setIsSubmitting(false);
     };
 
     const totalSteps = 8;
@@ -289,7 +302,9 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                 {step < totalSteps ? (
                     <button type="button" onClick={handleNext} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors">{strings.next}</button>
                 ) : (
-                    <button type="submit" disabled={!termsAgreed} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">{strings.finishSignup}</button>
+                    <button type="submit" disabled={!termsAgreed || isSubmitting} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        {isSubmitting ? `${strings.generating}...` : strings.finishSignup}
+                    </button>
                 )}
             </div>
         </form>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 // Fix: Corrected import path for types.
 import { Page, Currency, Language } from '../types';
@@ -7,6 +8,7 @@ interface HeaderProps {
     onLoginClick: () => void;
     onSignupClick: () => void;
     isLoggedIn: boolean;
+    isAdmin: boolean;
     username?: string;
     onLogout: () => void;
     currency: Currency;
@@ -18,7 +20,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-    onNavigate, onLoginClick, onSignupClick, isLoggedIn, username, onLogout, 
+    onNavigate, onLoginClick, onSignupClick, isLoggedIn, isAdmin, username, onLogout, 
     currency, onCurrencyChange, language, onLanguageChange, isTranslating, strings 
 }) => {
     const navLinks = [
@@ -59,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
                     {isLoggedIn ? (
                         <>
                            <span className="font-semibold text-blue-900 hidden md:inline">{strings.welcome}, {username}</span>
-                           <button onClick={() => onNavigate('dashboard')} className="bg-green-500 text-white font-bold py-2 px-4 rounded-full hover:bg-green-600 transition-colors text-sm">
+                           <button onClick={() => onNavigate(isAdmin ? 'admin-dashboard' : 'dashboard')} className="bg-green-500 text-white font-bold py-2 px-4 rounded-full hover:bg-green-600 transition-colors text-sm">
                                 {strings.dashboard}
                            </button>
                            <button onClick={onLogout} className="bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors text-sm">

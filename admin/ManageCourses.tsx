@@ -1,16 +1,16 @@
-
-
 import React, { useState } from 'react';
 // Fix: Corrected import paths for types.
-import { Course } from '../../types';
+import { Course } from '../types';
+import { seedInitialCourses } from '../googleSheetService';
+import { initialData } from '../mockData';
 
 interface ManageCoursesProps {
     courses: Course[];
     setCourses: React.Dispatch<React.SetStateAction<Course[]>>;
-    subjects: string[];
+    courseCategories: string[];
 }
 
-const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course) => void; onClose: () => void; subjects: string[] }> = ({ course, onSave, onClose, subjects }) => {
+const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course) => void; onClose: () => void; categories: string[] }> = ({ course, onSave, onClose, categories }) => {
     const [formData, setFormData] = useState<Omit<Course, 'id'>>({
         title: course?.title || '',
         description: course?.description || '',
@@ -19,7 +19,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
         duration: course?.duration || '4 أسابيع',
         level: course?.level || 'مبتدئ',
         imageUrl: course?.imageUrl || 'https://picsum.photos/seed/course/400/225',
-        category: course?.category || subjects[0],
+        category: course?.category || (categories.length > 0 ? categories[0] : ''),
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -31,7 +31,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalCourse: Course = {
-            id: course?.id || Date.now(),
+            id: course?.id || Date.now().toString(),
             ...formData,
         };
         onSave(finalCourse);
@@ -46,7 +46,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
                         <input name="title" value={formData.title} onChange={handleChange} placeholder="عنوان الدورة" className="p-2 border rounded md:col-span-2" required />
                         <input name="teacher" value={formData.teacher} onChange={handleChange} placeholder="اسم المعلم" className="p-2 border rounded" required />
                         <select name="category" value={formData.category} onChange={handleChange} className="p-2 border rounded">
-                            {subjects.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                            {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                         </select>
                         <input name="price" type="number" value={formData.price} onChange={handleChange} placeholder="السعر" className="p-2 border rounded" />
                         <input name="duration" value={formData.duration} onChange={handleChange} placeholder="المدة" className="p-2 border rounded" />
@@ -67,9 +67,10 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
 };
 
 
-const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, subjects }) => {
+const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, courseCategories }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+    const [isSeeding, setIsSeeding] = useState(false);
 
     const handleOpenModal = (course: Course | null) => {
         setEditingCourse(course);
@@ -90,20 +91,46 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, subj
         handleCloseModal();
     };
 
-    const handleRemoveCourse = (id: number) => {
+    const handleRemoveCourse = (id: string) => {
         if (window.confirm('هل أنت متأكد من رغبتك في حذف هذه الدورة؟')) {
             setCourses(prev => prev.filter(c => c.id !== id));
         }
     };
+    
+    const handleSeedData = async () => {
+        if (!window.confirm('هل أنت متأكد من رغبتك في إضافة البيانات الأولية؟ سيتم إضافة أو تحديث أكثر من 80 دورة.')) {
+            return;
+        }
+
+        setIsSeeding(true);
+        const result = await seedInitialCourses();
+        if (result.success && result.seededCourses) {
+            setCourses(result.seededCourses);
+            alert('تم تحميل البيانات الأولية للدورات بنجاح!');
+        } else {
+            alert(`فشل تحميل البيانات الأولية: ${result.error || 'حدث خطأ غير معروف'}`);
+        }
+        setIsSeeding(false);
+    };
+
 
     return (
         <div>
-            {isModalOpen && <CourseFormModal course={editingCourse} onSave={handleSaveCourse} onClose={handleCloseModal} subjects={subjects} />}
+            {isModalOpen && <CourseFormModal course={editingCourse} onSave={handleSaveCourse} onClose={handleCloseModal} categories={courseCategories} />}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-800">إدارة الدورات</h1>
-                <button onClick={() => handleOpenModal(null)} className="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700">
-                    إضافة دورة جديدة
-                </button>
+                 <div className="flex space-x-2 space-x-reverse">
+                    <button 
+                        onClick={handleSeedData} 
+                        disabled={isSeeding}
+                        className="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                    >
+                        {isSeeding ? 'جاري التحميل...' : 'تحميل بيانات أولية'}
+                    </button>
+                    <button onClick={() => handleOpenModal(null)} className="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700">
+                        إضافة دورة جديدة
+                    </button>
+                </div>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="overflow-x-auto">

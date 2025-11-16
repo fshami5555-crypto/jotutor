@@ -4,7 +4,7 @@ import { Course, Currency, Language } from '../types';
 
 interface CourseProfilePageProps {
     course: Course;
-    onBook: (courseId: number) => void;
+    onBook: (courseId: string) => void;
     currency: Currency;
     exchangeRate: number;
     strings: { [key: string]: string };

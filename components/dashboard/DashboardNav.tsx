@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { DashboardView } from '../Dashboard';
+// Fix: Changed import to read from types.ts to break circular dependency.
+import { DashboardView } from '../../types';
 
 interface DashboardNavProps {
     username: string;
