@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { UserProfile, Course, Currency, Language, DashboardView } from '../types';
-import DashboardNav from './dashboard/DashboardNav.tsx';
-import UserProfileView from './dashboard/UserProfile.tsx';
-import CoursesView from './dashboard/Courses.tsx';
-import WalletView from './dashboard/Wallet.tsx';
-import AIAssistantView from './dashboard/AIAssistant.tsx';
+import DashboardNav from './dashboard/DashboardNav';
+import UserProfileView from './dashboard/UserProfile';
+import CoursesView from './dashboard/Courses';
+import WalletView from './dashboard/Wallet';
+import AIAssistantView from './dashboard/AIAssistant';
 
 interface DashboardProps {
     userProfile: UserProfile;
