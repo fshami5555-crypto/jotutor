@@ -2,8 +2,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Course } from '../types';
 
-// Fix: Use `process.env.API_KEY` as per Gemini API guidelines. This also resolves the `import.meta.env` TypeScript error.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to lazily get the AI client
+const getAiClient = () => {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        console.error("Gemini API Key is missing. Please set the API_KEY environment variable.");
+        return null;
+    }
+    return new GoogleGenAI({ apiKey });
+};
 
 /**
  * Generates a lesson plan using the Gemini API.
@@ -13,6 +20,11 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
  * @returns A string containing the generated lesson plan.
  */
 export const generateLessonPlan = async (subject: string, level: string, topic: string): Promise<string> => {
+    const ai = getAiClient();
+    if (!ai) {
+        return "عذرًا، خدمة الذكاء الاصطناعي غير متوفرة حاليًا بسبب نقص مفتاح API.";
+    }
+
     const model = 'gemini-2.5-flash';
 
     const prompt = `
@@ -38,7 +50,7 @@ export const generateLessonPlan = async (subject: string, level: string, topic: 
             contents: [{ parts: [{ text: prompt }] }],
         });
         
-        return response.text;
+        return response.text || "لم يتم إنشاء محتوى.";
     } catch (error) {
         console.error('Error generating lesson plan:', error);
         throw new Error('Failed to generate lesson plan from Gemini API.');
@@ -52,6 +64,12 @@ export const generateLessonPlan = async (subject: string, level: string, topic: 
  * @returns A new JSON object with translated string values.
  */
 export const translateContent = async (content: object, targetLanguage: string): Promise<any> => {
+    const ai = getAiClient();
+    if (!ai) {
+        console.warn("Translation skipped: API Key missing.");
+        return content; // Return original content if AI is unavailable
+    }
+
     const model = 'gemini-2.5-pro'; // Use a powerful model for reliable JSON translation
 
     const prompt = `
@@ -78,7 +96,9 @@ export const translateContent = async (content: object, targetLanguage: string):
             },
         });
 
-        let jsonStr = response.text.trim();
+        let jsonStr = response.text?.trim();
+        if (!jsonStr) return content;
+
         // Clean up potential markdown wrappers from the response
         if (jsonStr.startsWith('```json')) {
             jsonStr = jsonStr.substring(7, jsonStr.length - 3).trim();
@@ -94,6 +114,14 @@ export const translateContent = async (content: object, targetLanguage: string):
 };
 
 export const getChatbotResponse = async (message: string, courses: Course[]): Promise<{ responseText: string; recommendedCourseIds: number[] }> => {
+    const ai = getAiClient();
+    if (!ai) {
+        return {
+            responseText: "عذرًا، خدمة المحادثة غير متوفرة حاليًا.",
+            recommendedCourseIds: []
+        };
+    }
+
     const model = 'gemini-2.5-flash';
 
     const prompt = `
@@ -141,7 +169,8 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
             }
         });
         
-        const jsonStr = response.text.trim();
+        const jsonStr = response.text?.trim();
+        if (!jsonStr) throw new Error("Empty response from AI");
         return JSON.parse(jsonStr);
 
     } catch (error) {
