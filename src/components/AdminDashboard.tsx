@@ -1,21 +1,22 @@
+
 import React, { useState } from 'react';
 import { 
     SiteContent, HeroSlide, OnboardingOptions, UserProfile, StaffMember, 
     Payment, Teacher, Course, Testimonial, BlogPost 
 } from '../types';
 
-import AdminNav, { AdminView } from './admin/AdminNav';
-import ManageContent from './admin/ManageContent';
-import ManageCourses from './admin/ManageCourses';
-import ManageTeachers from './admin/ManageTeachers';
-import ManageTestimonials from './admin/ManageTestimonials';
-import ManageBlog from './admin/ManageBlog';
-import ManageOnboarding from './admin/ManageOnboarding';
-import ManageUsers from './admin/ManageUsers';
-import ManageStaff from './admin/ManageStaff';
-import ManagePayments from './admin/ManagePayments';
-import AdminUserView from './admin/AdminUserView';
-import ManageHeroSlides from './admin/ManageHeroSlides';
+import AdminNav, { AdminView } from '../admin/AdminNav';
+import ManageContent from '../admin/ManageContent';
+import ManageCourses from '../admin/ManageCourses';
+import ManageTeachers from '../admin/ManageTeachers';
+import ManageTestimonials from '../admin/ManageTestimonials';
+import ManageBlog from '../admin/ManageBlog';
+import ManageOnboarding from '../admin/ManageOnboarding';
+import ManageUsers from '../admin/ManageUsers';
+import ManageStaff from '../admin/ManageStaff';
+import ManagePayments from '../admin/ManagePayments';
+import AdminUserView from '../admin/AdminUserView';
+import ManageHeroSlides from '../admin/ManageHeroSlides';
 import { initialData } from '../mockData';
 
 interface AdminDashboardProps {

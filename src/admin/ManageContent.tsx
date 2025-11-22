@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { SiteContent, FAQItem, AboutContent, ContactContent, HomepageContent } from '../types';
 
@@ -85,6 +86,24 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                         <h3 className="text-lg font-semibold mb-2">قسم "لماذا تختار JoTutor؟"</h3>
                         <input name="featuresTitle" value={localContent.homepage.featuresTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
                         <textarea name="featuresSubtitle" value={localContent.homepage.featuresSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 border-t pt-4">
+                            <div className="p-3 bg-gray-50 rounded border">
+                                <h4 className="font-bold text-gray-700 mb-2 text-sm">الميزة الأولى (البوكس 1)</h4>
+                                <input name="feature1Title" value={localContent.homepage.feature1Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
+                                <textarea name="feature1Desc" value={localContent.homepage.feature1Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded border">
+                                <h4 className="font-bold text-gray-700 mb-2 text-sm">الميزة الثانية (البوكس 2)</h4>
+                                <input name="feature2Title" value={localContent.homepage.feature2Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
+                                <textarea name="feature2Desc" value={localContent.homepage.feature2Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded border">
+                                <h4 className="font-bold text-gray-700 mb-2 text-sm">الميزة الثالثة (البوكس 3)</h4>
+                                <input name="feature3Title" value={localContent.homepage.feature3Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
+                                <textarea name="feature3Desc" value={localContent.homepage.feature3Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                            </div>
+                        </div>
                     </div>
                      <div className="md:col-span-2 p-4 border rounded-md">
                         <h3 className="text-lg font-semibold mb-2">قسم "كيف يعمل؟"</h3>
