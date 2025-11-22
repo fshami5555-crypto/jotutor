@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { SiteContent, FAQItem, AboutContent, ContactContent, HomepageContent } from '../types';
+import { SiteContent, FAQItem } from '../types';
 
 interface ManageContentProps {
   content: SiteContent;
@@ -82,51 +82,66 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
         case 'homepage':
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2">قسم "لماذا تختار JoTutor؟"</h3>
-                        <input name="featuresTitle" value={localContent.homepage.featuresTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
-                        <textarea name="featuresSubtitle" value={localContent.homepage.featuresSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                    <div className="md:col-span-2 p-4 border rounded-md bg-white shadow-sm">
+                        <h3 className="text-lg font-bold mb-4 text-blue-900 border-b pb-2">قسم "لماذا تختار JoTutor؟" (الميزات)</h3>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الرئيسي</label>
+                            <input name="featuresTitle" value={localContent.homepage.featuresTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الفرعي</label>
+                            <textarea name="featuresSubtitle" value={localContent.homepage.featuresSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 border-t pt-4">
-                            <div className="p-3 bg-gray-50 rounded border">
-                                <h4 className="font-bold text-gray-700 mb-2 text-sm">الميزة الأولى (البوكس 1)</h4>
-                                <input name="feature1Title" value={localContent.homepage.feature1Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
-                                <textarea name="feature1Desc" value={localContent.homepage.feature1Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
-                            </div>
-                            <div className="p-3 bg-gray-50 rounded border">
-                                <h4 className="font-bold text-gray-700 mb-2 text-sm">الميزة الثانية (البوكس 2)</h4>
-                                <input name="feature2Title" value={localContent.homepage.feature2Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
-                                <textarea name="feature2Desc" value={localContent.homepage.feature2Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
-                            </div>
-                            <div className="p-3 bg-gray-50 rounded border">
-                                <h4 className="font-bold text-gray-700 mb-2 text-sm">الميزة الثالثة (البوكس 3)</h4>
-                                <input name="feature3Title" value={localContent.homepage.feature3Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
-                                <textarea name="feature3Desc" value={localContent.homepage.feature3Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                        <div className="mt-6 pt-4 border-t">
+                            <h4 className="font-bold text-gray-800 mb-4 text-base bg-gray-100 p-2 rounded">تعديل البوكسات الثلاثة</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="p-3 bg-gray-50 rounded border shadow-sm">
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">البوكس الأول (يمين)</h5>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">العنوان</label>
+                                    <input name="feature1Title" value={localContent.homepage.feature1Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm bg-white focus:ring-2 focus:ring-green-500" placeholder="العنوان"/>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">الوصف</label>
+                                    <textarea name="feature1Desc" value={localContent.homepage.feature1Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm bg-white focus:ring-2 focus:ring-green-500" placeholder="الوصف" rows={3}></textarea>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded border shadow-sm">
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">البوكس الثاني (وسط)</h5>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">العنوان</label>
+                                    <input name="feature2Title" value={localContent.homepage.feature2Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm bg-white focus:ring-2 focus:ring-green-500" placeholder="العنوان"/>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">الوصف</label>
+                                    <textarea name="feature2Desc" value={localContent.homepage.feature2Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm bg-white focus:ring-2 focus:ring-green-500" placeholder="الوصف" rows={3}></textarea>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded border shadow-sm">
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">البوكس الثالث (يسار)</h5>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">العنوان</label>
+                                    <input name="feature3Title" value={localContent.homepage.feature3Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm bg-white focus:ring-2 focus:ring-green-500" placeholder="العنوان"/>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">الوصف</label>
+                                    <textarea name="feature3Desc" value={localContent.homepage.feature3Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm bg-white focus:ring-2 focus:ring-green-500" placeholder="الوصف" rows={3}></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
                      <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2">قسم "كيف يعمل؟"</h3>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "كيف يعمل؟"</h3>
                         <input name="howItWorksTitle" value={localContent.homepage.howItWorksTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
                         <textarea name="howItWorksSubtitle" value={localContent.homepage.howItWorksSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
                     </div>
                      <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2">قسم "ابحث عن معلم"</h3>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "ابحث عن معلم"</h3>
                         <input name="teacherSearchTitle" value={localContent.homepage.teacherSearchTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
                         <textarea name="teacherSearchSubtitle" value={localContent.homepage.teacherSearchSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
                     </div>
                     <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2">قسم "أحدث الدورات"</h3>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "أحدث الدورات"</h3>
                         <input name="coursesPreviewTitle" value={localContent.homepage.coursesPreviewTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
                         <textarea name="coursesPreviewSubtitle" value={localContent.homepage.coursesPreviewSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
                     </div>
                     <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2">قسم "شهادات العملاء"</h3>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "شهادات العملاء"</h3>
                         <input name="testimonialsTitle" value={localContent.homepage.testimonialsTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
                         <textarea name="testimonialsSubtitle" value={localContent.homepage.testimonialsSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
                     </div>
                     <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2">قسم "مخطط الدروس الذكي"</h3>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "مخطط الدروس الذكي"</h3>
                         <input name="aiPlannerTitle" value={localContent.homepage.aiPlannerTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
                         <textarea name="aiPlannerSubtitle" value={localContent.homepage.aiPlannerSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
                     </div>

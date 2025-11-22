@@ -5,6 +5,7 @@ import {
     Payment, Teacher, Course, Testimonial, BlogPost 
 } from '../types';
 
+// Fix: Updated imports to point to '../admin/' instead of './admin/'
 import AdminNav, { AdminView } from '../admin/AdminNav';
 import ManageContent from '../admin/ManageContent';
 import ManageCourses from '../admin/ManageCourses';
@@ -17,7 +18,6 @@ import ManageStaff from '../admin/ManageStaff';
 import ManagePayments from '../admin/ManagePayments';
 import AdminUserView from '../admin/AdminUserView';
 import ManageHeroSlides from '../admin/ManageHeroSlides';
-import { initialData } from '../mockData';
 
 interface AdminDashboardProps {
     onLogout: () => void;
