@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
-import { HeroSlide } from '../types';
+import { HeroSlide, HomepageContent } from '../types';
 
 interface HeroSectionProps {
   onSignupClick: () => void;
   heroSlides: HeroSlide[];
+  content?: HomepageContent;
   strings: { [key: string]: string };
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [], strings }) => {
+const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [], content, strings }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -34,41 +36,99 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
     );
   };
 
-  return (
-    <section className="relative text-white" style={{ minHeight: '500px' }}>
-       <div className="absolute inset-0 z-0">
-          {heroSlides.map((slide, index) => (
-            <div
-              key={index}
-              className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
-              style={{
-                backgroundImage: `url(${slide.imageUrl})`,
-                opacity: index === currentIndex ? 1 : 0,
-              }}
-            />
-          ))}
-          <div className="absolute inset-0 bg-black/40"></div> {/* Overlay for better text contrast */}
-        </div>
+  const stats = [
+    {
+      value: content?.statsTeacherCount || '+750',
+      label: content?.statsTeacherLabel || 'معلم ومعلمة',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      )
+    },
+    {
+      value: content?.statsAcceptanceRate || '25%',
+      label: content?.statsAcceptanceLabel || 'معدل القبول',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138z" />
+        </svg>
+      )
+    },
+    {
+      value: content?.statsStudentCount || '+5000',
+      label: content?.statsStudentLabel || 'طالب مسجل',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      )
+    },
+    {
+      value: content?.statsSatisfactionRate || '95%',
+      label: content?.statsSatisfactionLabel || 'رضا أولياء الأمور',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+      )
+    }
+  ];
 
-      <div className="container mx-auto px-6 py-20 lg:py-32 flex flex-col lg:flex-row items-center relative z-10">
-        <div className="lg:w-2/3 text-center lg:text-right">
-          {currentSlide && <Title text={currentSlide.title} />}
-          {currentSlide && (
-            <p className="mt-6 text-lg text-gray-200 max-w-2xl mx-auto lg:mx-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
-              {currentSlide.description}
-            </p>
-          )}
-          <div className="mt-8 flex justify-center lg:justify-start">
-            <button onClick={onSignupClick} className="bg-green-500 text-white font-bold text-lg py-3 px-8 rounded-full hover:bg-green-600 transition-transform duration-300 transform hover:scale-105 shadow-xl flex items-center space-x-2 space-x-reverse">
-              <span>{strings.heroButton}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l-5 5 5 5m-5-5h12" />
-              </svg>
-            </button>
+  return (
+    <div className="flex flex-col">
+      <section className="relative text-white" style={{ minHeight: '500px' }}>
+         <div className="absolute inset-0 z-0">
+            {heroSlides.map((slide, index) => (
+              <div
+                key={index}
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+                style={{
+                  backgroundImage: `url(${slide.imageUrl})`,
+                  opacity: index === currentIndex ? 1 : 0,
+                }}
+              />
+            ))}
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
+
+        <div className="container mx-auto px-6 py-20 lg:py-32 flex flex-col lg:flex-row items-center relative z-10">
+          <div className="lg:w-2/3 text-center lg:text-right">
+            {currentSlide && <Title text={currentSlide.title} />}
+            {currentSlide && (
+              <p className="mt-6 text-lg text-gray-200 max-w-2xl mx-auto lg:mx-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+                {currentSlide.description}
+              </p>
+            )}
+            <div className="mt-8 flex justify-center lg:justify-start">
+              <button onClick={onSignupClick} className="bg-green-500 text-white font-bold text-lg py-3 px-8 rounded-full hover:bg-green-600 transition-transform duration-300 transform hover:scale-105 shadow-xl flex items-center space-x-2 space-x-reverse">
+                <span>{strings.heroButton}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l-5 5 5 5m-5-5h12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Statistics Section - Large Circles Design */}
+      <div className="bg-gray-50 py-16 border-b border-gray-200 relative z-20">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+            {stats.map((stat, index) => (
+              <div key={index} className="w-48 h-48 rounded-full border-4 border-green-500 bg-white flex flex-col items-center justify-center shadow-xl transform hover:scale-105 transition-transform duration-300 group text-center px-2">
+                <div className="text-green-500 mb-2 group-hover:scale-110 transition-transform">
+                    {stat.icon}
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-blue-900 leading-tight">{stat.value}</h3>
+                <p className="text-xs md:text-sm text-gray-600 font-semibold mt-1">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

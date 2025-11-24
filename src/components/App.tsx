@@ -5,7 +5,7 @@ import { JOD_TO_USD_RATE } from '../constants';
 // Fix: Imported DashboardView from types.ts to resolve module error.
 import { 
     Page, Currency, Language, SiteContent, HeroSlide, Teacher, Testimonial, Course, BlogPost, 
-    OnboardingOptions, UserProfile, Payment, StaffMember, DashboardView
+    OnboardingOptions, UserProfile, Payment, StaffMember, DashboardView 
 } from '../types';
 
 // Component Imports
@@ -41,6 +41,7 @@ import Chatbot from './Chatbot';
 // Data and Services
 import { initialData } from '../mockData';
 import { translateContent } from '../services/geminiService';
+// Fix: Use Firebase v8 compat imports and syntax to resolve module errors.
 import { 
     fetchPublicData,
     fetchAdminData,
@@ -50,13 +51,16 @@ import {
     auth,
     db,
     onAuthStateChangedListener,
-} from '../googleSheetService';
+} from '../googleSheetService'; // This is now firebaseService.ts
 
 
 const App: React.FC = () => {
     // === STATE MANAGEMENT ===
     const [page, setPage] = useState<Page>('home');
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    // Navigation History Stack
+    const [navHistory, setNavHistory] = useState<{page: Page, id: string | null}[]>([]);
+
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -97,7 +101,17 @@ const App: React.FC = () => {
         const loadPublicData = async () => {
             setIsDataLoading(true);
             try {
-                const response = await fetchPublicData();
+                // Create a timeout to prevent indefinite loading
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error("Firebase request timed out")), 5000)
+                );
+
+                // Race the fetch against the timeout
+                const response = await Promise.race([
+                    fetchPublicData(),
+                    timeoutPromise
+                ]) as { success: boolean; data: any };
+
                 if(response.success){
                     const data = response.data;
                     setTeachers(data.teachers || []);
@@ -105,16 +119,37 @@ const App: React.FC = () => {
                     setTestimonials(data.testimonials || []);
                     setBlogPosts(data.blog || []);
                     setHeroSlides(data.heroSlides || []);
-                    if (data.config?.siteContent) setSiteContent(data.config.siteContent);
+                    
+                    // Merge fetched content with initialData to ensure new fields (like stats) appear
+                    if (data.config?.siteContent) {
+                        const fetchedContent = data.config.siteContent;
+                        // Deep merge homepage content
+                        const mergedHomepage = { 
+                            ...initialData.siteContent.homepage, 
+                            ...(fetchedContent.homepage || {}) 
+                        };
+                        const mergedContent = {
+                            ...initialData.siteContent,
+                            ...fetchedContent,
+                            homepage: mergedHomepage
+                        };
+                        setSiteContent(mergedContent);
+                    }
+
                     if (data.config?.onboardingOptions) setOnboardingOptions(data.config.onboardingOptions);
                     setError(null);
                 } else {
                      throw new Error("Failed to fetch public data from Firebase");
                 }
             } catch (e: any) {
-                console.error("Failed to load public data from Firebase:", e.message);
-                setError("Failed to load public data from Firebase. Displaying sample data instead. Please check your Firebase security rules to allow public read access.");
-                // Fallback to mock data on error is handled by initial state
+                console.warn("Failed to load public data (Offline Mode):", e.message);
+                // We don't set a heavy error message here to avoid scaring the user,
+                // as the app will simply fall back to mock data (initialData).
+                if (e.message.includes("timed out") || e.message.includes("offline")) {
+                    setError("Could not connect to the server. Using offline mode.");
+                } else {
+                    setError("Failed to load live data. Displaying sample data.");
+                }
             } finally {
                 setIsDataLoading(false);
             }
@@ -125,7 +160,20 @@ const App: React.FC = () => {
 
     // === AUTHENTICATION STATE LISTENER ===
     useEffect(() => {
+        let isMounted = true;
+        
+        // Safety timeout for Auth: If Firebase is blocked or offline, don't hang forever.
+        const authTimer = setTimeout(() => {
+            if (isMounted) {
+                console.warn("Auth check timed out - defaulting to logged out state.");
+                setIsAuthLoading(false);
+            }
+        }, 4000);
+
         const unsubscribe = onAuthStateChangedListener(async (user) => {
+            if (!isMounted) return;
+            clearTimeout(authTimer); // Auth responded, clear timeout
+
             if (user) {
                 setIsLoggedIn(true);
                 if (user.email === 'admin@jotutor.com') {
@@ -133,27 +181,30 @@ const App: React.FC = () => {
                     setUserProfile(null);
                     
                     // Fetch admin-specific data
-                    const response = await fetchAdminData();
-                    const data = response.data; // Data can be partial, so we always set it.
-                    setUsers(data.users || []);
-                    setStaff(data.staff || []);
-                    setPayments(data.payments || []);
+                    try {
+                        const response = await fetchAdminData();
+                        const data = response.data; 
+                        setUsers(data.users || []);
+                        setStaff(data.staff || []);
+                        setPayments(data.payments || []);
 
-                    if (!response.success && response.failedCollections && response.failedCollections.length > 0) {
-                        const failedList = response.failedCollections.join(', ');
-                        const exampleCollection = response.failedCollections[0];
-                        const errorMessage = `Failed to load admin data for the following sections due to Firestore permissions: ${failedList}. Please ensure your Firestore Security Rules allow the admin ('admin@jotutor.com') to read these collections. For example, the rule for '${exampleCollection}' should be: match /${exampleCollection}/{docId} { allow read, write: if request.auth.token.email == 'admin@jotutor.com'; }`;
-                        setError(errorMessage);
-                        console.error(errorMessage);
-                    } else {
-                        setError(null); // Clear previous errors on full success
+                        if (!response.success && response.failedCollections && response.failedCollections.length > 0) {
+                            console.warn(`Partial admin data load failure: ${response.failedCollections.join(', ')}`);
+                        }
+                    } catch (err) {
+                        console.error("Admin data fetch failed", err);
                     }
 
                 } else {
-                    const userDocRef = db.collection('users').doc(user.uid);
-                    const userDocSnap = await userDocRef.get();
-                    if (userDocSnap.exists) {
-                        setUserProfile({ ...userDocSnap.data(), id: user.uid } as UserProfile);
+                    // Fix: Use Firebase v8 compat syntax to resolve module errors.
+                    try {
+                        const userDocRef = db.collection('users').doc(user.uid);
+                        const userDocSnap = await userDocRef.get();
+                        if (userDocSnap.exists) {
+                            setUserProfile({ ...userDocSnap.data(), id: user.uid } as UserProfile);
+                        }
+                    } catch (err) {
+                        console.error("Failed to fetch user profile", err);
                     }
                     setIsAdmin(false);
                 }
@@ -165,7 +216,11 @@ const App: React.FC = () => {
             setIsAuthLoading(false);
         });
 
-        return unsubscribe; // Cleanup on unmount
+        return () => {
+            isMounted = false;
+            clearTimeout(authTimer);
+            unsubscribe();
+        };
     }, []);
     
 
@@ -234,13 +289,28 @@ const App: React.FC = () => {
 
     // === NAVIGATION & AUTH HANDLERS ===
     const handleNavigate = (newPage: Page, id: string | null = null) => {
+        // Prevent duplicate entries if clicking the same link
+        if (page === newPage && selectedId === id) return;
+
+        setNavHistory(prev => [...prev, { page, id: selectedId }]);
         setPage(newPage);
         setSelectedId(id);
         window.scrollTo(0, 0);
     };
 
+    const handleBack = () => {
+        if (navHistory.length === 0) return;
+        const prevState = navHistory[navHistory.length - 1];
+        
+        setNavHistory(prev => prev.slice(0, -1));
+        setPage(prevState.page);
+        setSelectedId(prevState.id);
+        window.scrollTo(0, 0);
+    };
+
     const handleLogin = async (email: string, password: string): Promise<boolean> => {
         try {
+            // Fix: Use Firebase v8 compat syntax to resolve module errors.
             await auth.signInWithEmailAndPassword(email, password);
             setAuthModalOpen(false);
             if (email.toLowerCase() === 'admin@jotutor.com') {
@@ -256,6 +326,7 @@ const App: React.FC = () => {
     };
 
     const handleLogout = () => {
+        // Fix: Use Firebase v8 compat syntax to resolve module errors.
         auth.signOut();
         handleNavigate('home');
     };
@@ -267,6 +338,7 @@ const App: React.FC = () => {
         }
     
         try {
+            // Fix: Use Firebase v8 compat syntax to resolve module errors.
             const { user } = await auth.createUserWithEmailAndPassword(profile.email, profile.password);
             
             const { password, ...profileData } = profile;
@@ -374,7 +446,12 @@ const App: React.FC = () => {
         switch (page) {
             case 'home': return (
                 <>
-                    <HeroSection onSignupClick={() => { setAuthModalView('signup'); setAuthModalOpen(true); }} heroSlides={heroSlides} strings={strings} />
+                    <HeroSection 
+                        onSignupClick={() => { setAuthModalView('signup'); setAuthModalOpen(true); }} 
+                        heroSlides={heroSlides} 
+                        content={siteContent.homepage}
+                        strings={strings} 
+                    />
                     <FeaturesSection content={siteContent.homepage} strings={strings} />
                     <HowItWorks content={siteContent.homepage} strings={strings} />
                     <TeacherSearch content={siteContent.homepage} teachers={teachers} subjects={onboardingOptions?.subjects || []} onSelectTeacher={(id) => handleNavigate('teacher-profile', id)} isHomePageVersion={true} strings={strings} language={language} />
@@ -453,12 +530,14 @@ const App: React.FC = () => {
                 language={language}
                 onLanguageChange={handleLanguageChange}
                 isTranslating={isTranslating}
+                onBack={handleBack}
+                canGoBack={navHistory.length > 0}
                 strings={strings}
             />
             
             {error && (
-                 <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 container mx-auto my-4 rounded-md" role="alert">
-                    <p className="font-bold">Error</p>
+                 <div className="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 p-4 container mx-auto my-4 rounded-md text-sm" role="alert">
+                    <p className="font-bold">Notice</p>
                     <p>{error}</p>
                 </div>
             )}

@@ -1,3 +1,4 @@
+
 import { UserProfile, Course, Teacher, Testimonial, BlogPost, HeroSlide, StaffMember, Payment, SiteContent, OnboardingOptions, AboutContent, HomepageContent } from './types';
 
 // This file provides the initial state for the application.
@@ -223,6 +224,14 @@ const homepageContent: HomepageContent = {
   testimonialsSubtitle: 'آراء طلابنا وأولياء أمورهم هي شهادتنا الأغلى.',
   aiPlannerTitle: 'مخطط الدروس الذكي',
   aiPlannerSubtitle: 'استخدم الذكاء الاصطناعي لإنشاء خطط دروس متكاملة في ثوانٍ.',
+  statsTeacherCount: '+750',
+  statsTeacherLabel: 'معلم ومعلمة',
+  statsAcceptanceRate: '25%',
+  statsAcceptanceLabel: 'معدل القبول',
+  statsStudentCount: '+5000',
+  statsStudentLabel: 'طالب مسجل',
+  statsSatisfactionRate: '95%',
+  statsSatisfactionLabel: 'رضا أولياء الأمور',
 };
 
 const aboutContent: AboutContent = {

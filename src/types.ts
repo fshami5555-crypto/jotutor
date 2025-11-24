@@ -1,3 +1,4 @@
+
 export type Page = 
   'home' | 'teachers' | 'teacher-profile' | 'courses' | 'course-profile' | 
   'payment' | 'videos' | 'short-player' | 'blog' | 'article' | 'about' | 
@@ -126,6 +127,15 @@ export interface HomepageContent {
   testimonialsSubtitle: string;
   aiPlannerTitle: string;
   aiPlannerSubtitle: string;
+  // Statistics Section
+  statsTeacherCount?: string;
+  statsTeacherLabel?: string;
+  statsAcceptanceRate?: string;
+  statsAcceptanceLabel?: string;
+  statsStudentCount?: string;
+  statsStudentLabel?: string;
+  statsSatisfactionRate?: string;
+  statsSatisfactionLabel?: string;
 }
 
 export interface AboutContent {

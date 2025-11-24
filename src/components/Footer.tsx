@@ -53,7 +53,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, strings }) => {
                       {link.label}
                     </a>
                   ) : (
-                    <button onClick={() => onNavigate(link.page)} className="text-blue-200 hover:text-white transition-colors">{link.label}</button>
+                    <button onClick={() => onNavigate(link.page as Page)} className="text-blue-200 hover:text-white transition-colors">{link.label}</button>
                   )}
                 </li>
               ))}

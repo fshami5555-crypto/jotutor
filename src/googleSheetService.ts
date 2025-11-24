@@ -26,6 +26,21 @@ const analytics = firebase.analytics();
 export const auth = firebase.auth();
 export const db = firebase.firestore();
 
+// Enable offline persistence
+try {
+    db.enablePersistence().catch((err) => {
+        if (err.code === 'failed-precondition') {
+            // Multiple tabs open, persistence can only be enabled in one tab at a a time.
+            console.warn("Firebase persistence failed: multiple tabs open");
+        } else if (err.code === 'unimplemented') {
+            // The current browser does not support all of the features required to enable persistence
+            console.warn("Firebase persistence not supported by browser");
+        }
+    });
+} catch (e) {
+    console.warn("Offline persistence initialization error", e);
+}
+
 // --- Authentication Functions ---
 export const onAuthStateChangedListener = (callback: (user: firebase.User | null) => void) => auth.onAuthStateChanged(callback);
 // signInWithEmailAndPassword, createUserWithEmailAndPassword, and signOut will be called directly on the exported `auth` object in App.tsx.
