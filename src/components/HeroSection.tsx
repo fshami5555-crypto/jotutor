@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HeroSlide, HomepageContent } from '../types';
 
@@ -112,7 +111,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
         </div>
       </section>
 
-      {/* Statistics Section - Large Circles Design */}
+      {/* Statistics Section */}
       <div className="bg-gray-50 py-16 border-b border-gray-200 relative z-20">
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
