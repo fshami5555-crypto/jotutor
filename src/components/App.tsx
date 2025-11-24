@@ -40,7 +40,7 @@ import Chatbot from './Chatbot';
 
 // Data and Services
 import { initialData } from '../mockData';
-import { translateContent } from '../services/geminiService';
+import { translateContent, setGeminiApiKey } from '../services/geminiService';
 // Fix: Use Firebase v8 compat imports and syntax to resolve module errors.
 import { 
     fetchPublicData,
@@ -133,6 +133,12 @@ const App: React.FC = () => {
                             ...fetchedContent,
                             homepage: mergedHomepage
                         };
+                        
+                        // IMPORTANT: Set Gemini API Key if present in DB
+                        if (mergedContent.geminiApiKey) {
+                            setGeminiApiKey(mergedContent.geminiApiKey);
+                        }
+
                         setSiteContent(mergedContent);
                     }
 
@@ -143,6 +149,11 @@ const App: React.FC = () => {
                 }
             } catch (e: any) {
                 console.warn("Failed to load public data (Offline Mode):", e.message);
+                // Initialize Gemini with mock data key if offline or error
+                if (initialData.siteContent.geminiApiKey) {
+                    setGeminiApiKey(initialData.siteContent.geminiApiKey);
+                }
+
                 // We don't set a heavy error message here to avoid scaring the user,
                 // as the app will simply fall back to mock data (initialData).
                 if (e.message.includes("timed out") || e.message.includes("offline")) {
@@ -265,6 +276,12 @@ const App: React.FC = () => {
         const finalOptions = newOptions || onboardingOptions;
         if (finalContent) setSiteContent(finalContent);
         if (finalOptions) setOnboardingOptions(finalOptions);
+        
+        // If the content includes a new API key, update the service immediately
+        if (finalContent && finalContent.geminiApiKey) {
+            setGeminiApiKey(finalContent.geminiApiKey);
+        }
+
         updateConfig({ siteContent: finalContent, onboardingOptions: finalOptions })
             .catch(e => console.error("Failed to save config:", e));
     };

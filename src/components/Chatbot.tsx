@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Course, ChatMessage, Language } from '../types';
 import { getChatbotResponse } from '../services/geminiService';
@@ -86,13 +87,15 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
         }
     };
 
+    const mrPincelIcon = "https://i.ibb.co/sd7GkLLT/image-removebg-preview.png";
+
     return (
         <>
             {/* Tooltip */}
             <div 
                 role="tooltip"
                 className={`fixed bottom-24 right-6 w-64 bg-blue-900 text-white p-3 rounded-lg shadow-lg z-50 transition-all duration-500 ease-in-out ${showTooltip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
-                <p className="text-sm text-center">
+                <p className="text-sm text-center font-medium">
                     {strings.chatbotTooltip}
                 </p>
                 {/* Arrow */}
@@ -102,17 +105,29 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
             {/* FAB */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed bottom-6 right-6 bg-green-500 text-white rounded-full p-4 shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-transform duration-300 z-50 ${isOpen ? 'rotate-90 scale-0' : 'rotate-0 scale-100'}`}
+                className={`fixed bottom-6 right-6 bg-green-500 text-white rounded-full p-2 shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-transform duration-300 z-50 border-2 border-white ${isOpen ? 'rotate-90 scale-0' : 'rotate-0 scale-100'}`}
                 aria-label="Open Chat"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                <img 
+                    src={mrPincelIcon} 
+                    alt="Mr.Pincel" 
+                    className="w-14 h-14 object-contain"
+                />
             </button>
 
             {/* Chat Window */}
             <div className={`fixed bottom-24 right-6 w-full max-w-sm h-[70vh] max-h-[600px] bg-white rounded-xl shadow-2xl flex flex-col transition-all duration-300 origin-bottom-right z-50 ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}`}>
                 {/* Header */}
                 <div className="flex-shrink-0 bg-blue-900 text-white p-4 flex justify-between items-center rounded-t-xl">
-                    <h3 className="font-bold text-lg">{strings.chatbotTitle}</h3>
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                        <div className="bg-white rounded-full p-1">
+                             <img src={mrPincelIcon} alt="Mr.Pincel" className="w-8 h-8 object-contain" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">{strings.chatbotTitle}</h3>
+                            <p className="text-xs text-green-300">Online</p>
+                        </div>
+                    </div>
                     <button onClick={() => setIsOpen(false)} className="p-1 rounded-full hover:bg-blue-800">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>

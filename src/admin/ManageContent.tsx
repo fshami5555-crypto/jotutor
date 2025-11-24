@@ -8,7 +8,7 @@ interface ManageContentProps {
   onUpdate: (newContent: SiteContent) => void;
 }
 
-type ContentTab = 'homepage' | 'about' | 'faq' | 'contact' | 'privacy' | 'terms';
+type ContentTab = 'homepage' | 'about' | 'faq' | 'contact' | 'privacy' | 'terms' | 'config';
 
 const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
   const [activeTab, setActiveTab] = useState<ContentTab>('homepage');
@@ -48,6 +48,11 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
         ...prev,
         contact: { ...prev.contact, [name]: value }
     }));
+  };
+
+  const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLocalContent(prev => ({ ...prev, [name]: value }));
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>, section: 'privacy' | 'terms') => {
@@ -275,6 +280,18 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                 <textarea name="terms" value={localContent.terms} onChange={(e) => handleTextChange(e, 'terms')} rows={10} className="w-full p-2 border rounded-md"></textarea>
             </div>
         );
+      case 'config':
+        return (
+            <div className="space-y-4">
+                <div className="bg-yellow-50 p-4 rounded border border-yellow-300 text-yellow-800 text-sm mb-4">
+                    <strong>تحذير:</strong> مفتاح API حساس. مشاركته قد تؤدي إلى سوء استخدامه. تأكد من إبقاء هذا المفتاح سرياً.
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Gemini API Key</label>
+                    <input type="text" name="geminiApiKey" value={localContent.geminiApiKey || ''} onChange={handleConfigChange} className="w-full p-2 border rounded-md font-mono text-sm" placeholder="AIzaSy..."/>
+                </div>
+            </div>
+        );
     }
   };
 
@@ -283,6 +300,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
       { id: 'about', label: 'عن JoTutor' },
       { id: 'faq', label: 'الأسئلة الشائعة' },
       { id: 'contact', label: 'معلومات التواصل' },
+      { id: 'config', label: 'إعدادات النظام (API)' }, // New Tab
       { id: 'privacy', label: 'سياسة الخصوصية' },
       { id: 'terms', label: 'شروط الاستخدام' }
   ];

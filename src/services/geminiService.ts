@@ -2,14 +2,21 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Course } from '../types';
 
+// Store the API key dynamically (initially try env, then waiting for setGeminiApiKey)
+let dynamicApiKey = process.env.API_KEY || '';
+
+// Export a function to set the API key at runtime
+export const setGeminiApiKey = (key: string) => {
+    dynamicApiKey = key;
+};
+
 // Helper to lazily get the AI client
 const getAiClient = () => {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-        console.error("Gemini API Key is missing. Please set the API_KEY environment variable.");
+    if (!dynamicApiKey) {
+        console.error("Gemini API Key is missing. Please set the API_KEY environment variable or configure it in the Admin Dashboard.");
         return null;
     }
-    return new GoogleGenAI({ apiKey });
+    return new GoogleGenAI({ apiKey: dynamicApiKey });
 };
 
 /**
@@ -22,7 +29,7 @@ const getAiClient = () => {
 export const generateLessonPlan = async (subject: string, level: string, topic: string): Promise<string> => {
     const ai = getAiClient();
     if (!ai) {
-        return "عذرًا، خدمة الذكاء الاصطناعي غير متوفرة حاليًا بسبب نقص مفتاح API.";
+        return "عذرًا، خدمة الذكاء الاصطناعي غير متوفرة حاليًا. يرجى التأكد من إعداد مفتاح API.";
     }
 
     const model = 'gemini-2.5-flash';
@@ -117,7 +124,7 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
     const ai = getAiClient();
     if (!ai) {
         return {
-            responseText: "عذرًا، خدمة المحادثة غير متوفرة حاليًا.",
+            responseText: "عذرًا، خدمة المحادثة غير متوفرة حاليًا. يرجى التأكد من إعداد مفتاح API.",
             recommendedCourseIds: []
         };
     }
@@ -125,7 +132,8 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
     const model = 'gemini-2.5-flash';
 
     const prompt = `
-        أنت "مساعد JoTutor"، روبوت محادثة ودود ومتعاون لمنصة تعليمية. هدفك هو مساعدة الطلاب في العثور على الدورات المناسبة.
+        أنت "Mr.Pincel"، المساعد التعليمي الذكي والشخصية المميزة لمنصة JoTutor.
+        شخصيتك: ودود، ذكي، مشجع، ومحب للتعليم. تتحدث بأسلوب لطيف واحترافي.
         
         المهمة:
         بناءً على رسالة المستخدم وقائمة الدورات المتاحة، قدم ردًا مفيدًا. إذا كان ذلك مناسبًا، قم بترشيح دورات محددة تتناسب مع احتياجات المستخدم.
@@ -137,10 +145,11 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
         "${message}"
 
         التعليمات:
-        1.  تحدث باللغة العربية بأسلوب ودود ومساعد.
-        2.  حلل رسالة المستخدم لفهم ما يبحث عنه (مثل مادة معينة، مستوى، هدف).
-        3.  إذا كانت هناك دورات ذات صلة في قائمة JSON، قم بتضمين أرقام معرفاتها (IDs) في ردك.
-        4.  يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، ولا شيء غير ذلك.
+        1.  عرف عن نفسك باسم "Mr.Pincel" عند الحاجة.
+        2.  تحدث باللغة العربية بأسلوب ودود ومساعد.
+        3.  حلل رسالة المستخدم لفهم ما يبحث عنه (مثل مادة معينة، مستوى، هدف).
+        4.  إذا كانت هناك دورات ذات صلة في قائمة JSON، قم بتضمين أرقام معرفاتها (IDs) في ردك.
+        5.  يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، ولا شيء غير ذلك.
     `;
 
     try {
@@ -154,7 +163,7 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
                     properties: {
                         responseText: {
                             type: Type.STRING,
-                            description: "Your friendly, conversational response to the user in Arabic."
+                            description: "Your friendly, conversational response to the user in Arabic as Mr.Pincel."
                         },
                         recommendedCourseIds: {
                             type: Type.ARRAY,
@@ -176,7 +185,7 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
     } catch (error) {
         console.error('Error getting chatbot response:', error);
         return {
-            responseText: "عذرًا، أواجه مشكلة فنية في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقًا.",
+            responseText: "عذرًا، Mr.Pincel يواجه مشكلة فنية صغيرة في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقًا.",
             recommendedCourseIds: []
         };
     }

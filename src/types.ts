@@ -153,6 +153,7 @@ export interface AboutContent {
 }
 
 export interface SiteContent {
+  geminiApiKey?: string; // Added API Key field
   homepage: HomepageContent;
   about: AboutContent;
   faq: FAQItem[];

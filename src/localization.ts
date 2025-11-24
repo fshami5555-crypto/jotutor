@@ -1,3 +1,4 @@
+
 // This file contains all the string resources for the application.
 
 export const arStrings = {
@@ -202,12 +203,12 @@ export const arStrings = {
   paymentSuccess: 'تم الدفع بنجاح!',
 
   // Chatbot
-  chatbotTooltip: 'مرحباً! هل تحتاج إلى مساعدة في العثور على دورة؟ أنا هنا للمساعدة!',
-  chatbotWelcome: 'أهلاً بك في مساعد JoTutor! كيف يمكنني مساعدتك في العثور على الدورة المثالية اليوم؟',
-  chatbotTitle: 'مساعد JoTutor',
+  chatbotTooltip: 'مرحباً! أنا Mr.Pincel. هل تحتاج إلى مساعدة؟',
+  chatbotWelcome: 'أهلاً بك! أنا Mr.Pincel، مساعدك التعليمي الذكي. كيف يمكنني مساعدتك اليوم؟',
+  chatbotTitle: 'Mr.Pincel - المساعد التعليمي',
   chatbotRecommendedCourses: 'دورات مقترحة لك:',
-  chatbotTyping: 'أكتب...',
-  chatbotPlaceholder: 'اسأل عن دورة...',
+  chatbotTyping: 'Mr.Pincel يكتب...',
+  chatbotPlaceholder: 'اسأل Mr.Pincel...',
   chatbotSend: 'إرسال',
 };
 
@@ -385,11 +386,11 @@ export const enStrings = {
   cvv: 'CVV',
   confirmPayment: 'Confirm Payment',
   paymentSuccess: 'Payment successful!',
-  chatbotTooltip: 'Hi! Need help finding a course? I am here to assist!',
-  chatbotWelcome: 'Welcome to the JoTutor Assistant! How can I help you find the perfect course today?',
-  chatbotTitle: 'JoTutor Assistant',
+  chatbotTooltip: "Hi! I'm Mr.Pincel. Need help?",
+  chatbotWelcome: "Welcome! I am Mr.Pincel, your AI educational assistant. How can I help you?",
+  chatbotTitle: 'Mr.Pincel - Educational Assistant',
   chatbotRecommendedCourses: 'Recommended courses for you:',
-  chatbotTyping: 'Typing...',
-  chatbotPlaceholder: 'Ask about a course...',
+  chatbotTyping: 'Mr.Pincel is typing...',
+  chatbotPlaceholder: 'Ask Mr.Pincel...',
   chatbotSend: 'Send',
 };

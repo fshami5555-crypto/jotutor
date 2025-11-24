@@ -1,4 +1,5 @@
 
+// Fix: Added AboutContent to imports to resolve type error.
 import { UserProfile, Course, Teacher, Testimonial, BlogPost, HeroSlide, StaffMember, Payment, SiteContent, OnboardingOptions, AboutContent, HomepageContent } from './types';
 
 // This file provides the initial state for the application.
@@ -268,6 +269,7 @@ const onboardingOptions: OnboardingOptions = {
 };
 
 const siteContent: SiteContent = {
+    geminiApiKey: 'AIzaSyA9Mik-C-2DwTZ90IRZ-9YhBLB-YoR5zFE', // Added API Key
     homepage: homepageContent,
     about: aboutContent,
     faq: [
