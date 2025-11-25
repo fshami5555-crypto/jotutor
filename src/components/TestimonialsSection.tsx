@@ -18,8 +18,14 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials,
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="bg-blue-800 p-8 rounded-xl shadow-lg flex flex-col items-center text-center">
-              <img src={testimonial.avatarUrl} alt={testimonial.name} className="w-24 h-24 rounded-full border-4 border-green-400 object-cover mb-6" />
+            <div key={testimonial.id} className="bg-blue-800 p-8 rounded-xl shadow-lg flex flex-col items-center text-center relative group">
+              <div className="relative">
+                <img 
+                    src={testimonial.avatarUrl} 
+                    alt={testimonial.name} 
+                    className="w-24 h-24 rounded-full border-4 border-green-400 object-cover mb-6 transition-all duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] transform hover:scale-[3.5] hover:rounded-lg hover:border-white hover:shadow-2xl hover:z-50 cursor-pointer relative" 
+                />
+              </div>
               <p className="text-blue-200 italic mb-6 flex-grow">"{testimonial.quote}"</p>
               <div>
                 <h4 className="font-bold text-xl text-white">{testimonial.name}</h4>
