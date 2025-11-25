@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Teacher } from '../types';
 
@@ -7,12 +8,15 @@ interface ManageTeachersProps {
 }
 
 const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Teacher) => void; onClose: () => void }> = ({ teacher, onSave, onClose }) => {
-    const [formData, setFormData] = useState<Omit<Teacher, 'id' | 'rating' | 'reviews'>>({
+    // Updated state to include rating and reviews in the form data
+    const [formData, setFormData] = useState<Omit<Teacher, 'id'>>({
         name: teacher?.name || '',
         avatarUrl: teacher?.avatarUrl || 'https://picsum.photos/seed/new/200/200',
         level: teacher?.level || '',
         experience: teacher?.experience || 0,
         specialties: teacher?.specialties || [],
+        rating: teacher?.rating || 5.0,
+        reviews: teacher?.reviews || 0,
         pricePerHour: teacher?.pricePerHour || 20,
         bio: teacher?.bio || '',
         qualifications: teacher?.qualifications || [],
@@ -33,8 +37,6 @@ const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Te
         e.preventDefault();
         const finalTeacher: Teacher = {
             id: teacher?.id || Date.now().toString(),
-            rating: teacher?.rating || 0,
-            reviews: teacher?.reviews || 0,
             ...formData
         };
         onSave(finalTeacher);
@@ -50,6 +52,19 @@ const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Te
                         <input name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} placeholder="رابط الصورة" className="p-2 border rounded" />
                         <input name="level" value={formData.level} onChange={handleChange} placeholder="المرحلة (مثال: ابتدائي, متوسط)" className="p-2 border rounded" />
                         <input name="experience" type="number" value={formData.experience} onChange={handleChange} placeholder="سنوات الخبرة" className="p-2 border rounded" />
+                        
+                        {/* New fields for Rating and Reviews */}
+                        <div className="md:col-span-2 grid grid-cols-2 gap-4 bg-gray-50 p-3 rounded border">
+                            <div>
+                                <label className="block text-xs text-gray-500 mb-1">التقييم (من 5)</label>
+                                <input name="rating" type="number" step="0.1" min="0" max="5" value={formData.rating} onChange={handleChange} placeholder="التقييم" className="w-full p-2 border rounded" />
+                            </div>
+                            <div>
+                                <label className="block text-xs text-gray-500 mb-1">عدد المراجعات</label>
+                                <input name="reviews" type="number" min="0" value={formData.reviews} onChange={handleChange} placeholder="عدد المراجعات" className="w-full p-2 border rounded" />
+                            </div>
+                        </div>
+
                         <input name="pricePerHour" type="number" value={formData.pricePerHour} onChange={handleChange} placeholder="السعر للساعة" className="p-2 border rounded" />
                         <div className="md:col-span-2">
                            <input name="specialties" value={formData.specialties.join(', ')} onChange={e => handleArrayChange(e, 'specialties')} placeholder="التخصصات (مفصولة بفاصلة)" className="w-full p-2 border rounded" />
@@ -116,6 +131,7 @@ const ManageTeachers: React.FC<ManageTeachersProps> = ({ teachers, setTeachers }
                         <thead className="bg-gray-100">
                             <tr>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الاسم</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">التقييم</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المرحلة</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">التخصصات</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الإجراءات</th>
@@ -127,6 +143,12 @@ const ManageTeachers: React.FC<ManageTeachersProps> = ({ teachers, setTeachers }
                                     <td className="py-3 px-4 flex items-center">
                                         <img src={teacher.avatarUrl} alt={teacher.name} className="w-10 h-10 rounded-full ml-4 object-cover" />
                                         {teacher.name}
+                                    </td>
+                                    <td className="py-3 px-4">
+                                        <div className="flex items-center">
+                                            <span className="text-yellow-500 mr-1">★</span>
+                                            {teacher.rating} <span className="text-gray-400 text-xs mr-1">({teacher.reviews})</span>
+                                        </div>
                                     </td>
                                     <td className="py-3 px-4">{teacher.level}</td>
                                     <td className="py-3 px-4">{teacher.specialties.join(', ')}</td>

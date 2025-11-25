@@ -635,11 +635,11 @@ const App: React.FC = () => {
                         isOpen={isChatOpen}
                         setIsOpen={setIsChatOpen}
                     />
-                    {/* Start Now Floating Button */}
+                    {/* Start Now Floating Button - Moved to Left Side */}
                     <button
                         onClick={() => handleNavigate('courses')}
-                        className="fixed bottom-32 right-6 z-40 w-16 h-16 bg-blue-900 text-white rounded-full shadow-lg hover:bg-blue-800 transition-transform transform hover:scale-105 flex flex-col items-center justify-center border-2 border-white font-bold text-xs leading-tight"
-                        style={{ right: '24px' }}
+                        className="fixed bottom-32 left-6 z-40 w-16 h-16 bg-blue-900 text-white rounded-full shadow-lg hover:bg-blue-800 transition-transform transform hover:scale-105 flex flex-col items-center justify-center border-2 border-white font-bold text-xs leading-tight"
+                        style={{ left: '24px', right: 'auto' }}
                     >
                         <span>{language === 'ar' ? 'ابدأ' : 'Start'}</span>
                         <span>{language === 'ar' ? 'الآن' : 'Now'}</span>

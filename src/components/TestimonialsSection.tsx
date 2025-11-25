@@ -10,14 +10,17 @@ interface TestimonialsSectionProps {
 
 const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials, content, strings }) => {
   return (
-    <section className="py-20 bg-blue-900 text-white">
+    // Changed bg-blue-900 to bg-white
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-extrabold">{content?.testimonialsTitle || strings.testimonialsTitle}</h2>
-          <p className="mt-4 text-lg text-blue-200">{content?.testimonialsSubtitle || strings.testimonialsSubtitle}</p>
+          {/* Changed text colors to blue-900 and gray-600 for visibility on white background */}
+          <h2 className="text-4xl font-extrabold text-blue-900">{content?.testimonialsTitle || strings.testimonialsTitle}</h2>
+          <p className="mt-4 text-lg text-gray-600">{content?.testimonialsSubtitle || strings.testimonialsSubtitle}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
+            // Cards remain bg-blue-800 (dark blue) with white text
             <div key={testimonial.id} className="bg-blue-800 p-8 rounded-xl shadow-lg flex flex-col items-center text-center relative group">
               <div className="relative">
                 <img 
