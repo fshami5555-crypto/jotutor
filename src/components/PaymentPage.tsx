@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -46,6 +47,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
     const whatsappNumber = "962792822241";
     const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
+    // 1. Bank Details View (Shown after confirming payment)
     if (showBankDetails) {
         return (
             <div className="py-20 bg-gray-100">
@@ -100,6 +102,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
         );
     }
 
+    // 2. Default Payment Form View (Selection)
     return (
         <div className="py-20 bg-gray-100">
             <div className="container mx-auto px-6 max-w-3xl">
@@ -162,9 +165,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                 </div>
             </div>
         );
-    }
-
-    return null;
 };
 
 export default PaymentPage;
