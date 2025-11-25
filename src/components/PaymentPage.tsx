@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -10,11 +11,20 @@ interface PaymentPageProps {
     onEnroll: (course: Course) => void;
 }
 
-const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, exchangeRate, strings, onEnroll }) => {
-    const displayPrice = currency === 'USD'
-        ? (course.price / exchangeRate).toFixed(2)
-        : course.price.toFixed(2);
-    const currencySymbol = currency === 'USD' ? strings.usd : strings.jod;
+const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, onEnroll }) => {
+    let displayPrice = 0;
+    let currencySymbol = '';
+
+    if (currency === 'USD') {
+        displayPrice = course.priceUsd;
+        currencySymbol = strings.usd;
+    } else if (currency === 'SAR') {
+        displayPrice = course.priceSar;
+        currencySymbol = strings.sar;
+    } else {
+        displayPrice = course.priceJod;
+        currencySymbol = strings.jod;
+    }
 
     const handlePayment = (e: React.FormEvent) => {
         e.preventDefault();

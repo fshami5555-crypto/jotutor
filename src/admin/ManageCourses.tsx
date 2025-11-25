@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Course } from '../types';
 import { seedInitialCourses } from '../googleSheetService';
@@ -14,7 +15,9 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
         title: course?.title || '',
         description: course?.description || '',
         teacher: course?.teacher || '',
-        price: course?.price || 50,
+        priceJod: course?.priceJod || 50,
+        priceUsd: course?.priceUsd || 70,
+        priceSar: course?.priceSar || 265,
         duration: course?.duration || '4 أسابيع',
         level: course?.level || 'مبتدئ',
         imageUrl: course?.imageUrl || 'https://picsum.photos/seed/course/400/225',
@@ -47,7 +50,23 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
                         <select name="category" value={formData.category} onChange={handleChange} className="p-2 border rounded">
                             {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                         </select>
-                        <input name="price" type="number" value={formData.price} onChange={handleChange} placeholder="السعر" className="p-2 border rounded" />
+                        
+                        <div className="md:col-span-2 grid grid-cols-3 gap-2 bg-gray-50 p-2 rounded border">
+                            <div className="col-span-3 mb-1 text-sm font-semibold text-gray-700">تسعير الدورة:</div>
+                            <div>
+                                <label className="block text-xs text-gray-500 mb-1">السعر (JOD)</label>
+                                <input name="priceJod" type="number" value={formData.priceJod} onChange={handleChange} placeholder="د.أ" className="w-full p-2 border rounded" />
+                            </div>
+                            <div>
+                                <label className="block text-xs text-gray-500 mb-1">السعر (USD)</label>
+                                <input name="priceUsd" type="number" value={formData.priceUsd} onChange={handleChange} placeholder="$" className="w-full p-2 border rounded" />
+                            </div>
+                            <div>
+                                <label className="block text-xs text-gray-500 mb-1">السعر (SAR)</label>
+                                <input name="priceSar" type="number" value={formData.priceSar} onChange={handleChange} placeholder="ر.س" className="w-full p-2 border rounded" />
+                            </div>
+                        </div>
+
                         <input name="duration" value={formData.duration} onChange={handleChange} placeholder="المدة" className="p-2 border rounded" />
                         <input name="level" value={formData.level} onChange={handleChange} placeholder="المستوى" className="p-2 border rounded" />
                         <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="رابط الصورة" className="p-2 border rounded md:col-span-2" />
@@ -138,7 +157,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                             <tr>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">عنوان الدورة</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المعلم</th>
-                                <th className="text-right py-3 px-4 font-semibold text-sm">السعر</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">السعر (JOD)</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الإجراءات</th>
                             </tr>
                         </thead>
@@ -147,7 +166,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                                 <tr key={course.id} className="border-b">
                                     <td className="py-3 px-4">{course.title}</td>
                                     <td className="py-3 px-4">{course.teacher}</td>
-                                    <td className="py-3 px-4">{course.price} د.أ</td>
+                                    <td className="py-3 px-4">{course.priceJod} د.أ</td>
                                     <td className="py-3 px-4 whitespace-nowrap">
                                         <button onClick={() => handleOpenModal(course)} className="text-blue-500 hover:underline mr-4">تعديل</button>
                                         <button onClick={() => handleRemoveCourse(course.id)} className="text-red-500 hover:underline">حذف</button>

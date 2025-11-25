@@ -7,7 +7,7 @@ export type Page =
 
 export type DashboardView = 'profile' | 'courses' | 'wallet' | 'ai-assistant';
 
-export type Currency = 'JOD' | 'USD';
+export type Currency = 'JOD' | 'USD' | 'SAR';
 export type Language = 'ar' | 'en';
 
 export interface HeroSlide {
@@ -44,7 +44,10 @@ export interface Course {
     title: string;
     description: string;
     teacher: string;
-    price: number; // in JOD
+    // Prices in specific currencies
+    priceJod: number;
+    priceUsd: number;
+    priceSar: number;
     duration: string;
     level: string;
     imageUrl: string;
@@ -153,7 +156,7 @@ export interface AboutContent {
 }
 
 export interface SiteContent {
-  geminiApiKey?: string; // Added API Key field
+  geminiApiKey?: string;
   homepage: HomepageContent;
   about: AboutContent;
   faq: FAQItem[];
@@ -185,6 +188,6 @@ export interface Payment {
     courseId: string;
     courseName: string;
     amount: number;
-    currency: 'JOD' | 'USD';
+    currency: Currency;
     status: 'Success' | 'Failed';
 }

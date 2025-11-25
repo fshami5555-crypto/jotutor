@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -10,11 +11,20 @@ interface CourseProfilePageProps {
     language: Language;
 }
 
-const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, exchangeRate, strings }) => {
-    const displayPrice = currency === 'USD'
-        ? (course.price / exchangeRate).toFixed(2)
-        : course.price.toFixed(2);
-    const currencySymbol = currency === 'USD' ? strings.usd : strings.jod;
+const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, strings }) => {
+    let displayPrice = 0;
+    let currencySymbol = '';
+
+    if (currency === 'USD') {
+        displayPrice = course.priceUsd;
+        currencySymbol = strings.usd;
+    } else if (currency === 'SAR') {
+        displayPrice = course.priceSar;
+        currencySymbol = strings.sar;
+    } else {
+        displayPrice = course.priceJod;
+        currencySymbol = strings.jod;
+    }
 
     return (
         <div className="py-12 bg-white">

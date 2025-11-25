@@ -153,11 +153,39 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                         </div>
                     </div>
 
-                     <div className="md:col-span-2 p-4 border rounded-md">
+                     <div className="md:col-span-2 p-4 border rounded-md bg-white shadow-sm">
                         <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "كيف يعمل؟"</h3>
-                        <input name="howItWorksTitle" value={localContent.homepage.howItWorksTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
-                        <textarea name="howItWorksSubtitle" value={localContent.homepage.howItWorksSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الرئيسي</label>
+                            <input name="howItWorksTitle" value={localContent.homepage.howItWorksTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الفرعي</label>
+                            <textarea name="howItWorksSubtitle" value={localContent.homepage.howItWorksSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        </div>
+
+                        <div className="mt-4 border-t pt-4">
+                            <h4 className="font-bold text-gray-800 mb-4 text-base bg-gray-100 p-2 rounded">تعديل الخطوات الثلاث</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="p-3 bg-gray-50 rounded border shadow-sm">
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">الخطوة الأولى (01)</h5>
+                                    <input name="step1Title" value={localContent.homepage.step1Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="عنوان الخطوة" />
+                                    <textarea name="step1Desc" value={localContent.homepage.step1Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="وصف الخطوة" rows={3}></textarea>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded border shadow-sm">
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">الخطوة الثانية (02)</h5>
+                                    <input name="step2Title" value={localContent.homepage.step2Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="عنوان الخطوة" />
+                                    <textarea name="step2Desc" value={localContent.homepage.step2Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="وصف الخطوة" rows={3}></textarea>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded border shadow-sm">
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">الخطوة الثالثة (03)</h5>
+                                    <input name="step3Title" value={localContent.homepage.step3Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="عنوان الخطوة" />
+                                    <textarea name="step3Desc" value={localContent.homepage.step3Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="وصف الخطوة" rows={3}></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                      <div className="md:col-span-2 p-4 border rounded-md">
                         <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "ابحث عن معلم"</h3>
                         <input name="teacherSearchTitle" value={localContent.homepage.teacherSearchTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>

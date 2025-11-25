@@ -37,6 +37,7 @@ import FAQPage from './FAQPage';
 import PrivacyPolicyPage from './PrivacyPolicyPage';
 import TermsPage from './TermsPage';
 import Chatbot from './Chatbot';
+import WelcomeModal from './WelcomeModal';
 
 // Data and Services
 import { initialData } from '../mockData';
@@ -69,6 +70,8 @@ const App: React.FC = () => {
     const [isAuthModalOpen, setAuthModalOpen] = useState(false);
     const [authModalView, setAuthModalView] = useState<'login' | 'signup'>('login');
     const [showOnboarding, setShowOnboarding] = useState(false);
+    const [showWelcomeModal, setShowWelcomeModal] = useState(true); // Show Welcome Modal by default on load
+    const [isChatOpen, setIsChatOpen] = useState(false); // Chatbot state managed here
 
     // Localization & Currency
     const [language, setLanguage] = useState<Language>('ar');
@@ -400,6 +403,9 @@ const App: React.FC = () => {
             setUserProfile(updatedProfile); // Update local state immediately
 
             // 2. Create a payment record for admin tracking
+            // Determine price based on current currency selection
+            const paymentAmount = currency === 'USD' ? course.priceUsd : (currency === 'SAR' ? course.priceSar : course.priceJod);
+
             const newPayment: Payment = {
                 id: `${userProfile.id}-${course.id}-${Date.now()}`,
                 date: new Date().toISOString(),
@@ -407,8 +413,8 @@ const App: React.FC = () => {
                 userName: userProfile.username,
                 courseId: course.id,
                 courseName: course.title,
-                amount: course.price,
-                currency: 'JOD',
+                amount: paymentAmount,
+                currency: currency,
                 status: 'Success'
             };
             await setDocument('Payments', newPayment.id, newPayment);
@@ -440,6 +446,20 @@ const App: React.FC = () => {
         } finally {
             setIsTranslating(false);
         }
+    };
+
+    const handleCurrencyChange = () => {
+        setCurrency(prev => {
+            if (prev === 'JOD') return 'USD';
+            if (prev === 'USD') return 'SAR';
+            return 'JOD';
+        });
+    };
+
+    // Welcome Modal handlers
+    const handleStartChatFromModal = () => {
+        setShowWelcomeModal(false);
+        setIsChatOpen(true);
     };
 
     // === RENDER LOGIC ===
@@ -534,6 +554,14 @@ const App: React.FC = () => {
 
     return (
         <div className={language === 'ar' ? 'rtl' : 'ltr'}>
+            {/* Welcome Modal - Only shown if state is true AND user is not logged in/navigating somewhere else ideally, but logic says "on opening" */}
+            {showWelcomeModal && (
+                <WelcomeModal 
+                    onStartChat={handleStartChatFromModal}
+                    onClose={() => setShowWelcomeModal(false)}
+                />
+            )}
+
             <Header
                 onNavigate={handleNavigate}
                 onLoginClick={() => { setAuthModalView('login'); setAuthModalOpen(true); }}
@@ -543,7 +571,7 @@ const App: React.FC = () => {
                 username={isAdmin ? 'Admin' : userProfile?.username}
                 onLogout={handleLogout}
                 currency={currency}
-                onCurrencyChange={() => setCurrency(c => c === 'JOD' ? 'USD' : 'JOD')}
+                onCurrencyChange={handleCurrencyChange}
                 language={language}
                 onLanguageChange={handleLanguageChange}
                 isTranslating={isTranslating}
@@ -566,7 +594,14 @@ const App: React.FC = () => {
              {!(isDataLoading || isAuthLoading) && (
                  <>
                     <Footer onNavigate={handleNavigate} strings={strings} />
-                    <Chatbot courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} strings={strings} language={language}/>
+                    <Chatbot 
+                        courses={courses} 
+                        onSelectCourse={(id) => handleNavigate('course-profile', id)} 
+                        strings={strings} 
+                        language={language}
+                        isOpen={isChatOpen}
+                        setIsOpen={setIsChatOpen}
+                    />
                  </>
             )}
             

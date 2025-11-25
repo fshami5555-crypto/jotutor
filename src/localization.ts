@@ -189,6 +189,7 @@ export const arStrings = {
   courseLevel: 'المستوى',
   jod: 'د.أ',
   usd: '$',
+  sar: 'ر.س',
 
   // Payment
   paymentTitle: 'إتمام عملية الدفع',
@@ -376,6 +377,7 @@ export const enStrings = {
   courseLevel: 'Level',
   jod: 'JOD',
   usd: 'USD',
+  sar: 'SAR',
   paymentTitle: 'Complete Your Payment',
   courseSummary: 'Course Summary',
   totalAmount: 'Total Amount',

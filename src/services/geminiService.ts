@@ -139,7 +139,7 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
         بناءً على رسالة المستخدم وقائمة الدورات المتاحة، قدم ردًا مفيدًا. إذا كان ذلك مناسبًا، قم بترشيح دورات محددة تتناسب مع احتياجات المستخدم.
         
         قائمة الدورات المتاحة (JSON):
-        ${JSON.stringify(courses.map(c => ({id: c.id, title: c.title, description: c.description, category: c.category, level: c.level, price: c.price})), null, 2)}
+        ${JSON.stringify(courses.map(c => ({id: c.id, title: c.title, description: c.description, category: c.category, level: c.level, price: c.priceJod})), null, 2)}
 
         رسالة المستخدم:
         "${message}"

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Course, Currency, Page, HomepageContent } from '../types';
 import CourseCard from './CourseCard';

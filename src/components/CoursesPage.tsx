@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Course, Currency, Language } from '../types';
 import CourseCard from './CourseCard';
@@ -31,13 +32,21 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
     }
 
     if (sortBy === 'price-asc') {
-      result.sort((a, b) => a.price - b.price);
+      result.sort((a, b) => {
+          const priceA = currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod);
+          const priceB = currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod);
+          return priceA - priceB;
+      });
     } else if (sortBy === 'price-desc') {
-      result.sort((a, b) => b.price - a.price);
+      result.sort((a, b) => {
+          const priceA = currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod);
+          const priceB = currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod);
+          return priceB - priceA;
+      });
     }
 
     return result;
-  }, [courses, selectedCategory, selectedLevel, sortBy]);
+  }, [courses, selectedCategory, selectedLevel, sortBy, currency]);
 
   return (
     <div className="py-20 bg-gray-100">

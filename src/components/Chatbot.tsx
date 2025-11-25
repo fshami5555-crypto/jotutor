@@ -9,10 +9,11 @@ interface ChatbotProps {
     onSelectCourse: (id: string) => void;
     strings: { [key: string]: string };
     language: Language;
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
 }
 
-const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, language }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, language, isOpen, setIsOpen }) => {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +42,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
             clearTimeout(showTimer);
             clearTimeout(hideTimer);
         };
-    }, [isOpen]); // Re-evaluate if chat opens/closes, though it mainly runs once.
+    }, [isOpen]); // Re-evaluate if chat opens/closes
 
 
     useEffect(() => {
@@ -64,6 +65,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
         setIsLoading(true);
 
         try {
+            // The AI uses priceJod for context
             const response = await getChatbotResponse(trimmedInput, courses);
             
             const recommendedCourses = courses.filter(course => 
@@ -147,7 +149,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
                                                 {msg.courses.map(course => (
                                                     <div key={course.id} onClick={() => { onSelectCourse(course.id); setIsOpen(false); }} className="bg-white p-2 rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow">
                                                         <p className="font-bold text-blue-900 text-sm">{course.title}</p>
-                                                        <p className="text-xs text-gray-600">{course.category} - {course.price}{strings.jod}</p>
+                                                        <p className="text-xs text-gray-600">{course.category} - {course.priceJod} {strings.jod}</p>
                                                     </div>
                                                 ))}
                                             </div>

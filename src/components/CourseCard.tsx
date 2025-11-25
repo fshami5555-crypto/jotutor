@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Course, Currency } from '../types';
 
@@ -9,11 +10,20 @@ interface CourseCardProps {
     strings: { [key: string]: string };
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, exchangeRate, strings }) => {
-    const displayPrice = currency === 'USD' 
-        ? (course.price / exchangeRate).toFixed(2) 
-        : course.price.toFixed(2);
-    const currencySymbol = currency === 'USD' ? strings.usd : strings.jod;
+const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, strings }) => {
+    let displayPrice = 0;
+    let currencySymbol = '';
+
+    if (currency === 'USD') {
+        displayPrice = course.priceUsd;
+        currencySymbol = strings.usd;
+    } else if (currency === 'SAR') {
+        displayPrice = course.priceSar;
+        currencySymbol = strings.sar;
+    } else {
+        displayPrice = course.priceJod;
+        currencySymbol = strings.jod;
+    }
 
     return (
         <div onClick={onSelect} className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
