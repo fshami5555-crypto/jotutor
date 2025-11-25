@@ -235,11 +235,28 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                     </div>
                 );
             case 4: // Grade
+                const grades = [
+                    'KG1', 'KG2',
+                    '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade',
+                    '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade',
+                    'College'
+                ];
                 return (
                     <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep4Title}</h3>
                         <p className="text-center text-gray-600 mb-6">{strings.onboardingStep4Desc}</p>
-                        <input type="text" placeholder={strings.gradePlaceholder} onChange={e => handleSelect('grade', e.target.value)} value={formData.grade || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
+                        <div className="grid grid-cols-3 gap-3 max-h-64 overflow-y-auto pr-2">
+                             {grades.map(grade => (
+                                <button
+                                    key={grade}
+                                    type="button"
+                                    onClick={() => handleSelect('grade', grade)}
+                                    className={`p-2 border rounded-lg text-sm font-medium transition-all duration-200 ${formData.grade === grade ? 'bg-green-100 border-green-500 ring-2 ring-green-500 text-green-800' : 'bg-white hover:border-green-400 text-gray-700'}`}
+                                >
+                                    {grade}
+                                </button>
+                             ))}
+                        </div>
                     </div>
                 );
             case 5: // Curriculum
