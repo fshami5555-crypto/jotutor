@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UserProfile, OnboardingOptions } from '../types';
 
@@ -32,7 +33,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
         subjects: [],
         serviceType: options.serviceTypes?.[0],
         educationStage: options.educationStages?.[0],
-        curriculum: options.curriculums?.[0],
+        curriculum: '', // Initialize empty
         phone: '',
     });
     const [termsAgreed, setTermsAgreed] = useState(false);
@@ -45,6 +46,12 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
             case 4: // Grade
                 if (!formData.grade?.trim()) {
                     setError(strings.errorGradeRequired);
+                    return false;
+                }
+                break;
+            case 5: // Curriculum
+                if (!formData.curriculum) {
+                    setError("الرجاء اختيار منهاج واحد على الأقل.");
                     return false;
                 }
                 break;
@@ -109,6 +116,21 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                 ? subjects.filter(s => s !== subject)
                 : [...subjects, subject];
             return { ...prev, subjects: newSubjects };
+        });
+    };
+
+    // Handle multi-selection for curriculum and store as string
+    const handleCurriculumToggle = (curr: string) => {
+        setError('');
+        setFormData(prev => {
+            const currentList = prev.curriculum ? prev.curriculum.split(', ') : [];
+            let newList;
+            if (currentList.includes(curr)) {
+                newList = currentList.filter(c => c !== curr);
+            } else {
+                newList = [...currentList, curr];
+            }
+            return { ...prev, curriculum: newList.join(', ') };
         });
     };
     
@@ -221,14 +243,21 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                     </div>
                 );
             case 5: // Curriculum
+                 const selectedCurriculums = formData.curriculum ? formData.curriculum.split(', ') : [];
                  return (
                      <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep5Title}</h3>
-                        <p className="text-center text-gray-600 mb-6">{strings.onboardingStep5Desc}</p>
+                        <p className="text-center text-gray-600 mb-6">{strings.onboardingStep5Desc} (يمكنك اختيار أكثر من منهاج)</p>
                         <div className="space-y-3">
                             {options.curriculums.map(c => (
-                                <button key={c} type="button" onClick={() => handleSelect('curriculum', c)} className={`w-full text-right p-3 border rounded-lg transition-all duration-200 ${formData.curriculum === c ? 'bg-green-100 border-green-500 ring-2 ring-green-500' : 'bg-white hover:border-green-400'}`}>
+                                <button 
+                                    key={c} 
+                                    type="button" 
+                                    onClick={() => handleCurriculumToggle(c)} 
+                                    className={`w-full text-right p-3 border rounded-lg transition-all duration-200 flex justify-between items-center ${selectedCurriculums.includes(c) ? 'bg-green-100 border-green-500 ring-2 ring-green-500' : 'bg-white hover:border-green-400'}`}
+                                >
                                     <span className="font-semibold text-blue-900">{c}</span>
+                                    {selectedCurriculums.includes(c) && <span className="text-green-600 font-bold">✓</span>}
                                 </button>
                             ))}
                         </div>

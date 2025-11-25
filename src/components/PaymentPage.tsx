@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -12,23 +11,27 @@ interface PaymentPageProps {
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, onEnroll }) => {
-    let displayPrice = 0;
+    if (!course) return <div>Course not found</div>;
+
+    let price = 0;
     let currencySymbol = '';
 
     if (currency === 'USD') {
-        displayPrice = course.priceUsd;
+        price = course.priceUsd ?? 0;
         currencySymbol = strings.usd;
     } else if (currency === 'SAR') {
-        displayPrice = course.priceSar;
+        price = course.priceSar ?? 0;
         currencySymbol = strings.sar;
     } else {
-        displayPrice = course.priceJod;
+        price = course.priceJod ?? 0;
         currencySymbol = strings.jod;
     }
 
+    const safePrice = typeof price === 'number' ? price : 0;
+    const displayPrice = safePrice.toFixed(2);
+
     const handlePayment = (e: React.FormEvent) => {
         e.preventDefault();
-        // Call the passed-in enrollment function instead of just showing an alert
         onEnroll(course);
     };
 

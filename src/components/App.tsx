@@ -403,8 +403,15 @@ const App: React.FC = () => {
             setUserProfile(updatedProfile); // Update local state immediately
 
             // 2. Create a payment record for admin tracking
-            // Determine price based on current currency selection
-            const paymentAmount = currency === 'USD' ? course.priceUsd : (currency === 'SAR' ? course.priceSar : course.priceJod);
+            // Determine price based on current currency selection. SAFE FALLBACK.
+            let paymentAmount = 0;
+            if (currency === 'USD') {
+                paymentAmount = course.priceUsd || 0;
+            } else if (currency === 'SAR') {
+                paymentAmount = course.priceSar || 0;
+            } else {
+                paymentAmount = course.priceJod || 0;
+            }
 
             const newPayment: Payment = {
                 id: `${userProfile.id}-${course.id}-${Date.now()}`,

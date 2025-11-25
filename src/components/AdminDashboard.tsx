@@ -78,6 +78,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                             courses={props.courses} 
                             setCourses={props.setCourses} 
                             courseCategories={props.onboardingOptions.serviceTypes} 
+                            curriculums={props.onboardingOptions.curriculums}
                         />;
             case 'testimonials':
                 return <ManageTestimonials testimonials={props.testimonials} setTestimonials={props.setTestimonials} />;

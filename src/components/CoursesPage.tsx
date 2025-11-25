@@ -15,10 +15,12 @@ interface CoursesPageProps {
 const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, currency, exchangeRate, strings, language }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
+  const [selectedCurriculum, setSelectedCurriculum] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('default');
 
   const categories = useMemo(() => ['all', ...Array.from(new Set(courses.map(c => c.category)))], [courses]);
   const levels = useMemo(() => ['all', ...Array.from(new Set(courses.map(c => c.level)))], [courses]);
+  const curriculums = useMemo(() => ['all', ...Array.from(new Set(courses.map(c => c.curriculum).filter(Boolean) as string[]))], [courses]);
 
   const filteredAndSortedCourses = useMemo(() => {
     let result = [...courses]; // Create a copy to avoid mutating the original prop
@@ -31,22 +33,26 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
       result = result.filter(course => course.level === selectedLevel);
     }
 
+    if (selectedCurriculum !== 'all') {
+      result = result.filter(course => course.curriculum === selectedCurriculum);
+    }
+
     if (sortBy === 'price-asc') {
       result.sort((a, b) => {
-          const priceA = currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod);
-          const priceB = currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod);
+          const priceA = (currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod)) || 0;
+          const priceB = (currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod)) || 0;
           return priceA - priceB;
       });
     } else if (sortBy === 'price-desc') {
       result.sort((a, b) => {
-          const priceA = currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod);
-          const priceB = currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod);
+          const priceA = (currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod)) || 0;
+          const priceB = (currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod)) || 0;
           return priceB - priceA;
       });
     }
 
     return result;
-  }, [courses, selectedCategory, selectedLevel, sortBy, currency]);
+  }, [courses, selectedCategory, selectedLevel, selectedCurriculum, sortBy, currency]);
 
   return (
     <div className="py-20 bg-gray-100">
@@ -57,8 +63,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
         </div>
 
         {/* Filters and Sorting */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-12 max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-lg shadow-md mb-12 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Category Filter */}
                 <div>
                     <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700">{strings.category}</label>
@@ -83,6 +89,19 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
                     >
                         <option value="all">{strings.allLevels}</option>
                         {levels.filter(l => l !== 'all').map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
+                    </select>
+                </div>
+                 {/* Curriculum Filter */}
+                 <div>
+                    <label htmlFor="curriculum-filter" className="block text-sm font-medium text-gray-700">المنهاج</label>
+                    <select
+                        id="curriculum-filter"
+                        value={selectedCurriculum}
+                        onChange={(e) => setSelectedCurriculum(e.target.value)}
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md"
+                    >
+                        <option value="all">كل المناهج</option>
+                        {curriculums.filter(c => c !== 'all').map(curr => <option key={curr} value={curr}>{curr}</option>)}
                     </select>
                 </div>
                 {/* Sort By */}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Course } from '../types';
 import { seedInitialCourses } from '../googleSheetService';
@@ -8,9 +7,10 @@ interface ManageCoursesProps {
     courses: Course[];
     setCourses: React.Dispatch<React.SetStateAction<Course[]>>;
     courseCategories: string[];
+    curriculums: string[];
 }
 
-const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course) => void; onClose: () => void; categories: string[] }> = ({ course, onSave, onClose, categories }) => {
+const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course) => void; onClose: () => void; categories: string[]; curriculums: string[] }> = ({ course, onSave, onClose, categories, curriculums }) => {
     const [formData, setFormData] = useState<Omit<Course, 'id'>>({
         title: course?.title || '',
         description: course?.description || '',
@@ -22,6 +22,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
         level: course?.level || 'مبتدئ',
         imageUrl: course?.imageUrl || 'https://picsum.photos/seed/course/400/225',
         category: course?.category || (categories.length > 0 ? categories[0] : ''),
+        curriculum: course?.curriculum || (curriculums.length > 0 ? curriculums[0] : ''),
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -47,9 +48,21 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input name="title" value={formData.title} onChange={handleChange} placeholder="عنوان الدورة" className="p-2 border rounded md:col-span-2" required />
                         <input name="teacher" value={formData.teacher} onChange={handleChange} placeholder="اسم المعلم" className="p-2 border rounded" required />
-                        <select name="category" value={formData.category} onChange={handleChange} className="p-2 border rounded">
-                            {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                        </select>
+                        
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">الفئة</label>
+                            <select name="category" value={formData.category} onChange={handleChange} className="w-full p-2 border rounded">
+                                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-gray-500 mb-1">المنهاج</label>
+                            <select name="curriculum" value={formData.curriculum} onChange={handleChange} className="w-full p-2 border rounded">
+                                <option value="">اختر المنهاج</option>
+                                {curriculums.map(curr => <option key={curr} value={curr}>{curr}</option>)}
+                            </select>
+                        </div>
                         
                         <div className="md:col-span-2 grid grid-cols-3 gap-2 bg-gray-50 p-2 rounded border">
                             <div className="col-span-3 mb-1 text-sm font-semibold text-gray-700">تسعير الدورة:</div>
@@ -85,7 +98,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
 };
 
 
-const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, courseCategories }) => {
+const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, courseCategories, curriculums }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
     const [isSeeding, setIsSeeding] = useState(false);
@@ -134,7 +147,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
 
     return (
         <div>
-            {isModalOpen && <CourseFormModal course={editingCourse} onSave={handleSaveCourse} onClose={handleCloseModal} categories={courseCategories} />}
+            {isModalOpen && <CourseFormModal course={editingCourse} onSave={handleSaveCourse} onClose={handleCloseModal} categories={courseCategories} curriculums={curriculums} />}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-800">إدارة الدورات</h1>
                  <div className="flex space-x-2 space-x-reverse">
@@ -157,6 +170,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                             <tr>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">عنوان الدورة</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المعلم</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">المنهاج</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">السعر (JOD)</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الإجراءات</th>
                             </tr>
@@ -166,6 +180,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                                 <tr key={course.id} className="border-b">
                                     <td className="py-3 px-4">{course.title}</td>
                                     <td className="py-3 px-4">{course.teacher}</td>
+                                    <td className="py-3 px-4 text-gray-600 text-sm">{course.curriculum || '-'}</td>
                                     <td className="py-3 px-4">{course.priceJod} د.أ</td>
                                     <td className="py-3 px-4 whitespace-nowrap">
                                         <button onClick={() => handleOpenModal(course)} className="text-blue-500 hover:underline mr-4">تعديل</button>

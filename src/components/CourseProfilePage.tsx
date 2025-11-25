@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -12,19 +11,24 @@ interface CourseProfilePageProps {
 }
 
 const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, strings }) => {
-    let displayPrice = 0;
+    if (!course) return <div>Course not found</div>;
+
+    let price = 0;
     let currencySymbol = '';
 
     if (currency === 'USD') {
-        displayPrice = course.priceUsd;
+        price = course.priceUsd ?? 0;
         currencySymbol = strings.usd;
     } else if (currency === 'SAR') {
-        displayPrice = course.priceSar;
+        price = course.priceSar ?? 0;
         currencySymbol = strings.sar;
     } else {
-        displayPrice = course.priceJod;
+        price = course.priceJod ?? 0;
         currencySymbol = strings.jod;
     }
+
+    const safePrice = typeof price === 'number' ? price : 0;
+    const displayPrice = safePrice.toFixed(2);
 
     return (
         <div className="py-12 bg-white">
@@ -52,6 +56,7 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
                                 <li className="flex justify-between"><strong>{strings.courseDuration}:</strong> <span>{course.duration}</span></li>
                                 <li className="flex justify-between"><strong>{strings.courseLevel}:</strong> <span>{course.level}</span></li>
                                 <li className="flex justify-between"><strong>{strings.subject}:</strong> <span>{course.category}</span></li>
+                                {course.curriculum && <li className="flex justify-between"><strong>المنهاج:</strong> <span>{course.curriculum}</span></li>}
                             </ul>
                         </div>
                     </div>

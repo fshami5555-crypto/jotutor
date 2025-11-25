@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course, Currency } from '../types';
 
@@ -11,19 +10,26 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, strings }) => {
-    let displayPrice = 0;
+    // Safety check
+    if (!course) return null;
+
+    let price = 0;
     let currencySymbol = '';
 
     if (currency === 'USD') {
-        displayPrice = course.priceUsd;
+        price = course.priceUsd ?? 0;
         currencySymbol = strings.usd;
     } else if (currency === 'SAR') {
-        displayPrice = course.priceSar;
+        price = course.priceSar ?? 0;
         currencySymbol = strings.sar;
     } else {
-        displayPrice = course.priceJod;
+        price = course.priceJod ?? 0;
         currencySymbol = strings.jod;
     }
+
+    // Safe check to ensure price is a number before calling toFixed
+    const safePrice = typeof price === 'number' ? price : 0;
+    const displayPrice = safePrice.toFixed(2);
 
     return (
         <div onClick={onSelect} className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer">

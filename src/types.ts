@@ -52,6 +52,7 @@ export interface Course {
     level: string;
     imageUrl: string;
     category: string;
+    curriculum?: string; // Added curriculum field
 }
 
 export interface UserProfile {

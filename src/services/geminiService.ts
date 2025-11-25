@@ -131,15 +131,27 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
 
     const model = 'gemini-2.5-flash';
 
+    // Prepare a lightweight course list for the AI, including the CURRICULUM
+    const courseData = courses.map(c => ({
+        id: c.id,
+        title: c.title,
+        description: c.description,
+        category: c.category,
+        level: c.level,
+        curriculum: c.curriculum, // Added curriculum
+        price: c.priceJod
+    }));
+
     const prompt = `
         أنت "Mr.Pincel"، المساعد التعليمي الذكي والشخصية المميزة لمنصة JoTutor.
         شخصيتك: ودود، ذكي، مشجع، ومحب للتعليم. تتحدث بأسلوب لطيف واحترافي.
         
         المهمة:
-        بناءً على رسالة المستخدم وقائمة الدورات المتاحة، قدم ردًا مفيدًا. إذا كان ذلك مناسبًا، قم بترشيح دورات محددة تتناسب مع احتياجات المستخدم.
+        بناءً على رسالة المستخدم وقائمة الدورات المتاحة، قدم ردًا مفيدًا.
+        يجب عليك تحليل طلب المستخدم بدقة (المادة، المستوى الدراسي، والمنهاج إن وجد) واقتراح الدورات الأنسب له من القائمة.
         
         قائمة الدورات المتاحة (JSON):
-        ${JSON.stringify(courses.map(c => ({id: c.id, title: c.title, description: c.description, category: c.category, level: c.level, price: c.priceJod})), null, 2)}
+        ${JSON.stringify(courseData, null, 2)}
 
         رسالة المستخدم:
         "${message}"
@@ -147,9 +159,10 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
         التعليمات:
         1.  عرف عن نفسك باسم "Mr.Pincel" عند الحاجة.
         2.  تحدث باللغة العربية بأسلوب ودود ومساعد.
-        3.  حلل رسالة المستخدم لفهم ما يبحث عنه (مثل مادة معينة، مستوى، هدف).
-        4.  إذا كانت هناك دورات ذات صلة في قائمة JSON، قم بتضمين أرقام معرفاتها (IDs) في ردك.
-        5.  يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، ولا شيء غير ذلك.
+        3.  حلل رسالة المستخدم لفهم ما يبحث عنه. انتبه للمادة، المستوى، والمنهج (مثل دولي، وطني، IGCSE).
+        4.  إذا وجدت دورات مناسبة في القائمة، **يجب** أن تضع أرقام معرفاتها (IDs) في مصفوفة recommendedCourseIds في ردك.
+        5.  في نص الرد (responseText)، قم بدعوة المستخدم للاطلاع على الدورات المقترحة أدناه.
+        6.  يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، ولا شيء غير ذلك.
     `;
 
     try {
