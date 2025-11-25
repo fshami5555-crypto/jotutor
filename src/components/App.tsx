@@ -72,6 +72,9 @@ const App: React.FC = () => {
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [showWelcomeModal, setShowWelcomeModal] = useState(true); // Show Welcome Modal by default on load
     const [isChatOpen, setIsChatOpen] = useState(false); // Chatbot state managed here
+    
+    // Pending action state (for redirecting after login)
+    const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
 
     // Localization & Currency
     const [language, setLanguage] = useState<Language>('ar');
@@ -328,6 +331,16 @@ const App: React.FC = () => {
         window.scrollTo(0, 0);
     };
 
+    const handleBookCourse = (courseId: string) => {
+        if (isLoggedIn) {
+            handleNavigate('payment', courseId);
+        } else {
+            setPendingBookingId(courseId);
+            setAuthModalView('login');
+            setAuthModalOpen(true);
+        }
+    };
+
     const handleLogin = async (email: string, password: string): Promise<boolean> => {
         try {
             // Fix: Use Firebase v8 compat syntax to resolve module errors.
@@ -336,7 +349,13 @@ const App: React.FC = () => {
             if (email.toLowerCase() === 'admin@jotutor.com') {
                 handleNavigate('admin-dashboard');
             } else {
-                handleNavigate('dashboard');
+                // Redirect to pending booking if exists, otherwise dashboard
+                if (pendingBookingId) {
+                    handleNavigate('payment', pendingBookingId);
+                    setPendingBookingId(null);
+                } else {
+                    handleNavigate('dashboard');
+                }
             }
             return true;
         } catch (error) {
@@ -368,8 +387,15 @@ const App: React.FC = () => {
             
             // The onAuthStateChanged listener will handle setting the user profile and login state.
             setShowOnboarding(false);
-            setInitialDashboardView('courses'); // Set the initial view for the dashboard
-            handleNavigate('dashboard');
+            
+            if (pendingBookingId) {
+                handleNavigate('payment', pendingBookingId);
+                setPendingBookingId(null);
+            } else {
+                setInitialDashboardView('courses'); // Set the initial view for the dashboard
+                handleNavigate('dashboard');
+            }
+            
             return null; // Return null on success
         } catch (error: any) {
             console.error("Error during signup process:", error);
@@ -508,7 +534,7 @@ const App: React.FC = () => {
             case 'teacher-profile': return selectedTeacher ? <TeacherProfilePage teacher={selectedTeacher} strings={strings} language={language}/> : <p>Teacher not found.</p>;
             
             case 'courses': return <CoursesPage courses={courses} onSelectCourse={(id) => handleNavigate('course-profile', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/>
-            case 'course-profile': return selectedCourse ? <CourseProfilePage course={selectedCourse} onBook={(id) => handleNavigate('payment', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/> : <p>Course not found.</p>;
+            case 'course-profile': return selectedCourse ? <CourseProfilePage course={selectedCourse} onBook={handleBookCourse} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/> : <p>Course not found.</p>;
             case 'payment': return selectedCourse ? <PaymentPage course={selectedCourse} onEnroll={handleEnrollInCourse} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language}/> : <p>Course not found.</p>;
 
             case 'videos': return <VideosPage shorts={blogPosts.filter(p => p.type === 'short')} onSelectShort={(id) => handleNavigate('short-player', id)} strings={strings} language={language}/>;
@@ -609,13 +635,25 @@ const App: React.FC = () => {
                         isOpen={isChatOpen}
                         setIsOpen={setIsChatOpen}
                     />
+                    {/* Start Now Floating Button */}
+                    <button
+                        onClick={() => handleNavigate('courses')}
+                        className="fixed bottom-32 right-6 z-40 w-16 h-16 bg-blue-900 text-white rounded-full shadow-lg hover:bg-blue-800 transition-transform transform hover:scale-105 flex flex-col items-center justify-center border-2 border-white font-bold text-xs leading-tight"
+                        style={{ right: '24px' }}
+                    >
+                        <span>{language === 'ar' ? 'ابدأ' : 'Start'}</span>
+                        <span>{language === 'ar' ? 'الآن' : 'Now'}</span>
+                    </button>
                  </>
             )}
             
             {isAuthModalOpen && (
                 <AuthModal 
                     initialView={authModalView}
-                    onClose={() => setAuthModalOpen(false)}
+                    onClose={() => {
+                        setAuthModalOpen(false);
+                        setPendingBookingId(null); // Clear pending booking if closed without login
+                    }}
                     onLogin={handleLogin}
                     onSwitchToOnboarding={() => {
                         setAuthModalOpen(false);
