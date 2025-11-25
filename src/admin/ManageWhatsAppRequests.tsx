@@ -9,13 +9,15 @@ interface ManageWhatsAppRequestsProps {
 
 const ManageWhatsAppRequests: React.FC<ManageWhatsAppRequestsProps> = ({ payments, onActivate }) => {
     
-    // Filter only Pending payments
+    // Filter only Pending payments and sort by date (newest first)
     const pendingRequests = useMemo(() => {
-        return payments.filter(p => p.status === 'Pending');
+        return payments
+            .filter(p => p.status === 'Pending')
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [payments]);
 
     const handleActivateClick = (paymentId: string, userName: string) => {
-        if (window.confirm(`هل أنت متأكد من تفعيل الدورة للطالب ${userName}؟`)) {
+        if (window.confirm(`هل أنت متأكد من تفعيل الدورة للطالب ${userName}؟\nسيتم إضافة الدورة إلى ملف الطالب فوراً.`)) {
             onActivate(paymentId);
         }
     };
@@ -25,7 +27,7 @@ const ManageWhatsAppRequests: React.FC<ManageWhatsAppRequestsProps> = ({ payment
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800">الدورات عبر واتساب</h1>
-                    <p className="text-gray-500 mt-1">قائمة الطلاب الذين ينتظرون تفعيل دوراتهم بعد الدفع اليدوي.</p>
+                    <p className="text-gray-500 mt-1">قائمة الطلاب الذين ينتظرون تفعيل دوراتهم بعد الدفع اليدوي (كليك).</p>
                 </div>
                 <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-200 text-blue-800 font-semibold">
                     عدد الطلبات المعلقة: {pendingRequests.length}
