@@ -1,6 +1,7 @@
+
 import React from 'react';
 
-export type AdminView = 'content' | 'users' | 'teachers' | 'courses' | 'testimonials' | 'blog' | 'heroImages' | 'onboarding' | 'staff' | 'payments';
+export type AdminView = 'content' | 'users' | 'teachers' | 'courses' | 'testimonials' | 'blog' | 'heroImages' | 'onboarding' | 'staff' | 'payments' | 'whatsapp-courses';
 
 interface AdminNavProps {
     activeView: AdminView;
@@ -10,6 +11,7 @@ interface AdminNavProps {
 
 const AdminNav: React.FC<AdminNavProps> = ({ activeView, setActiveView, onLogout }) => {
     const navItems = [
+        { id: 'whatsapp-courses', label: 'الدورات عبر واتساب', icon: '💬' },
         { id: 'content', label: 'إدارة المحتوى' },
         { id: 'heroImages', label: 'إدارة بنر الرئيسية' },
         { id: 'onboarding', label: 'مراحل التسجيل' },
@@ -32,9 +34,10 @@ const AdminNav: React.FC<AdminNavProps> = ({ activeView, setActiveView, onLogout
                     <button
                         key={item.id}
                         onClick={() => setActiveView(item.id as AdminView)}
-                        className={`w-full text-right p-3 rounded-lg transition-colors ${activeView === item.id ? 'bg-blue-900 text-white' : 'hover:bg-gray-100 text-gray-700'}`}
+                        className={`w-full text-right p-3 rounded-lg transition-colors flex items-center justify-between ${activeView === item.id ? 'bg-blue-900 text-white' : 'hover:bg-gray-100 text-gray-700'}`}
                     >
                         <span className="font-semibold">{item.label}</span>
+                        {item.icon && <span>{item.icon}</span>}
                     </button>
                 ))}
             </nav>

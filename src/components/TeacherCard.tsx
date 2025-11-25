@@ -22,8 +22,13 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onSelect, strings, l
 
     return (
         <div className={`${containerClasses} ${clickableClasses}`} onClick={handleCardClick}>
-            <div className="h-48 w-full overflow-hidden">
-                <img src={teacher.avatarUrl} alt={teacher.name} className="w-full h-full object-cover"/>
+            {/* Changed height to h-64 and use object-contain + background to show full image */}
+            <div className="h-64 w-full overflow-hidden bg-gray-50 flex items-center justify-center">
+                <img 
+                    src={teacher.avatarUrl} 
+                    alt={teacher.name} 
+                    className="w-full h-full object-contain"
+                />
             </div>
             <div className="p-6">
                 <h3 className="text-2xl font-bold text-blue-900 mb-2">{teacher.name}</h3>

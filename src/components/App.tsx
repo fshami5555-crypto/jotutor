@@ -252,6 +252,11 @@ const App: React.FC = () => {
         setStaff(updatedStaff);
         overwriteCollection('Staff', updatedStaff).catch(e => console.error("Failed to save staff:", e));
     };
+    const handleSetPayments = (newPayments: React.SetStateAction<Payment[]>) => {
+        const updatedPayments = typeof newPayments === 'function' ? newPayments(payments) : newPayments;
+        setPayments(updatedPayments);
+        overwriteCollection('Payments', updatedPayments).catch(e => console.error("Failed to save payments:", e));
+    };
     const handleSetTeachers = (newTeachers: React.SetStateAction<Teacher[]>) => {
         const updatedTeachers = typeof newTeachers === 'function' ? newTeachers(teachers) : newTeachers;
         setTeachers(updatedTeachers);
@@ -406,7 +411,7 @@ const App: React.FC = () => {
         }
     };
 
-    const handleEnrollInCourse = async (course: Course) => {
+    const handleEnrollInCourse = async (course: Course, status: 'Success' | 'Pending' = 'Success') => {
         if (!userProfile) {
             alert("Please log in to enroll in a course.");
             setAuthModalOpen(true);
@@ -414,21 +419,24 @@ const App: React.FC = () => {
         }
 
         try {
-            // 1. Update user profile with new course
             const currentEnrolled = userProfile.enrolledCourses || [];
             if (currentEnrolled.includes(course.id)) {
                 alert("You are already enrolled in this course.");
                 handleNavigate('dashboard');
                 return;
             }
-            const updatedProfile: UserProfile = {
-                ...userProfile,
-                enrolledCourses: [...currentEnrolled, course.id]
-            };
-            await setDocument('Users', userProfile.id, updatedProfile);
-            setUserProfile(updatedProfile); // Update local state immediately
 
-            // 2. Create a payment record for admin tracking
+            // If status is Pending (Local Payment), we do NOT update the user profile yet.
+            // We only create the payment record.
+            if (status === 'Success') {
+                const updatedProfile: UserProfile = {
+                    ...userProfile,
+                    enrolledCourses: [...currentEnrolled, course.id]
+                };
+                await setDocument('Users', userProfile.id, updatedProfile);
+                setUserProfile(updatedProfile); // Update local state immediately
+            }
+
             // Determine price based on current currency selection. SAFE FALLBACK.
             let paymentAmount = 0;
             if (currency === 'USD') {
@@ -448,17 +456,62 @@ const App: React.FC = () => {
                 courseName: course.title,
                 amount: paymentAmount,
                 currency: currency,
-                status: 'Success'
+                status: status
             };
+            
+            // Save payment record
             await setDocument('Payments', newPayment.id, newPayment);
+            
+            // Update payments state locally if admin
+            setPayments(prev => [...prev, newPayment]);
 
-            // 3. Provide feedback and navigate
-            alert(`${strings.paymentSuccess} You have enrolled in ${course.title}.`);
-            handleNavigate('dashboard');
+            if (status === 'Success') {
+                alert(`${strings.paymentSuccess} You have enrolled in ${course.title}.`);
+                handleNavigate('dashboard');
+            }
+            // If Pending, the PaymentPage handles the UI (showing transfer details)
 
         } catch (error) {
             console.error("Error enrolling in course:", error);
-            alert("There was an error enrolling you in the course. Please try again.");
+            alert("There was an error creating the request. Please try again.");
+        }
+    };
+
+    // Admin Function: Activate a Pending Course
+    const handleActivateCourse = async (paymentId: string) => {
+        const paymentToActivate = payments.find(p => p.id === paymentId);
+        if (!paymentToActivate) return;
+
+        const targetUser = users.find(u => u.id === paymentToActivate.userId);
+        if (!targetUser) {
+            // Try fetching specific user if not in loaded list
+            // For simplicity, we assume users are loaded for Admin
+            console.error("User not found for activation");
+            return;
+        }
+
+        try {
+            // 1. Update Payment Status to Success
+            const updatedPayment = { ...paymentToActivate, status: 'Success' as const };
+            await setDocument('Payments', paymentId, updatedPayment);
+            setPayments(prev => prev.map(p => p.id === paymentId ? updatedPayment : p));
+
+            // 2. Enroll User in Course
+            const currentEnrolled = targetUser.enrolledCourses || [];
+            // Check if already enrolled to avoid duplicates
+            if (!currentEnrolled.includes(paymentToActivate.courseId)) {
+                const updatedUser = {
+                    ...targetUser,
+                    enrolledCourses: [...currentEnrolled, paymentToActivate.courseId]
+                };
+                await setDocument('Users', targetUser.id, updatedUser);
+                setUsers(prev => prev.map(u => u.id === targetUser.id ? updatedUser : u));
+            }
+
+            alert("Course activated successfully!");
+        } catch (error) {
+            console.error("Error activating course:", error);
+            alert("Failed to activate course.");
         }
     };
 
@@ -572,12 +625,13 @@ const App: React.FC = () => {
                     onboardingOptions={onboardingOptions} setOnboardingOptions={handleSetOnboardingOptions}
                     users={users} setUsers={handleSetUsers}
                     staff={staff} setStaff={handleSetStaff}
-                    payments={payments}
+                    payments={payments} setPayments={handleSetPayments}
                     teachers={teachers} setTeachers={handleSetTeachers}
                     courses={courses} setCourses={handleSetCourses}
                     subjects={(onboardingOptions).subjects || []}
                     testimonials={testimonials} setTestimonials={handleSetTestimonials}
                     blogPosts={blogPosts} setBlogPosts={handleSetBlogPosts}
+                    onActivateCourse={handleActivateCourse}
                 />
             ) : <p>Access denied.</p>;
 

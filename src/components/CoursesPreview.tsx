@@ -14,7 +14,15 @@ interface CoursesPreviewProps {
 }
 
 const CoursesPreview: React.FC<CoursesPreviewProps> = ({ courses, onSelectCourse, onNavigate, currency, exchangeRate, content, strings }) => {
-    const coursesToShow = courses.slice(0, 4);
+    // Filter strictly for courses marked as 'isFeatured'.
+    // If no courses are featured, we can either show nothing or fallback to the first 4.
+    // Let's fallback to the most recent 4 (assumed to be at the top of the list) if nothing is featured, 
+    // to ensure the section isn't empty for new installs.
+    const featuredCourses = courses.filter(c => c.isFeatured);
+    
+    const coursesToShow = featuredCourses.length > 0 
+        ? featuredCourses.slice(0, 4) 
+        : courses.slice(0, 4);
 
     return (
         <section id="courses-preview" className="py-20 bg-white">

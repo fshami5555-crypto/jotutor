@@ -53,6 +53,7 @@ export interface Course {
     imageUrl: string;
     category: string;
     curriculum?: string; // Added curriculum field
+    isFeatured?: boolean; // Added isFeatured field
 }
 
 export interface UserProfile {
@@ -190,5 +191,5 @@ export interface Payment {
     courseName: string;
     amount: number;
     currency: Currency;
-    status: 'Success' | 'Failed';
+    status: 'Success' | 'Failed' | 'Pending';
 }

@@ -16,7 +16,12 @@ const TeacherProfilePage: React.FC<TeacherProfilePageProps> = ({ teacher, string
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Left Column: Avatar and Basic Info */}
                         <div className="md:col-span-1 text-center">
-                            <img src={teacher.avatarUrl} alt={teacher.name} className="w-48 h-48 rounded-full mx-auto object-cover border-4 border-green-400" />
+                            {/* Changed from rounded-full/object-cover to rounded-lg/object-contain to show full image */}
+                            <img 
+                                src={teacher.avatarUrl} 
+                                alt={teacher.name} 
+                                className="w-full max-w-[300px] h-auto max-h-[400px] rounded-lg mx-auto object-contain border-4 border-green-400 shadow-lg" 
+                            />
                             <h1 className="text-3xl font-bold text-blue-900 mt-6">{teacher.name}</h1>
                             <p className="text-gray-600 mt-2">{teacher.level} ・ {teacher.experience} {strings.yearsExperience}</p>
                             <div className="flex justify-center items-center mt-4">

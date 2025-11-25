@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Course } from '../types';
 import { seedInitialCourses } from '../googleSheetService';
@@ -23,6 +24,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
         imageUrl: course?.imageUrl || 'https://picsum.photos/seed/course/400/225',
         category: course?.category || (categories.length > 0 ? categories[0] : ''),
         curriculum: course?.curriculum || (curriculums.length > 0 ? curriculums[0] : ''),
+        isFeatured: course?.isFeatured || false,
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -85,6 +87,18 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
                         <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="رابط الصورة" className="p-2 border rounded md:col-span-2" />
                         <div className="md:col-span-2">
                             <textarea name="description" value={formData.description} onChange={handleChange} placeholder="وصف الدورة" rows={4} className="w-full p-2 border rounded"></textarea>
+                        </div>
+
+                        <div className="md:col-span-2 flex items-center mt-2">
+                            <input
+                                type="checkbox"
+                                id="isFeatured"
+                                name="isFeatured"
+                                checked={formData.isFeatured}
+                                onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                                className="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded ml-2"
+                            />
+                            <label htmlFor="isFeatured" className="text-sm text-gray-700 font-bold">إظهار في الصفحة الرئيسية</label>
                         </div>
                     </div>
                     <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
@@ -172,6 +186,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المعلم</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المنهاج</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">السعر (JOD)</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">مميز</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الإجراءات</th>
                             </tr>
                         </thead>
@@ -182,6 +197,9 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                                     <td className="py-3 px-4">{course.teacher}</td>
                                     <td className="py-3 px-4 text-gray-600 text-sm">{course.curriculum || '-'}</td>
                                     <td className="py-3 px-4">{course.priceJod} د.أ</td>
+                                    <td className="py-3 px-4 text-center text-xl">
+                                        {course.isFeatured ? <span title="يظهر في الصفحة الرئيسية">⭐</span> : ''}
+                                    </td>
                                     <td className="py-3 px-4 whitespace-nowrap">
                                         <button onClick={() => handleOpenModal(course)} className="text-blue-500 hover:underline mr-4">تعديل</button>
                                         <button onClick={() => handleRemoveCourse(course.id)} className="text-red-500 hover:underline">حذف</button>

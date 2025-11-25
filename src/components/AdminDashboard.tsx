@@ -5,7 +5,6 @@ import {
     Payment, Teacher, Course, Testimonial, BlogPost 
 } from '../types';
 
-// Fix: Updated imports to point to '../admin/' instead of './admin/'
 import AdminNav, { AdminView } from '../admin/AdminNav';
 import ManageContent from '../admin/ManageContent';
 import ManageCourses from '../admin/ManageCourses';
@@ -18,6 +17,7 @@ import ManageStaff from '../admin/ManageStaff';
 import ManagePayments from '../admin/ManagePayments';
 import AdminUserView from '../admin/AdminUserView';
 import ManageHeroSlides from '../admin/ManageHeroSlides';
+import ManageWhatsAppRequests from '../admin/ManageWhatsAppRequests';
 
 interface AdminDashboardProps {
     onLogout: () => void;
@@ -32,6 +32,7 @@ interface AdminDashboardProps {
     staff: StaffMember[];
     setStaff: React.Dispatch<React.SetStateAction<StaffMember[]>>;
     payments: Payment[];
+    setPayments: React.Dispatch<React.SetStateAction<Payment[]>>;
     teachers: Teacher[];
     setTeachers: React.Dispatch<React.SetStateAction<Teacher[]>>;
     courses: Course[];
@@ -41,10 +42,11 @@ interface AdminDashboardProps {
     setTestimonials: React.Dispatch<React.SetStateAction<Testimonial[]>>;
     blogPosts: BlogPost[];
     setBlogPosts: React.Dispatch<React.SetStateAction<BlogPost[]>>;
+    onActivateCourse: (paymentId: string) => Promise<void>;
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
-    const [activeView, setActiveView] = useState<AdminView>('content');
+    const [activeView, setActiveView] = useState<AdminView>('whatsapp-courses'); // Default to new view
     const [viewingUser, setViewingUser] = useState<UserProfile | null>(null);
 
     const handleViewUser = (user: UserProfile) => {
@@ -86,6 +88,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                 return <ManageBlog posts={props.blogPosts} setPosts={props.setBlogPosts} />;
             case 'heroImages':
                 return <ManageHeroSlides heroSlides={props.heroSlides} setHeroSlides={props.setHeroSlides} />;
+            case 'whatsapp-courses':
+                return <ManageWhatsAppRequests payments={props.payments} onActivate={props.onActivateCourse} />;
             default:
                 return <div>Welcome to the Admin Dashboard.</div>;
         }

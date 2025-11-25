@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Teacher } from '../types';
 
@@ -8,7 +7,6 @@ interface ManageTeachersProps {
 }
 
 const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Teacher) => void; onClose: () => void }> = ({ teacher, onSave, onClose }) => {
-    // Updated state to include rating and reviews in the form data
     const [formData, setFormData] = useState<Omit<Teacher, 'id'>>({
         name: teacher?.name || '',
         avatarUrl: teacher?.avatarUrl || 'https://picsum.photos/seed/new/200/200',
@@ -49,7 +47,20 @@ const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Te
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">{teacher ? 'تعديل بيانات المعلم' : 'إضافة معلم جديد'}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input name="name" value={formData.name} onChange={handleChange} placeholder="الاسم" className="p-2 border rounded" required />
-                        <input name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} placeholder="رابط الصورة" className="p-2 border rounded" />
+                        <div>
+                            <input name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} placeholder="رابط الصورة" className="w-full p-2 border rounded" />
+                            {/* Image Preview */}
+                            {formData.avatarUrl && (
+                                <div className="mt-2 flex justify-center bg-gray-50 p-2 border rounded">
+                                    <img 
+                                        src={formData.avatarUrl} 
+                                        alt="Preview" 
+                                        className="h-32 w-auto object-contain" 
+                                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    />
+                                </div>
+                            )}
+                        </div>
                         <input name="level" value={formData.level} onChange={handleChange} placeholder="المرحلة (مثال: ابتدائي, متوسط)" className="p-2 border rounded" />
                         <input name="experience" type="number" value={formData.experience} onChange={handleChange} placeholder="سنوات الخبرة" className="p-2 border rounded" />
                         
@@ -141,7 +152,8 @@ const ManageTeachers: React.FC<ManageTeachersProps> = ({ teachers, setTeachers }
                             {teachers.map(teacher => (
                                 <tr key={teacher.id} className="border-b">
                                     <td className="py-3 px-4 flex items-center">
-                                        <img src={teacher.avatarUrl} alt={teacher.name} className="w-10 h-10 rounded-full ml-4 object-cover" />
+                                        {/* Use object-contain for table thumbnail too */}
+                                        <img src={teacher.avatarUrl} alt={teacher.name} className="w-12 h-12 rounded bg-gray-100 ml-4 object-contain border" />
                                         {teacher.name}
                                     </td>
                                     <td className="py-3 px-4">
