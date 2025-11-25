@@ -120,7 +120,7 @@ export const translateContent = async (content: object, targetLanguage: string):
     }
 };
 
-export const getChatbotResponse = async (message: string, courses: Course[]): Promise<{ responseText: string; recommendedCourseIds: number[] }> => {
+export const getChatbotResponse = async (message: string, courses: Course[]): Promise<{ responseText: string; recommendedCourseIds: string[] }> => {
     const ai = getAiClient();
     if (!ai) {
         return {
@@ -180,9 +180,9 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
                         },
                         recommendedCourseIds: {
                             type: Type.ARRAY,
-                            description: "An array of course ID numbers that are relevant to the user's query. Return an empty array if no courses are relevant.",
+                            description: "An array of course IDs (strings) that are relevant to the user's query. Return an empty array if no courses are relevant.",
                             items: {
-                                type: Type.NUMBER,
+                                type: Type.STRING,
                             }
                         }
                     },

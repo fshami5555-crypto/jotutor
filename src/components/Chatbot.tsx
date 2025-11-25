@@ -68,8 +68,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
             // The AI uses priceJod for context
             const response = await getChatbotResponse(trimmedInput, courses);
             
+            // Fix: Compare strings directly. Do NOT cast to Number() because IDs are strings (e.g., "c1").
             const recommendedCourses = courses.filter(course => 
-                response.recommendedCourseIds.includes(Number(course.id)) // Gemini may return numbers
+                response.recommendedCourseIds.includes(String(course.id)) 
             );
             
             const botMessage: ChatMessage = {
