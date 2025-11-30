@@ -2,7 +2,7 @@
 export type Page = 
   'home' | 'teachers' | 'teacher-profile' | 'courses' | 'course-profile' | 
   'payment' | 'videos' | 'short-player' | 'blog' | 'article' | 'about' | 
-  'contact' | 'faq' | 'privacy' | 'terms' | 
+  'contact' | 'faq' | 'privacy' | 'terms' | 'payment-refund' |
   'dashboard' | 'admin-dashboard' | 'admin-user-view';
 
 export type DashboardView = 'profile' | 'courses' | 'wallet' | 'ai-assistant';
@@ -165,6 +165,7 @@ export interface SiteContent {
   contact: ContactContent;
   privacy: string;
   terms: string;
+  paymentRefundPolicy: string;
 }
 
 export interface ChatMessage {

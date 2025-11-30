@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { arStrings, enStrings } from '../localization';
 import { JOD_TO_USD_RATE } from '../constants';
@@ -38,6 +39,7 @@ import PrivacyPolicyPage from './PrivacyPolicyPage';
 import TermsPage from './TermsPage';
 import Chatbot from './Chatbot';
 import WelcomeModal from './WelcomeModal';
+import PaymentRefundPage from './PaymentRefundPage';
 
 // Data and Services
 import { initialData } from '../mockData';
@@ -557,7 +559,12 @@ const App: React.FC = () => {
         if (showOnboarding) {
              return (
                  <div className="container mx-auto px-6 py-12 max-w-4xl">
-                     <OnboardingWizard options={onboardingOptions!} onSignupSuccess={handleSignupSuccess} strings={strings}/>
+                     <OnboardingWizard 
+                        options={onboardingOptions!} 
+                        onSignupSuccess={handleSignupSuccess} 
+                        onClose={() => setShowOnboarding(false)}
+                        strings={strings}
+                    />
                 </div>
             );
         }
@@ -601,6 +608,7 @@ const App: React.FC = () => {
             case 'faq': return siteContent ? <FAQPage faqs={siteContent.faq} strings={strings} /> : null;
             case 'privacy': return siteContent ? <PrivacyPolicyPage content={siteContent.privacy} strings={strings} /> : null;
             case 'terms': return siteContent ? <TermsPage content={siteContent.terms} strings={strings} /> : null;
+            case 'payment-refund': return siteContent ? <PaymentRefundPage content={siteContent.paymentRefundPolicy} strings={strings} /> : null;
 
             case 'dashboard': return userProfile ? (
                 <Dashboard 

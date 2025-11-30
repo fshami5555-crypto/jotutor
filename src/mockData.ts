@@ -1,4 +1,5 @@
 
+
 // Fix: Added AboutContent to imports to resolve type error.
 import { UserProfile, Course, Teacher, Testimonial, BlogPost, HeroSlide, StaffMember, Payment, SiteContent, OnboardingOptions, AboutContent, HomepageContent } from './types';
 
@@ -279,7 +280,8 @@ const siteContent: SiteContent = {
     ],
     contact: { email: 'contact@jotutor.com', phone: '+962 79 123 4567', address: 'عمان, الأردن' },
     privacy: 'هنا نص سياسة الخصوصية الكامل...',
-    terms: 'هنا نص شروط وأحكام الاستخدام الكاملة...'
+    terms: 'هنا نص شروط وأحكام الاستخدام الكاملة...',
+    paymentRefundPolicy: 'سياسة الدفع والإرجاع هنا...',
 };
 
 export const initialData = {

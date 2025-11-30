@@ -1,10 +1,12 @@
 
+
 import React, { useState } from 'react';
 import { UserProfile, OnboardingOptions } from '../types';
 
 interface OnboardingWizardProps {
     options: OnboardingOptions;
     onSignupSuccess: (profile: UserProfile) => Promise<string | null>;
+    onClose: () => void;
     strings: { [key: string]: string };
 }
 
@@ -26,7 +28,7 @@ const Stepper: React.FC<{ currentStep: number; totalSteps: number }> = ({ curren
     );
 };
 
-const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSuccess, strings }) => {
+const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSuccess, onClose, strings }) => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState<Partial<UserProfile>>({
         userType: 'Student',
@@ -333,26 +335,39 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-2 md:p-4">
-            <Stepper currentStep={step} totalSteps={totalSteps} />
-            <div className="min-h-[350px] flex flex-col justify-center py-4 bg-gray-50 p-6 rounded-lg shadow-inner">
-                {renderStepContent()}
-            </div>
-             {error && <p className="text-red-500 text-center text-sm mt-4">{error}</p>}
-            <div className="flex justify-between mt-6">
-                {step > 1 ? (
-                    <button type="button" onClick={handleBack} className="bg-gray-200 text-gray-800 py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">{strings.back}</button>
-                ) : <div />}
-                
-                {step < totalSteps ? (
-                    <button type="button" onClick={handleNext} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors">{strings.next}</button>
-                ) : (
-                    <button type="submit" disabled={!termsAgreed || isSubmitting} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        {isSubmitting ? `${strings.generating}...` : strings.finishSignup}
-                    </button>
-                )}
-            </div>
-        </form>
+        <div className="bg-white rounded-lg shadow-2xl relative p-2 md:p-4">
+            {/* Close Button */}
+            <button 
+                onClick={onClose} 
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+                aria-label="Close"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <form onSubmit={handleSubmit} className="mt-8">
+                <Stepper currentStep={step} totalSteps={totalSteps} />
+                <div className="min-h-[350px] flex flex-col justify-center py-4 bg-gray-50 p-6 rounded-lg shadow-inner">
+                    {renderStepContent()}
+                </div>
+                 {error && <p className="text-red-500 text-center text-sm mt-4">{error}</p>}
+                <div className="flex justify-between mt-6">
+                    {step > 1 ? (
+                        <button type="button" onClick={handleBack} className="bg-gray-200 text-gray-800 py-2 px-6 rounded-md hover:bg-gray-300 transition-colors">{strings.back}</button>
+                    ) : <div />}
+                    
+                    {step < totalSteps ? (
+                        <button type="button" onClick={handleNext} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors">{strings.next}</button>
+                    ) : (
+                        <button type="submit" disabled={!termsAgreed || isSubmitting} className="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            {isSubmitting ? `${strings.generating}...` : strings.finishSignup}
+                        </button>
+                    )}
+                </div>
+            </form>
+        </div>
     );
 };
 

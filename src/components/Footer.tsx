@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Page } from '../types';
 
@@ -17,6 +18,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, strings }) => {
   const legalLinks: { label: string; page: Page }[] = [
     { label: strings.privacyTitle, page: 'privacy' },
     { label: strings.termsTitle, page: 'terms' },
+    { label: strings.paymentRefundTitle, page: 'payment-refund' },
   ];
 
   const socialLinks = [

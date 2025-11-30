@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { SiteContent, FAQItem, AboutContent, ContactContent, HomepageContent } from '../types';
 import { initialData } from '../mockData';
@@ -8,7 +9,7 @@ interface ManageContentProps {
   onUpdate: (newContent: SiteContent) => void;
 }
 
-type ContentTab = 'homepage' | 'about' | 'faq' | 'contact' | 'privacy' | 'terms' | 'config';
+type ContentTab = 'homepage' | 'about' | 'faq' | 'contact' | 'privacy' | 'terms' | 'paymentRefund' | 'config';
 
 const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
   const [activeTab, setActiveTab] = useState<ContentTab>('homepage');
@@ -55,7 +56,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
     setLocalContent(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>, section: 'privacy' | 'terms') => {
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>, section: 'privacy' | 'terms' | 'paymentRefundPolicy') => {
     const { name, value } = e.target;
     setLocalContent(prev => ({ ...prev, [name]: value }));
   };
@@ -208,7 +209,6 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                     </div>
                 </div>
             );
-        // ... other cases remain same as existing file ...
         case 'about':
         return (
             <div className="space-y-6">
@@ -308,6 +308,13 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                 <textarea name="terms" value={localContent.terms} onChange={(e) => handleTextChange(e, 'terms')} rows={10} className="w-full p-2 border rounded-md"></textarea>
             </div>
         );
+      case 'paymentRefund':
+        return (
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">محتوى صفحة "سياسة الدفع والارجاع"</label>
+                <textarea name="paymentRefundPolicy" value={localContent.paymentRefundPolicy || ''} onChange={(e) => handleTextChange(e, 'paymentRefundPolicy')} rows={10} className="w-full p-2 border rounded-md"></textarea>
+            </div>
+        );
       case 'config':
         return (
             <div className="space-y-4">
@@ -328,9 +335,10 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
       { id: 'about', label: 'عن JoTutor' },
       { id: 'faq', label: 'الأسئلة الشائعة' },
       { id: 'contact', label: 'معلومات التواصل' },
-      { id: 'config', label: 'إعدادات النظام (API)' }, // New Tab
+      { id: 'config', label: 'إعدادات النظام (API)' },
       { id: 'privacy', label: 'سياسة الخصوصية' },
-      { id: 'terms', label: 'شروط الاستخدام' }
+      { id: 'terms', label: 'شروط الاستخدام' },
+      { id: 'paymentRefund', label: 'سياسة الدفع والارجاع' } // New Tab
   ];
 
   return (

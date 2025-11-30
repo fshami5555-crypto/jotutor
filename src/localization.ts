@@ -1,4 +1,5 @@
 
+
 // This file contains all the string resources for the application.
 
 export const arStrings = {
@@ -145,6 +146,7 @@ export const arStrings = {
   // Pages
   privacyTitle: 'سياسة الخصوصية',
   termsTitle: 'شروط الاستخدام',
+  paymentRefundTitle: 'سياسة الدفع والإرجاع',
   contactTitle: 'تواصل معنا',
   contactInfo: 'معلومات التواصل',
   contactFormTitle: 'أرسل لنا رسالة',
@@ -335,6 +337,7 @@ export const enStrings = {
   noSuggestedCoursesDesc: 'Explore our course library to find what suits you.',
   privacyTitle: 'Privacy Policy',
   termsTitle: 'Terms of Service',
+  paymentRefundTitle: 'Payment & Refund Policy',
   contactTitle: 'Contact Us',
   contactInfo: 'Contact Information',
   contactFormTitle: 'Send Us a Message',
