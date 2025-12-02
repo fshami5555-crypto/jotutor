@@ -2,8 +2,19 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Course } from '../types';
 
-// Store the API key dynamically (initially try env, then waiting for setGeminiApiKey)
-let dynamicApiKey = process.env.API_KEY || '';
+// Safely retrieve the API key. 
+// Vite replaces `process.env.API_KEY` during build, but accessing `process` object directly can crash browsers.
+// We check if process exists before accessing properties on it, or use the replaced string.
+const getEnvApiKey = () => {
+    try {
+        // @ts-ignore
+        return process.env.API_KEY; 
+    } catch (e) {
+        return '';
+    }
+};
+
+let dynamicApiKey = getEnvApiKey();
 
 // Export a function to set the API key at runtime
 export const setGeminiApiKey = (key: string) => {
@@ -13,7 +24,7 @@ export const setGeminiApiKey = (key: string) => {
 // Helper to lazily get the AI client
 const getAiClient = () => {
     if (!dynamicApiKey) {
-        console.error("Gemini API Key is missing. Please set the API_KEY environment variable or configure it in the Admin Dashboard.");
+        console.warn("Gemini API Key is missing. AI features will be disabled until configured.");
         return null;
     }
     return new GoogleGenAI({ apiKey: dynamicApiKey });

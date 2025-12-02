@@ -216,10 +216,12 @@ const App: React.FC = () => {
                 } else {
                     // Fix: Use Firebase v8 compat syntax to resolve module errors.
                     try {
-                        const userDocRef = db.collection('users').doc(user.uid);
-                        const userDocSnap = await userDocRef.get();
-                        if (userDocSnap.exists) {
-                            setUserProfile({ ...userDocSnap.data(), id: user.uid } as UserProfile);
+                        if (db) {
+                            const userDocRef = db.collection('users').doc(user.uid);
+                            const userDocSnap = await userDocRef.get();
+                            if (userDocSnap.exists) {
+                                setUserProfile({ ...userDocSnap.data(), id: user.uid } as UserProfile);
+                            }
                         }
                     } catch (err) {
                         console.error("Failed to fetch user profile", err);
@@ -348,6 +350,10 @@ const App: React.FC = () => {
     };
 
     const handleLogin = async (email: string, password: string): Promise<boolean> => {
+        if (!auth) {
+            alert("Authentication service is unavailable. Please check your connection.");
+            return false;
+        }
         try {
             // Fix: Use Firebase v8 compat syntax to resolve module errors.
             await auth.signInWithEmailAndPassword(email, password);
@@ -371,12 +377,16 @@ const App: React.FC = () => {
     };
 
     const handleLogout = () => {
-        // Fix: Use Firebase v8 compat syntax to resolve module errors.
-        auth.signOut();
+        if (auth) {
+            auth.signOut();
+        }
         handleNavigate('home');
     };
     
     const handleSignupSuccess = async (profile: UserProfile): Promise<string | null> => {
+        if (!auth) {
+            return "Authentication service unavailable.";
+        }
         if (!profile.email || !profile.password) {
             console.error("Email or password missing for signup.");
             return "Email or password missing for signup.";
