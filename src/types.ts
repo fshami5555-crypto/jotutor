@@ -57,7 +57,7 @@ export interface Course {
     curriculum?: string;
     isFeatured?: boolean;
     
-    // New fields requested
+    // New fields
     sessionCount?: number;
     totalHours?: number; // Duration of each session
     includedSubjects?: string; // The subjects included text

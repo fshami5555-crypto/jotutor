@@ -17,6 +17,7 @@ export const arStrings = {
   welcome: 'أهلاً',
   dashboard: 'لوحة التحكم',
   logout: 'تسجيل الخروج',
+  back: 'رجوع',
   
   // Hero Section
   heroButton: 'ابدأ رحلتك التعليمية',
@@ -119,7 +120,6 @@ export const arStrings = {
   onboardingStep8Desc: 'هل أنت مستعد لبدء رحلتك التعليمية؟',
   verificationMessage: 'سنقوم بمراجعة طلبك وسيتواصل معك أحد مستشارينا التعليميين خلال 24 ساعة.',
   agreeToTerms: 'أوافق على الشروط والأحكام وسياسة الخصوصية.',
-  back: 'رجوع',
   next: 'التالي',
   finishSignup: 'إنهاء التسجيل',
   errorGradeRequired: 'الرجاء إدخال الصف الدراسي.',
@@ -230,6 +230,7 @@ export const enStrings = {
   welcome: 'Welcome',
   dashboard: 'Dashboard',
   logout: 'Logout',
+  back: 'Back',
   heroButton: 'Start Your Learning Journey',
   featuresTitle: 'Why Choose JoTutor?',
   featuresSubtitle: 'We offer a unique learning experience tailored to your needs.',
@@ -316,7 +317,6 @@ export const enStrings = {
   onboardingStep8Desc: "Are you ready to start your learning journey?",
   verificationMessage: "We will review your application and one of our educational consultants will contact you within 24 hours.",
   agreeToTerms: "I agree to the Terms & Conditions and Privacy Policy.",
-  back: "Back",
   next: "Next",
   finishSignup: "Finish Signup",
   errorGradeRequired: "Please enter your grade.",

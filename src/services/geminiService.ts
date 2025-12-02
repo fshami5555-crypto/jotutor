@@ -32,6 +32,10 @@ const getAiClient = () => {
 
 /**
  * Generates a lesson plan using the Gemini API.
+ * @param subject The subject of the lesson.
+ * @param level The educational level (e.g., elementary, high school).
+ * @param topic The specific topic for the lesson plan.
+ * @returns A string containing the generated lesson plan.
  */
 export const generateLessonPlan = async (subject: string, level: string, topic: string): Promise<string> => {
     const ai = getAiClient();
@@ -73,6 +77,9 @@ export const generateLessonPlan = async (subject: string, level: string, topic: 
 
 /**
  * Translates a JSON object's values to a target language using the Gemini API.
+ * @param content The JSON object to translate.
+ * @param targetLanguage The target language (e.g., "English").
+ * @returns A new JSON object with translated string values.
  */
 export const translateContent = async (content: object, targetLanguage: string): Promise<any> => {
     const ai = getAiClient();
@@ -81,7 +88,7 @@ export const translateContent = async (content: object, targetLanguage: string):
         return content; // Return original content if AI is unavailable
     }
 
-    const model = 'gemini-2.5-pro';
+    const model = 'gemini-2.5-pro'; // Use a powerful model for reliable JSON translation
 
     const prompt = `
         You are an expert localization specialist. Translate all Arabic string values in the following JSON object to professional, natural-sounding ${targetLanguage}.
@@ -110,6 +117,7 @@ export const translateContent = async (content: object, targetLanguage: string):
         let jsonStr = response.text?.trim();
         if (!jsonStr) return content;
 
+        // Clean up potential markdown wrappers from the response
         if (jsonStr.startsWith('```json')) {
             jsonStr = jsonStr.substring(7, jsonStr.length - 3).trim();
         } else if (jsonStr.startsWith('```')) {
@@ -134,7 +142,7 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
 
     const model = 'gemini-2.5-flash';
 
-    // Prepare a lightweight course list for the AI
+    // Prepare a lightweight course list for the AI, including the CURRICULUM
     const courseData = courses.map(c => ({
         id: c.id,
         title: c.title,
@@ -162,7 +170,7 @@ export const getChatbotResponse = async (message: string, courses: Course[]): Pr
         التعليمات:
         1.  عرف عن نفسك باسم "Mr.Pincel" عند الحاجة.
         2.  تحدث باللغة العربية بأسلوب ودود ومساعد.
-        3.  حلل رسالة المستخدم لفهم ما يبحث عنه. انتبه للمادة، المستوى، والمنهج.
+        3.  حلل رسالة المستخدم لفهم ما يبحث عنه. انتبه للمادة، المستوى، والمنهج (مثل دولي، وطني، IGCSE).
         4.  إذا وجدت دورات مناسبة في القائمة، **يجب** أن تضع أرقام معرفاتها (IDs) في مصفوفة recommendedCourseIds في ردك.
         5.  في نص الرد (responseText)، قم بدعوة المستخدم للاطلاع على الدورات المقترحة أدناه.
         6.  يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، ولا شيء غير ذلك.
