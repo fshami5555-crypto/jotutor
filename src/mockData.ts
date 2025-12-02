@@ -1,5 +1,4 @@
 
-
 // Fix: Added AboutContent to imports to resolve type error.
 import { UserProfile, Course, Teacher, Testimonial, BlogPost, HeroSlide, StaffMember, Payment, SiteContent, OnboardingOptions, AboutContent, HomepageContent } from './types';
 
@@ -30,8 +29,8 @@ const staff: StaffMember[] = [
 ];
 
 const payments: Payment[] = [
-    { id: '101', date: new Date('2023-10-26T10:00:00Z').toISOString(), userId: '1', userName: 'طالب جديد', courseId: '1', courseName: 'باقة الرياضيات للمرحلة الابتدائية', amount: 179, currency: 'JOD', status: 'Success' },
-    { id: '102', date: new Date('2023-10-25T14:30:00Z').toISOString(), userId: '2', userName: 'مستخدم آخر', courseId: '3', courseName: 'باقة اللغة الإنجليزية المتقدمة', amount: 247, currency: 'JOD', status: 'Failed' },
+    { id: '101', date: new Date('2023-10-26T10:00:00Z').toISOString(), userId: '1', userName: 'طالب جديد', courseId: 'c1', courseName: 'باقة الرياضيات للمرحلة الابتدائية', amount: 179, currency: 'JOD', status: 'Success' },
+    { id: '102', date: new Date('2023-10-25T14:30:00Z').toISOString(), userId: '2', userName: 'مستخدم آخر', courseId: 'c3', courseName: 'باقة اللغة الإنجليزية المتقدمة', amount: 247, currency: 'JOD', status: 'Failed' },
 ];
 
 const teachers: Teacher[] = [

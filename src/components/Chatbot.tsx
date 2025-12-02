@@ -68,7 +68,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
             // The AI uses priceJod for context
             const response = await getChatbotResponse(trimmedInput, courses);
             
-            // Fix: Compare strings directly. Do NOT cast to Number() because IDs are strings (e.g., "c1").
             const recommendedCourses = courses.filter(course => 
                 response.recommendedCourseIds.includes(String(course.id)) 
             );
@@ -150,7 +149,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courses, onSelectCourse, strings, lan
                                                 {msg.courses.map(course => (
                                                     <div key={course.id} onClick={() => { onSelectCourse(course.id); setIsOpen(false); }} className="bg-white p-2 rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow">
                                                         <p className="font-bold text-blue-900 text-sm">{course.title}</p>
-                                                        <p className="text-xs text-gray-600">{course.category} - {course.priceJod} {strings.jod}</p>
+                                                        <p className="text-xs text-gray-600">{course.category} - {course.priceJod || course.price || 0} {strings.jod}</p>
                                                     </div>
                                                 ))}
                                             </div>

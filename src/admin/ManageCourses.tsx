@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Course } from '../types';
 import { seedInitialCourses } from '../googleSheetService';
@@ -17,7 +16,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
         title: course?.title || '',
         description: course?.description || '',
         teacher: course?.teacher || '',
-        priceJod: course?.priceJod || 50,
+        priceJod: course?.priceJod || (course?.price || 50),
         priceUsd: course?.priceUsd || 70,
         priceSar: course?.priceSar || 265,
         duration: course?.duration || '4 أسابيع',
@@ -28,6 +27,7 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
         isFeatured: course?.isFeatured || false,
         sessionCount: course?.sessionCount || 0,
         totalHours: course?.totalHours || 0,
+        includedSubjects: course?.includedSubjects || '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -69,6 +69,12 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
                             </select>
                         </div>
                         
+                        {/* Included Subjects */}
+                        <div className="md:col-span-2">
+                            <label className="block text-xs text-gray-500 mb-1">المواد التي تشملها الدورة (تشمل المواد التالية)</label>
+                            <input name="includedSubjects" value={formData.includedSubjects} onChange={handleChange} placeholder="مثال: الرياضيات، الفيزياء، الكيمياء" className="w-full p-2 border rounded" />
+                        </div>
+
                         {/* New Fields: Session Count and Hours */}
                         <div className="grid grid-cols-2 gap-2 bg-blue-50 p-2 rounded border md:col-span-2">
                              <div className="col-span-2 mb-1 text-sm font-semibold text-gray-700">تفاصيل الحصص والساعات:</div>
@@ -77,8 +83,8 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
                                 <input name="sessionCount" type="number" value={formData.sessionCount} onChange={handleChange} placeholder="عدد الحصص" className="w-full p-2 border rounded" />
                              </div>
                              <div>
-                                <label className="block text-xs text-gray-500 mb-1">عدد الساعات</label>
-                                <input name="totalHours" type="number" value={formData.totalHours} onChange={handleChange} placeholder="عدد الساعات" className="w-full p-2 border rounded" />
+                                <label className="block text-xs text-gray-500 mb-1">مدة الحصة (ساعة/لكل حصة)</label>
+                                <input name="totalHours" type="number" value={formData.totalHours} onChange={handleChange} placeholder="مدة الحصة" className="w-full p-2 border rounded" />
                              </div>
                         </div>
 
@@ -202,7 +208,7 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المعلم</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">المنهاج</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الحصص</th>
-                                <th className="text-right py-3 px-4 font-semibold text-sm">الساعات</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">المدة</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">السعر (JOD)</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">مميز</th>
                                 <th className="text-right py-3 px-4 font-semibold text-sm">الإجراءات</th>
@@ -215,8 +221,8 @@ const ManageCourses: React.FC<ManageCoursesProps> = ({ courses, setCourses, cour
                                     <td className="py-3 px-4">{course.teacher}</td>
                                     <td className="py-3 px-4 text-gray-600 text-sm">{course.curriculum || '-'}</td>
                                     <td className="py-3 px-4">{course.sessionCount || '-'}</td>
-                                    <td className="py-3 px-4">{course.totalHours || '-'}</td>
-                                    <td className="py-3 px-4">{course.priceJod} د.أ</td>
+                                    <td className="py-3 px-4">{course.totalHours ? `${course.totalHours} س/حصة` : '-'}</td>
+                                    <td className="py-3 px-4">{course.priceJod || course.price} د.أ</td>
                                     <td className="py-3 px-4 text-center text-xl">
                                         {course.isFeatured ? <span title="يظهر في الصفحة الرئيسية">⭐</span> : ''}
                                     </td>

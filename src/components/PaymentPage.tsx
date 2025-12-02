@@ -18,13 +18,13 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
     let currencySymbol = '';
 
     if (currency === 'USD') {
-        price = course.priceUsd ?? 0;
+        price = course.priceUsd ?? (course.price ? course.price * 1.41 : 0);
         currencySymbol = strings.usd;
     } else if (currency === 'SAR') {
-        price = course.priceSar ?? 0;
+        price = course.priceSar ?? (course.price ? course.price * 5.3 : 0);
         currencySymbol = strings.sar;
     } else {
-        price = course.priceJod ?? 0;
+        price = course.priceJod ?? course.price ?? 0;
         currencySymbol = strings.jod;
     }
 

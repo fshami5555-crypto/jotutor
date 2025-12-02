@@ -1,5 +1,4 @@
 
-
 // This file contains all the string resources for the application.
 
 export const arStrings = {
@@ -166,7 +165,7 @@ export const arStrings = {
   blogTitle: 'مدونة JoTutor',
   by: 'تشمل المواد التالية',
   sessions: 'حصص',
-  hours: 'ساعات',
+  hours: 'ساعة/لكل حصة',
   readMore: 'اقرأ المزيد',
   backToBlog: 'العودة إلى المدونة',
   videosTitle: 'فيديوهات تعليمية قصيرة',
@@ -359,7 +358,7 @@ export const enStrings = {
   blogTitle: 'JoTutor Blog',
   by: 'Includes subjects:',
   sessions: 'Sessions',
-  hours: 'Hours',
+  hours: 'Hour/Per Session',
   readMore: 'Read More',
   backToBlog: 'Back to Blog',
   videosTitle: 'Short Educational Videos',

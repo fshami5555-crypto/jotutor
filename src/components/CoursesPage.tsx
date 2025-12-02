@@ -23,7 +23,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
   const curriculums = useMemo(() => ['all', ...Array.from(new Set(courses.map(c => c.curriculum).filter(Boolean) as string[]))], [courses]);
 
   const filteredAndSortedCourses = useMemo(() => {
-    let result = [...courses]; // Create a copy to avoid mutating the original prop
+    let result = [...courses]; 
 
     if (selectedCategory !== 'all') {
       result = result.filter(course => course.category === selectedCategory);
@@ -37,18 +37,16 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
       result = result.filter(course => course.curriculum === selectedCurriculum);
     }
 
+    const getPrice = (c: Course) => {
+        if (currency === 'USD') return c.priceUsd ?? (c.price ? c.price * 1.41 : 0);
+        if (currency === 'SAR') return c.priceSar ?? (c.price ? c.price * 5.3 : 0);
+        return c.priceJod ?? c.price ?? 0;
+    };
+
     if (sortBy === 'price-asc') {
-      result.sort((a, b) => {
-          const priceA = (currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod)) || 0;
-          const priceB = (currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod)) || 0;
-          return priceA - priceB;
-      });
+      result.sort((a, b) => getPrice(a) - getPrice(b));
     } else if (sortBy === 'price-desc') {
-      result.sort((a, b) => {
-          const priceA = (currency === 'USD' ? a.priceUsd : (currency === 'SAR' ? a.priceSar : a.priceJod)) || 0;
-          const priceB = (currency === 'USD' ? b.priceUsd : (currency === 'SAR' ? b.priceSar : b.priceJod)) || 0;
-          return priceB - priceA;
-      });
+      result.sort((a, b) => getPrice(b) - getPrice(a));
     }
 
     return result;
@@ -62,10 +60,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
           <p className="mt-4 text-lg text-gray-600">{strings.coursesSubtitle}</p>
         </div>
 
-        {/* Filters and Sorting */}
         <div className="bg-white p-4 rounded-lg shadow-md mb-12 max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Category Filter */}
                 <div>
                     <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700">{strings.category}</label>
                     <select
@@ -78,7 +74,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
                         {categories.filter(c => c !== 'all').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                     </select>
                 </div>
-                {/* Level Filter */}
                 <div>
                     <label htmlFor="level-filter" className="block text-sm font-medium text-gray-700">{strings.level}</label>
                     <select
@@ -91,7 +86,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
                         {levels.filter(l => l !== 'all').map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
                     </select>
                 </div>
-                 {/* Curriculum Filter */}
                  <div>
                     <label htmlFor="curriculum-filter" className="block text-sm font-medium text-gray-700">المنهاج</label>
                     <select
@@ -104,7 +98,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
                         {curriculums.filter(c => c !== 'all').map(curr => <option key={curr} value={curr}>{curr}</option>)}
                     </select>
                 </div>
-                {/* Sort By */}
                 <div>
                     <label htmlFor="sort-by" className="block text-sm font-medium text-gray-700">{strings.sortBy}</label>
                     <select

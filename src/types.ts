@@ -44,18 +44,23 @@ export interface Course {
     title: string;
     description: string;
     teacher: string;
-    // Prices in specific currencies
+    // New Price Fields
     priceJod: number;
     priceUsd: number;
     priceSar: number;
+    // Deprecated single price (kept optional for legacy data compatibility)
+    price?: number; 
     duration: string;
     level: string;
     imageUrl: string;
     category: string;
-    curriculum?: string; // Added curriculum field
-    isFeatured?: boolean; // Added isFeatured field
-    sessionCount?: number; // New field
-    totalHours?: number;   // New field
+    curriculum?: string;
+    isFeatured?: boolean;
+    
+    // New fields requested
+    sessionCount?: number;
+    totalHours?: number; // Duration of each session
+    includedSubjects?: string; // The subjects included text
 }
 
 export interface UserProfile {

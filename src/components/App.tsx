@@ -451,11 +451,11 @@ const App: React.FC = () => {
             // Determine price based on current currency selection. SAFE FALLBACK.
             let paymentAmount = 0;
             if (currency === 'USD') {
-                paymentAmount = course.priceUsd || 0;
+                paymentAmount = course.priceUsd ?? (course.price ? course.price * 1.41 : 0);
             } else if (currency === 'SAR') {
-                paymentAmount = course.priceSar || 0;
+                paymentAmount = course.priceSar ?? (course.price ? course.price * 5.3 : 0);
             } else {
-                paymentAmount = course.priceJod || 0;
+                paymentAmount = course.priceJod ?? course.price ?? 0;
             }
 
             const newPayment: Payment = {

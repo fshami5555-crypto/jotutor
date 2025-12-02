@@ -17,14 +17,16 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
     let price = 0;
     let currencySymbol = '';
 
+    // Robust price selection
     if (currency === 'USD') {
-        price = course.priceUsd ?? 0;
+        price = course.priceUsd ?? (course.price ? course.price * 1.41 : 0);
         currencySymbol = strings.usd;
     } else if (currency === 'SAR') {
-        price = course.priceSar ?? 0;
+        price = course.priceSar ?? (course.price ? course.price * 5.3 : 0);
         currencySymbol = strings.sar;
     } else {
-        price = course.priceJod ?? 0;
+        // Default to JOD
+        price = course.priceJod ?? course.price ?? 0;
         currencySymbol = strings.jod;
     }
 
@@ -41,10 +43,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
                 </div>
                 <h3 className="text-xl font-bold text-blue-900 mb-2 line-clamp-2 h-14">{course.title}</h3>
                 
-                {/* Changed from Teacher Name to Subject/Category based on "Includes subjects" label */}
+                {/* Use includedSubjects if available, otherwise default category */}
                 <p className="text-gray-500 text-sm mb-2">
                     <span className="font-semibold">{strings.by}: </span> 
-                    {course.category}
+                    {course.includedSubjects || course.category}
                 </p>
 
                 {/* New Section for Sessions and Hours */}
