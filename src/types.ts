@@ -54,6 +54,8 @@ export interface Course {
     category: string;
     curriculum?: string; // Added curriculum field
     isFeatured?: boolean; // Added isFeatured field
+    sessionCount?: number; // New field
+    totalHours?: number;   // New field
 }
 
 export interface UserProfile {

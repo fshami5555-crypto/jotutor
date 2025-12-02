@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -27,7 +28,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
         currencySymbol = strings.jod;
     }
 
-    const safePrice = typeof price === 'number' ? price : 0;
+    const safePrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
     const displayPrice = safePrice.toFixed(2);
 
     const [paymentMethod, setPaymentMethod] = useState<'cliq' | 'visa' | 'paypal'>('cliq');

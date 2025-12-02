@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -27,7 +28,7 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
         currencySymbol = strings.jod;
     }
 
-    const safePrice = typeof price === 'number' ? price : 0;
+    const safePrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
     const displayPrice = safePrice.toFixed(2);
 
     return (
