@@ -214,6 +214,20 @@ export const arStrings = {
   chatbotTyping: 'Mr.Pincel يكتب...',
   chatbotPlaceholder: 'اسأل Mr.Pincel...',
   chatbotSend: 'إرسال',
+
+  // Admin
+  adminPanelTitle: 'لوحة تحكم المشرف',
+  adminNavContent: 'إدارة المحتوى',
+  adminNavHero: 'إدارة بنر الرئيسية',
+  adminNavOnboarding: 'مراحل التسجيل',
+  adminNavUsers: 'إدارة المستخدمين',
+  adminNavStaff: 'إدارة الموظفين',
+  adminNavPayments: 'إدارة الدفعات',
+  adminNavTeachers: 'إدارة المعلمين',
+  adminNavCourses: 'إدارة الدورات',
+  adminNavTestimonials: 'إدارة الشهادات',
+  adminNavBlog: 'إدارة المدونة',
+  adminNavWhatsapp: 'الدورات عبر واتساب',
 };
 
 // Abridged English strings for fallback
@@ -401,4 +415,18 @@ export const enStrings = {
   chatbotTyping: 'Mr.Pincel is typing...',
   chatbotPlaceholder: 'Ask Mr.Pincel...',
   chatbotSend: 'Send',
+
+  // Admin
+  adminPanelTitle: 'Admin Control Panel',
+  adminNavContent: 'Content Management',
+  adminNavHero: 'Home Banner',
+  adminNavOnboarding: 'Onboarding Steps',
+  adminNavUsers: 'User Management',
+  adminNavStaff: 'Staff Management',
+  adminNavPayments: 'Payments',
+  adminNavTeachers: 'Teacher Management',
+  adminNavCourses: 'Course Management',
+  adminNavTestimonials: 'Testimonials',
+  adminNavBlog: 'Blog Management',
+  adminNavWhatsapp: 'WhatsApp Courses',
 };

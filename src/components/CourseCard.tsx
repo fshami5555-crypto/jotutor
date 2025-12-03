@@ -50,14 +50,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
                 </p>
 
                 {/* New Section for Sessions and Hours */}
-                <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-4 font-medium">
+                <div className="flex flex-wrap gap-2 mb-4">
                     {course.sessionCount && (
-                        <span className="bg-gray-100 px-2 py-1 rounded border">
+                        <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded text-sm font-bold shadow-sm">
                             {course.sessionCount} {strings.sessions}
                         </span>
                     )}
                     {course.totalHours && (
-                        <span className="bg-gray-100 px-2 py-1 rounded border">
+                        <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded text-sm font-bold shadow-sm">
                             {course.totalHours} {strings.hours}
                         </span>
                     )}

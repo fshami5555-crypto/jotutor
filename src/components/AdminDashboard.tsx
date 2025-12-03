@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { 
     SiteContent, HeroSlide, OnboardingOptions, UserProfile, StaffMember, 
-    Payment, Teacher, Course, Testimonial, BlogPost 
+    Payment, Teacher, Course, Testimonial, BlogPost, Language 
 } from '../types';
 
 import AdminNav, { AdminView } from '../admin/AdminNav';
@@ -43,6 +43,8 @@ interface AdminDashboardProps {
     blogPosts: BlogPost[];
     setBlogPosts: React.Dispatch<React.SetStateAction<BlogPost[]>>;
     onActivateCourse: (paymentId: string) => Promise<void>;
+    strings: { [key: string]: string };
+    language: Language;
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
@@ -103,6 +105,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         activeView={activeView}
                         setActiveView={setActiveView}
                         onLogout={props.onLogout}
+                        strings={props.strings}
                     />
                     <main className="flex-1">
                         {renderMainContent()}

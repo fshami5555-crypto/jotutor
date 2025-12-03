@@ -194,9 +194,17 @@ const App: React.FC = () => {
 
             if (user) {
                 setIsLoggedIn(true);
-                if (user.email === 'admin@jotutor.com') {
+                const adminEmails = ['admin@jotutor.com', 'eng@jotutor.com'];
+                
+                if (adminEmails.includes(user.email || '')) {
                     setIsAdmin(true);
                     setUserProfile(null);
+                    
+                    // Special Logic for English Admin
+                    if (user.email === 'eng@jotutor.com') {
+                        setLanguage('en');
+                        setStrings(enStrings);
+                    }
                     
                     // Fetch admin-specific data
                     try {
@@ -358,7 +366,8 @@ const App: React.FC = () => {
             // Fix: Use Firebase v8 compat syntax to resolve module errors.
             await auth.signInWithEmailAndPassword(email, password);
             setAuthModalOpen(false);
-            if (email.toLowerCase() === 'admin@jotutor.com') {
+            
+            if (email.toLowerCase() === 'admin@jotutor.com' || email.toLowerCase() === 'eng@jotutor.com') {
                 handleNavigate('admin-dashboard');
             } else {
                 // Redirect to pending booking if exists, otherwise dashboard
@@ -649,6 +658,8 @@ const App: React.FC = () => {
                     testimonials={testimonials} setTestimonials={handleSetTestimonials}
                     blogPosts={blogPosts} setBlogPosts={handleSetBlogPosts}
                     onActivateCourse={handleActivateCourse}
+                    strings={strings}
+                    language={language}
                 />
             ) : <p>Access denied.</p>;
 
