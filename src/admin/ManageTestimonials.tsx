@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { Testimonial } from '../types';
+import ImageUploadInput from './ImageUploadInput';
 
 interface ManageTestimonialsProps {
     testimonials: Testimonial[];
@@ -36,7 +38,14 @@ const TestimonialFormModal: React.FC<{ testimonial: Testimonial | null; onSave: 
                     <div className="space-y-4">
                         <input name="name" value={formData.name} onChange={handleChange} placeholder="الاسم" className="w-full p-2 border rounded" required />
                         <input name="role" value={formData.role} onChange={handleChange} placeholder="الدور (مثال: ولي أمر)" className="w-full p-2 border rounded" required />
-                        <input name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} placeholder="رابط الصورة" className="w-full p-2 border rounded" />
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">صورة الشخص</label>
+                            <ImageUploadInput
+                                value={formData.avatarUrl}
+                                onChange={(url) => setFormData(prev => ({ ...prev, avatarUrl: url }))}
+                                placeholder="رابط الصورة"
+                            />
+                        </div>
                         <textarea name="quote" value={formData.quote} onChange={handleChange} placeholder="الاقتباس" rows={4} className="w-full p-2 border rounded" required></textarea>
                     </div>
                      <div className="flex justify-end mt-6 space-x-2 space-x-reverse">

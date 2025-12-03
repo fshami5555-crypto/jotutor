@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { Teacher } from '../types';
+import ImageUploadInput from './ImageUploadInput';
 
 interface ManageTeachersProps {
     teachers: Teacher[];
@@ -48,7 +50,11 @@ const TeacherFormModal: React.FC<{ teacher: Teacher | null; onSave: (teacher: Te
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input name="name" value={formData.name} onChange={handleChange} placeholder="الاسم" className="p-2 border rounded" required />
                         <div>
-                            <input name="avatarUrl" value={formData.avatarUrl} onChange={handleChange} placeholder="رابط الصورة" className="w-full p-2 border rounded" />
+                            <ImageUploadInput
+                                value={formData.avatarUrl}
+                                onChange={(url) => setFormData(prev => ({ ...prev, avatarUrl: url }))}
+                                placeholder="رابط الصورة"
+                            />
                             {/* Image Preview */}
                             {formData.avatarUrl && (
                                 <div className="mt-2 flex justify-center bg-gray-50 p-2 border rounded">

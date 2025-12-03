@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { HeroSlide } from '../types';
+import ImageUploadInput from './ImageUploadInput';
 
 interface ManageHeroSlidesProps {
     heroSlides: HeroSlide[];
@@ -34,7 +36,16 @@ const SlideFormModal: React.FC<{ slide: HeroSlide | null; onSave: (slide: HeroSl
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">{slide ? 'تعديل الشريحة' : 'إضافة شريحة جديدة'}</h2>
                     <div className="space-y-4">
                         <input name="title" value={formData.title} onChange={handleChange} placeholder="العنوان" className="w-full p-2 border rounded" required />
-                        <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="رابط الصورة" className="w-full p-2 border rounded" required />
+                        
+                        <div>
+                            <label className="block text-sm text-gray-600 mb-1">صورة البنر</label>
+                            <ImageUploadInput
+                                value={formData.imageUrl}
+                                onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                                placeholder="رابط الصورة"
+                            />
+                        </div>
+
                         <textarea name="description" value={formData.description} onChange={handleChange} placeholder="الوصف" rows={4} className="w-full p-2 border rounded" required></textarea>
                     </div>
                      <div className="flex justify-end mt-6 space-x-2 space-x-reverse">

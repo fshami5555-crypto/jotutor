@@ -1,8 +1,8 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { SiteContent, FAQItem, AboutContent, ContactContent, HomepageContent } from '../types';
 import { initialData } from '../mockData';
+import ImageUploadInput from './ImageUploadInput';
 
 interface ManageContentProps {
   content: SiteContent;
@@ -41,6 +41,13 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
             about: { ...prev.about, [name]: value }
         }));
     }
+  };
+
+  const handleAboutImageChange = (name: string, value: string) => {
+      setLocalContent(prev => ({
+          ...prev,
+          about: { ...prev.about, [name]: value }
+      }));
   };
   
   const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,8 +224,12 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                     <input name="aboutTitle" value={localContent.about.aboutTitle} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">صورة البنر الرئيسية (رابط)</label>
-                    <input name="heroImage" value={localContent.about.heroImage} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
+                    <label className="font-semibold block mb-1">صورة البنر الرئيسية</label>
+                    <ImageUploadInput 
+                        value={localContent.about.heroImage} 
+                        onChange={(url) => handleAboutImageChange('heroImage', url)} 
+                        placeholder="رابط الصورة" 
+                    />
                  </div>
                  <div>
                     <label className="font-semibold block mb-1">عنوان قسم الرؤية</label>
@@ -229,8 +240,12 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                     <textarea name="vision" value={localContent.about.vision} onChange={handleAboutChange} rows={3} className="w-full p-2 border rounded-md"></textarea>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">صورة الرؤية (رابط)</label>
-                    <input name="visionImage" value={localContent.about.visionImage} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
+                    <label className="font-semibold block mb-1">صورة الرؤية</label>
+                    <ImageUploadInput 
+                        value={localContent.about.visionImage} 
+                        onChange={(url) => handleAboutImageChange('visionImage', url)} 
+                        placeholder="رابط الصورة" 
+                    />
                  </div>
                   <div>
                     <label className="font-semibold block mb-1">عنوان قسم الرسالة</label>
@@ -338,7 +353,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
       { id: 'config', label: 'إعدادات النظام (API)' },
       { id: 'privacy', label: 'سياسة الخصوصية' },
       { id: 'terms', label: 'شروط الاستخدام' },
-      { id: 'paymentRefund', label: 'سياسة الدفع والارجاع' } // New Tab
+      { id: 'paymentRefund', label: 'سياسة الدفع والارجاع' }
   ];
 
   return (

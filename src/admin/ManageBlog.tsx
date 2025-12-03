@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { BlogPost } from '../types';
+import ImageUploadInput from './ImageUploadInput';
 
 interface ManageBlogProps {
     posts: BlogPost[];
@@ -84,7 +86,14 @@ const PostFormModal: React.FC<{ post: BlogPost | null; onSave: (post: BlogPost) 
                         )}
 
                         {type === 'article' && (
-                             <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="رابط الصورة" className="w-full p-2 border rounded" />
+                             <div>
+                                <label className="block text-sm text-gray-600 mb-1">صورة المقال</label>
+                                <ImageUploadInput
+                                    value={formData.imageUrl}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                                    placeholder="رابط الصورة"
+                                />
+                             </div>
                         )}
                        
                         <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} placeholder={type === 'short' ? 'شرح الفيديو' : 'مقتطف من المقال'} rows={3} className="w-full p-2 border rounded"></textarea>

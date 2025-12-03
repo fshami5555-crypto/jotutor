@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Course } from '../types';
 import { seedInitialCourses } from '../googleSheetService';
 import { initialData } from '../mockData';
+import ImageUploadInput from './ImageUploadInput';
 
 interface ManageCoursesProps {
     courses: Course[];
@@ -106,7 +107,16 @@ const CourseFormModal: React.FC<{ course: Course | null; onSave: (course: Course
 
                         <input name="duration" value={formData.duration} onChange={handleChange} placeholder="المدة (نصي)" className="p-2 border rounded" />
                         <input name="level" value={formData.level} onChange={handleChange} placeholder="المستوى" className="p-2 border rounded" />
-                        <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="رابط الصورة" className="p-2 border rounded md:col-span-2" />
+                        
+                        <div className="md:col-span-2">
+                            <label className="block text-xs text-gray-500 mb-1">صورة الدورة</label>
+                            <ImageUploadInput
+                                value={formData.imageUrl}
+                                onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                                placeholder="رابط الصورة"
+                            />
+                        </div>
+
                         <div className="md:col-span-2">
                             <textarea name="description" value={formData.description} onChange={handleChange} placeholder="وصف الدورة" rows={4} className="w-full p-2 border rounded"></textarea>
                         </div>
