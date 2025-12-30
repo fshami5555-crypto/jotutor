@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course, Currency } from '../types';
 
@@ -11,13 +10,11 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, strings }) => {
-    // Safety check for empty course object
     if (!course) return null;
 
     let price = 0;
     let currencySymbol = '';
 
-    // Robust price selection logic
     if (currency === 'USD') {
         price = course.priceUsd ?? (course.price ? course.price * 1.41 : 0);
         currencySymbol = strings.usd;
@@ -25,14 +22,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
         price = course.priceSar ?? (course.price ? course.price * 5.3 : 0);
         currencySymbol = strings.sar;
     } else {
-        // Default to JOD
         price = course.priceJod ?? course.price ?? 0;
         currencySymbol = strings.jod;
     }
 
-    // Ensure price is a number and not NaN before calling toFixed
-    const safePrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
-    const displayPrice = safePrice.toFixed(2);
+    // Ensure safePrice is a number before calling toFixed to prevent runtime errors
+    const safePriceValue = (typeof price === 'number' && !isNaN(price)) ? price : 0;
+    const displayPrice = safePriceValue.toFixed(2);
 
     return (
         <div onClick={onSelect} className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer h-full flex flex-col">
@@ -43,13 +39,11 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
                 </div>
                 <h3 className="text-xl font-bold text-blue-900 mb-2 line-clamp-2 h-14">{course.title}</h3>
                 
-                {/* Use includedSubjects if available, otherwise default category */}
                 <p className="text-gray-500 text-sm mb-2">
                     <span className="font-semibold">{strings.by}: </span> 
                     {course.includedSubjects || course.category}
                 </p>
 
-                {/* New Section for Sessions and Hours */}
                 <div className="flex flex-wrap gap-2 mb-4">
                     {course.sessionCount && (
                         <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded text-sm font-bold shadow-sm">

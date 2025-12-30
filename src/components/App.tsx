@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { arStrings, enStrings } from '../localization';
 import { JOD_TO_USD_RATE } from '../constants';
@@ -736,7 +735,7 @@ const App: React.FC = () => {
     // Welcome Modal handlers
     const handleStartChatFromModal = () => {
         setShowWelcomeModal(false);
-        setIsChatOpen(true);
+        // setIsChatOpen(true); // AI chat is currently being disabled as per request
     };
 
     // === RENDER LOGIC ===
@@ -897,6 +896,8 @@ const App: React.FC = () => {
              {!(isDataLoading || isAuthLoading) && (
                  <>
                     <Footer onNavigate={handleNavigate} strings={strings} />
+                    {/* Chatbot globally hidden for now as per user request to stop AI chat */}
+                    {/* 
                     <Chatbot 
                         courses={displayedCourses} 
                         onSelectCourse={(id) => handleNavigate('course-profile', id)} 
@@ -904,16 +905,8 @@ const App: React.FC = () => {
                         language={language}
                         isOpen={isChatOpen}
                         setIsOpen={setIsChatOpen}
-                    />
-                    {/* Start Now Floating Button - Moved to Left Side */}
-                    <button
-                        onClick={() => handleNavigate('courses')}
-                        className="fixed bottom-32 left-6 z-40 w-16 h-16 bg-blue-900 text-white rounded-full shadow-lg hover:bg-blue-800 transition-transform transform hover:scale-105 flex flex-col items-center justify-center border-2 border-white font-bold text-xs leading-tight"
-                        style={{ left: '24px', right: 'auto' }}
-                    >
-                        <span>{language === 'ar' ? 'ابدأ' : 'Start'}</span>
-                        <span>{language === 'ar' ? 'الآن' : 'Now'}</span>
-                    </button>
+                    /> 
+                    */}
                  </>
             )}
             
