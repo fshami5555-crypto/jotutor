@@ -1,4 +1,3 @@
-
 // Fix: Use Firebase v8 compat imports to resolve module errors.
 import firebase from "firebase/compat/app";
 import "firebase/compat/analytics";
@@ -10,7 +9,7 @@ import { initialData } from './mockData';
 
 // Your web app's Firebase configuration from user prompt
 const firebaseConfig = {
-  apiKey: "AIzaSyD22o_UCJ7xrbawNuIlACvFtbQB9HeUn9g",
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
   authDomain: "jototur-2f755.firebaseapp.com",
   projectId: "jototur-2f755",
   storageBucket: "jototur-2f755.appspot.com",

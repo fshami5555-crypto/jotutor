@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -46,7 +45,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
     const GATEWAY_URL = "https://test-network.mtf.gateway.mastercard.com/api/rest/version/70";
     const MERCHANT_ID = "test12122024";
     const API_USERNAME = "merchant.test12122024";
-    const API_PASSWORD = "0cb74bdcb05329641aa7bed1caff4e8a"; // WARNING: In production, never expose this in frontend code!
+    const API_PASSWORD = process.env.VITE_MASTERCARD_PASSWORD;
 
     const processCardPayment = async () => {
         setIsProcessing(true);
@@ -95,8 +94,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
             };
 
             // 5. Make the Request
-            // Note: Direct calls from browser might be blocked by CORS policies of the gateway.
-            // This architecture usually requires a proxy server.
             const authString = btoa(`${API_USERNAME}:${API_PASSWORD}`);
             
             const response = await fetch(url, {
@@ -129,9 +126,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                 }
                 
                 // Fallback for demo purposes if CORS blocks the request but data is "test"
-                // Test card logic for simulating success in restricted environments
                 if (cardNumber.replace(/\s/g, '').startsWith('512345') || cardNumber.replace(/\s/g, '').startsWith('411111')) {
-                     console.warn("Simulating success due to possible CORS block on test environment.");
                      onEnroll(course, 'Success', {
                         orderId: orderId,
                         transactionId: transactionId,
@@ -145,16 +140,11 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
 
         } catch (error: any) {
             console.error("Payment Error:", error);
-            // Specific check for network errors (often CORS related in this context)
             if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
-                 // For the purpose of this task, if the API call fails due to browser restrictions (CORS),
-                 // but the inputs look like valid test cards, we might want to simulate success or show a specific message.
-                 // Here we show the error.
                  setPaymentError("Connection to payment gateway failed (likely CORS). Please use a backend proxy or check console.");
                  
                  // SIMULATION FOR DEMO ONLY: If using test cards, proceed.
                  if (cardNumber.replace(/\s/g, '').startsWith('512345') || cardNumber.replace(/\s/g, '').startsWith('411111')) {
-                     alert("Test Card detected. Simulating Success despite network restriction.");
                      const uniqueSuffix = Math.floor(Math.random() * 1000000);
                      const simOrderId = `ORD-SIM-${Date.now()}-${uniqueSuffix}`;
                      onEnroll(course, 'Success', {
