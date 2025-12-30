@@ -72,7 +72,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                         username={userProfile.username} 
                         activeView={activeView} 
                         setActiveView={setActiveView} 
-                        onLogout={onLogout} 
+                        onLogout={onLogout}
+                        strings={strings}
                     />
                     <main className="flex-1">
                         {renderContent()}

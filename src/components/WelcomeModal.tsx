@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 
 interface WelcomeModalProps {
     onStartChat: () => void;
@@ -8,6 +7,12 @@ interface WelcomeModalProps {
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartChat, onClose }) => {
     const mrPincelImage = "https://i.ibb.co/sd7GkLLT/image-removebg-preview.png";
+    const [showSoon, setShowSoon] = useState(false);
+
+    const handleAIBtnClick = () => {
+        setShowSoon(true);
+        setTimeout(() => setShowSoon(false), 3000);
+    };
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
@@ -38,9 +43,19 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartChat, onClose }) => 
                         أنا <span className="font-bold">Mr. Pincel</span>، مساعدك الذكي. يمكنني تحليل احتياجاتك واقتراح أفضل المعلمين والدورات لك في ثوانٍ.
                     </p>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 relative">
+                        {/* Soon Cloud for Modal */}
+                        {showSoon && (
+                            <div className="absolute -top-16 left-0 right-0 animate-fade-in-up">
+                                <div className="bg-green-500 text-white p-3 rounded-xl shadow-lg inline-block relative font-bold text-sm">
+                                    سيكون متاحاً قريباً لخدمة طلابنا
+                                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-green-500"></div>
+                                </div>
+                            </div>
+                        )}
+
                         <button 
-                            onClick={onStartChat}
+                            onClick={handleAIBtnClick}
                             className="w-full bg-green-500 hover:bg-green-600 text-white text-lg font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2"
                         >
                             <span>أكمل بمساعدة المساعد الذكي Mr.Pincel</span>
@@ -51,7 +66,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartChat, onClose }) => 
 
                         <button 
                             onClick={onClose}
-                            className="text-gray-400 hover:text-gray-600 font-medium text-sm hover:underline transition-colors"
+                            className="text-gray-500 hover:text-gray-800 font-bold text-xl hover:underline transition-colors mt-2"
                         >
                             تابع للموقع بدون مساعدة Mr.Pincel
                         </button>

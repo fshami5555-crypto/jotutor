@@ -7,7 +7,8 @@ export type Page =
 // Fix: Moved DashboardView type here to break a circular dependency.
 export type DashboardView = 'profile' | 'courses' | 'wallet' | 'ai-assistant';
 
-export type Currency = 'JOD' | 'USD';
+// Fix: Added SAR to Currency to support regional pricing and localization.
+export type Currency = 'JOD' | 'USD' | 'SAR';
 export type Language = 'ar' | 'en';
 
 export interface HeroSlide {
@@ -45,10 +46,19 @@ export interface Course {
     description: string;
     teacher: string;
     price: number; // in JOD
+    // Fix: Added missing properties used in components/CoursesPage.tsx, CourseCard.tsx, and other components.
+    priceJod?: number;
+    priceUsd?: number;
+    priceSar?: number;
     duration: string;
     level: string;
     imageUrl: string;
     category: string;
+    curriculum?: string;
+    sessionCount?: number;
+    totalHours?: number;
+    includedSubjects?: string;
+    targetGrades?: string[];
 }
 
 export interface UserProfile {
@@ -175,6 +185,7 @@ export interface Payment {
     courseId: string;
     courseName: string;
     amount: number;
-    currency: 'JOD' | 'USD';
-    status: 'Success' | 'Failed';
+    // Fix: Updated currency and status to match usage in components.
+    currency: Currency;
+    status: 'Success' | 'Failed' | 'Pending';
 }

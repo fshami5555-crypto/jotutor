@@ -11,13 +11,13 @@ interface CourseCardProps {
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, strings }) => {
-    // Safety check
+    // Safety check for empty course object
     if (!course) return null;
 
     let price = 0;
     let currencySymbol = '';
 
-    // Robust price selection
+    // Robust price selection logic
     if (currency === 'USD') {
         price = course.priceUsd ?? (course.price ? course.price * 1.41 : 0);
         currencySymbol = strings.usd;
@@ -30,7 +30,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
         currencySymbol = strings.jod;
     }
 
-    // Safe check to ensure price is a number before calling toFixed
+    // Ensure price is a number and not NaN before calling toFixed
     const safePrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
     const displayPrice = safePrice.toFixed(2);
 

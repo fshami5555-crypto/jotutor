@@ -13,11 +13,11 @@ interface CoursesViewProps {
 }
 
 const getSuggestedCourses = (profile: UserProfile, allCourses: Course[]): Course[] => {
-    const { serviceType, educationStage } = profile;
+    const { serviceType, educationStage, grade } = profile;
 
     let targetCategories: string[] = [];
 
-    // Direct mapping for specific service types
+    // 1. Filter by Category/Service Type
     if (serviceType === 'التأسيس') {
         targetCategories.push('تأسيس');
     } else if (serviceType === 'اللغات') {
@@ -44,7 +44,26 @@ const getSuggestedCourses = (profile: UserProfile, allCourses: Course[]): Course
         return [];
     }
 
-    return allCourses.filter(course => uniqueCategories.includes(course.category));
+    let filteredCourses = allCourses.filter(course => uniqueCategories.includes(course.category));
+
+    // 2. Filter by Grade (Match user grade with course target grades)
+    // If the course has specific target grades defined, prioritize them.
+    if (grade) {
+        const gradeFiltered = filteredCourses.filter(course => {
+            // If course has no specific grades, keep it based on category (flexible)
+            if (!course.targetGrades || course.targetGrades.length === 0) return true;
+            // Strict match: User's grade must be in the course's target list
+            return course.targetGrades.includes(grade);
+        });
+
+        // If we found specific matches, use them. Otherwise, fall back to category matching
+        // to avoid showing an empty list if data is incomplete.
+        if (gradeFiltered.length > 0) {
+            filteredCourses = gradeFiltered;
+        }
+    }
+
+    return filteredCourses;
 };
 
 const CoursesView: React.FC<CoursesViewProps> = ({ userProfile, allCourses, onSelectCourse, currency, exchangeRate, strings }) => {
@@ -59,7 +78,7 @@ const CoursesView: React.FC<CoursesViewProps> = ({ userProfile, allCourses, onSe
     const suggestedCourses = useMemo(() => {
         const enrolledIds = new Set(userProfile.enrolledCourses || []);
 
-        // 1. Get initial suggestions based on profile
+        // 1. Get initial suggestions based on profile (Category + Grade)
         const initialSuggestions = getSuggestedCourses(userProfile, allCourses);
 
         // 2. Filter out any courses the user is already enrolled in

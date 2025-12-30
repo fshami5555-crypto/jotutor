@@ -1,4 +1,3 @@
-
 // This file contains all the string resources for the application.
 
 export const arStrings = {
@@ -19,6 +18,12 @@ export const arStrings = {
   logout: 'تسجيل الخروج',
   back: 'رجوع',
   
+  // Language Confirmation
+  langConfirmTitle: 'تغيير اللغة',
+  langConfirmMessage: 'عند تغيير اللغة يمكن ان تلاحظ تغيير في المحتوى وذلك لضمان الوصول لافضل معرفة بناءاً على اللغة. هل انت متاكد من تغيير اللغة؟',
+  langConfirmYes: 'نعم، غير اللغة',
+  langConfirmNo: 'لا، استمر بنفس اللغة الحالية',
+
   // Hero Section
   heroButton: 'ابدأ رحلتك التعليمية',
 
@@ -132,6 +137,7 @@ export const arStrings = {
   errorAgreeToTerms: 'يجب الموافقة على الشروط والأحكام.',
   errorEmailInUse: 'هذا البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر.',
   errorSignupGeneric: 'حدث خطأ غير متوقع أثناء التسجيل. يرجى المحاولة مرة أخرى.',
+  errorInvalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
 
   // Dashboard
   myCourses: 'دوراتي',
@@ -141,6 +147,9 @@ export const arStrings = {
   suggestedCoursesDesc: 'دورات مقترحة لك بناءً على اهتماماتك.',
   noSuggestedCourses: 'لا توجد دورات مقترحة حاليًا.',
   noSuggestedCoursesDesc: 'استكشف مكتبة الدورات لدينا للعثور على ما يناسبك.',
+  dashboardProfile: 'الملف الشخصي',
+  dashboardWallet: 'المحفظة',
+  dashboardAI: 'المساعد الذكي',
 
   // Pages
   privacyTitle: 'سياسة الخصوصية',
@@ -207,13 +216,14 @@ export const arStrings = {
   paymentSuccess: 'تم الدفع بنجاح!',
 
   // Chatbot
-  chatbotTooltip: 'مرحباً! أنا Mr.Pincel. هل تحتاج إلى مساعدة؟',
-  chatbotWelcome: 'أهلاً بك! أنا Mr.Pincel، مساعدك التعليمي الذكي. كيف يمكنني مساعدتك اليوم؟',
-  chatbotTitle: 'Mr.Pincel - المساعد التعليمي',
+  chatbotTooltip: 'مرحباً! هل تحتاج إلى مساعدة في العثور على دورة؟ أنا هنا للمساعدة!',
+  chatbotWelcome: 'أهلاً بك في مساعد JoTutor! كيف يمكنني مساعدتك في العثور على الدورة المثالية اليوم؟',
+  chatbotTitle: 'مساعد JoTutor',
   chatbotRecommendedCourses: 'دورات مقترحة لك:',
-  chatbotTyping: 'Mr.Pincel يكتب...',
-  chatbotPlaceholder: 'اسأل Mr.Pincel...',
+  chatbotTyping: 'أكتب...',
+  chatbotPlaceholder: 'اسأل عن دورة...',
   chatbotSend: 'إرسال',
+  chatbotSoon: 'سيكون متاحاً قريباً لخدمة طلابنا',
 
   // Admin
   adminPanelTitle: 'لوحة تحكم المشرف',
@@ -245,6 +255,13 @@ export const enStrings = {
   dashboard: 'Dashboard',
   logout: 'Logout',
   back: 'Back',
+  
+  // Language Confirmation
+  langConfirmTitle: 'Change Language',
+  langConfirmMessage: 'When changing the language, you may notice a change in content to ensure access to the best knowledge based on the language. Are you sure you want to change the language?',
+  langConfirmYes: 'Yes, change language',
+  langConfirmNo: 'No, keep current language',
+
   heroButton: 'Start Your Learning Journey',
   featuresTitle: 'Why Choose JoTutor?',
   featuresSubtitle: 'We offer a unique learning experience tailored to your needs.',
@@ -343,6 +360,7 @@ export const enStrings = {
   errorAgreeToTerms: "You must agree to the terms and conditions.",
   errorEmailInUse: 'This email address is already in use by another account.',
   errorSignupGeneric: 'An unexpected error occurred during signup. Please try again.',
+  errorInvalidCredentials: 'Invalid email or password.',
   myCourses: 'My Courses',
   enrolledCoursesTitle: 'Enrolled Courses',
   noEnrolledCourses: "You are not currently enrolled in any courses.",
@@ -350,6 +368,9 @@ export const enStrings = {
   suggestedCoursesDesc: 'Courses suggested for you based on your interests.',
   noSuggestedCourses: 'No suggested courses at the moment.',
   noSuggestedCoursesDesc: 'Explore our course library to find what suits you.',
+  dashboardProfile: 'Profile',
+  dashboardWallet: 'Wallet',
+  dashboardAI: 'AI Assistant',
   privacyTitle: 'Privacy Policy',
   termsTitle: 'Terms of Service',
   paymentRefundTitle: 'Payment & Refund Policy',
@@ -370,9 +391,7 @@ export const enStrings = {
   applyNow: 'Apply Now',
   faqTitle: 'Frequently Asked Questions',
   blogTitle: 'JoTutor Blog',
-  by: 'Includes subjects:',
-  sessions: 'Sessions',
-  hours: 'Hour/Per Session',
+  by: 'By',
   readMore: 'Read More',
   backToBlog: 'Back to Blog',
   videosTitle: 'Short Educational Videos',
@@ -408,13 +427,14 @@ export const enStrings = {
   cvv: 'CVV',
   confirmPayment: 'Confirm Payment',
   paymentSuccess: 'Payment successful!',
-  chatbotTooltip: "Hi! I'm Mr.Pincel. Need help?",
-  chatbotWelcome: "Welcome! I am Mr.Pincel, your AI educational assistant. How can I help you?",
-  chatbotTitle: 'Mr.Pincel - Educational Assistant',
+  chatbotTooltip: "Hi! Need help finding a course? I'm here to assist!",
+  chatbotWelcome: 'Welcome to the JoTutor Assistant! How can I help you find the perfect course today?',
+  chatbotTitle: 'JoTutor Assistant',
   chatbotRecommendedCourses: 'Recommended courses for you:',
-  chatbotTyping: 'Mr.Pincel is typing...',
-  chatbotPlaceholder: 'Ask Mr.Pincel...',
+  chatbotTyping: 'Typing...',
+  chatbotPlaceholder: 'Ask about a course...',
   chatbotSend: 'Send',
+  chatbotSoon: 'Will be available soon to serve our students',
 
   // Admin
   adminPanelTitle: 'Admin Control Panel',

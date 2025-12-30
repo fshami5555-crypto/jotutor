@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 interface AuthModalProps {
@@ -19,7 +20,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ initialView, onClose, onLogin, on
         setError('');
         const loginSuccess = await onLogin(email, password);
         if (!loginSuccess) {
-            setError('Invalid credentials');
+            setError(strings.errorInvalidCredentials || 'Invalid email or password.');
         }
     };
 

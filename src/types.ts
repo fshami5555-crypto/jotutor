@@ -15,6 +15,9 @@ export interface HeroSlide {
   title: string;
   description: string;
   imageUrl: string;
+  // English fields
+  title_en?: string;
+  description_en?: string;
 }
 
 export interface Teacher {
@@ -29,6 +32,13 @@ export interface Teacher {
   pricePerHour: number;
   bio: string;
   qualifications: string[];
+  
+  // English fields
+  name_en?: string;
+  level_en?: string;
+  bio_en?: string;
+  specialties_en?: string[];
+  qualifications_en?: string[];
 }
 
 export interface Testimonial {
@@ -37,6 +47,11 @@ export interface Testimonial {
   role: string; // e.g., "ولي أمر"
   avatarUrl: string;
   quote: string;
+  
+  // English fields
+  name_en?: string;
+  role_en?: string;
+  quote_en?: string;
 }
 
 export interface Course {
@@ -44,12 +59,12 @@ export interface Course {
     title: string;
     description: string;
     teacher: string;
-    // New Price Fields
-    priceJod: number;
-    priceUsd: number;
-    priceSar: number;
-    // Deprecated single price (kept optional for legacy data compatibility)
+    // Price fields (made optional to prevent crashes if missing)
     price?: number; 
+    priceJod?: number;
+    priceUsd?: number;
+    priceSar?: number;
+    
     duration: string;
     level: string;
     imageUrl: string;
@@ -61,6 +76,16 @@ export interface Course {
     sessionCount?: number;
     totalHours?: number; // Duration of each session
     includedSubjects?: string; // The subjects included text
+    targetGrades?: string[]; // Array of grades this course is suitable for
+
+    // English Localization Fields
+    title_en?: string;
+    description_en?: string;
+    level_en?: string;
+    category_en?: string;
+    curriculum_en?: string;
+    duration_en?: string;
+    includedSubjects_en?: string;
 }
 
 export interface UserProfile {
@@ -85,6 +110,12 @@ export interface OnboardingOptions {
     curriculums: string[];
     subjects: string[];
     languages: string[];
+    
+    // English fields
+    serviceTypes_en?: string[];
+    educationStages_en?: string[];
+    curriculums_en?: string[];
+    subjects_en?: string[];
 }
 
 export interface FAQItem {
@@ -104,6 +135,12 @@ export interface BlogPost {
   tags: string[];
   type: 'article' | 'short';
   youtubeVideoId?: string;
+  
+  // English fields
+  title_en?: string;
+  excerpt_en?: string;
+  content_en?: string;
+  tags_en?: string[];
 }
 
 export interface ContactContent {
@@ -172,7 +209,7 @@ export interface SiteContent {
   contact: ContactContent;
   privacy: string;
   terms: string;
-  paymentRefundPolicy: string;
+  paymentRefundPolicy?: string;
 }
 
 export interface ChatMessage {
@@ -200,4 +237,8 @@ export interface Payment {
     amount: number;
     currency: Currency;
     status: 'Success' | 'Failed' | 'Pending';
+    // New fields for gateway tracking
+    paymentMethod?: 'Credit Card' | 'CliQ' | 'Manual';
+    gatewayOrderId?: string;
+    transactionId?: string;
 }

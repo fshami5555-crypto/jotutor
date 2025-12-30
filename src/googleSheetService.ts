@@ -1,10 +1,11 @@
 
+// Fix: Use Firebase v8 compat imports to resolve module errors.
 import firebase from "firebase/compat/app";
 import "firebase/compat/analytics";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-import { SiteContent, OnboardingOptions, Course } from './types';
+import { SiteContent, OnboardingOptions, Course, Payment } from './types';
 import { initialData } from './mockData';
 
 // Your web app's Firebase configuration from user prompt
@@ -96,7 +97,7 @@ export const fetchPublicData = async (): Promise<{ success: boolean; data: any }
         promises.push(promise);
     }
     
-    // Fetch the single config document (also public)
+    // Fetch the main config document (also public)
     const configPromise = db.collection('config').doc('main').get().then(docSnap => {
         if (docSnap.exists) {
             data['config'] = docSnap.data();
@@ -145,6 +146,22 @@ export const fetchAdminData = async (): Promise<{ success: boolean; data: any; f
     }
 
     return { success: true, data };
+};
+
+/**
+ * Subscribes to the Payments collection for real-time updates.
+ * This fixes the issue where data disappears after a few seconds due to stale fetches.
+ */
+export const subscribeToPayments = (callback: (payments: Payment[]) => void) => {
+    if (!db) return () => {};
+    
+    // Subscribe to the 'payments' collection
+    return db.collection('payments').onSnapshot(snapshot => {
+        const payments = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Payment));
+        callback(payments);
+    }, error => {
+        console.error("Error subscribing to payments:", error);
+    });
 };
 
 
@@ -210,8 +227,9 @@ export const setDocument = async (sheetName: string, docId: string, data: object
 
 /**
  * Updates the 'main' document in the 'config' collection.
+ * Extended to support siteContentEn
  */
-export const updateConfig = async (configData: { siteContent?: SiteContent | null, onboardingOptions?: OnboardingOptions | null }): Promise<{ success: boolean; error?: string }> => {
+export const updateConfig = async (configData: { siteContent?: SiteContent | null, siteContentEn?: SiteContent | null, onboardingOptions?: OnboardingOptions | null }): Promise<{ success: boolean; error?: string }> => {
     if (!db) return { success: false, error: "Database not initialized" };
     try {
         await db.collection('config').doc('main').set(configData, { merge: true });

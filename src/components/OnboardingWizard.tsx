@@ -1,13 +1,13 @@
 
-
 import React, { useState } from 'react';
-import { UserProfile, OnboardingOptions } from '../types';
+import { UserProfile, OnboardingOptions, Language } from '../types';
 
 interface OnboardingWizardProps {
     options: OnboardingOptions;
     onSignupSuccess: (profile: UserProfile) => Promise<string | null>;
     onClose: () => void;
     strings: { [key: string]: string };
+    language?: Language;
 }
 
 const Stepper: React.FC<{ currentStep: number; totalSteps: number }> = ({ currentStep, totalSteps }) => {
@@ -28,7 +28,7 @@ const Stepper: React.FC<{ currentStep: number; totalSteps: number }> = ({ curren
     );
 };
 
-const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSuccess, onClose, strings }) => {
+const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSuccess, onClose, strings, language = 'ar' }) => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState<Partial<UserProfile>>({
         userType: 'Student',
@@ -237,17 +237,26 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                     </div>
                 );
             case 4: // Grade
-                const grades = [
+                const gradesEn = [
                     'KG1', 'KG2',
                     '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade',
                     '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade',
                     'College'
                 ];
+                const gradesAr = [
+                    'روضة 1', 'روضة 2',
+                    'الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس',
+                    'الصف السابع', 'الصف الثامن', 'الصف التاسع', 'الصف العاشر', 'الصف الحادي عشر', 'الصف الثاني عشر (توجيهي)',
+                    'جامعي'
+                ];
+                
+                const grades = language === 'ar' ? gradesAr : gradesEn;
+
                 return (
                     <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep4Title}</h3>
                         <p className="text-center text-gray-600 mb-6">{strings.onboardingStep4Desc}</p>
-                        <div className="grid grid-cols-3 gap-3 max-h-64 overflow-y-auto pr-2">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto pr-2">
                              {grades.map(grade => (
                                 <button
                                     key={grade}

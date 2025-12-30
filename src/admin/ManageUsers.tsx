@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UserProfile } from '../types';
 
@@ -5,9 +6,10 @@ interface ManageUsersProps {
     users: UserProfile[];
     setUsers: React.Dispatch<React.SetStateAction<UserProfile[]>>;
     onViewUser: (user: UserProfile) => void;
+    isEnglishAdmin?: boolean;
 }
 
-const ManageUsers: React.FC<ManageUsersProps> = ({ users, setUsers, onViewUser }) => {
+const ManageUsers: React.FC<ManageUsersProps> = ({ users, setUsers, onViewUser, isEnglishAdmin }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredUsers = users.filter(user =>
@@ -24,10 +26,10 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ users, setUsers, onViewUser }
     return (
         <div>
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
-                <h1 className="text-3xl font-bold text-gray-800">إدارة المستخدمين</h1>
+                <h1 className="text-3xl font-bold text-gray-800">{isEnglishAdmin ? 'User Management' : 'إدارة المستخدمين'}</h1>
                 <input
                     type="text"
-                    placeholder="ابحث بالاسم أو البريد الإلكتروني..."
+                    placeholder={isEnglishAdmin ? "Search by name or email..." : "ابحث بالاسم أو البريد الإلكتروني..."}
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     className="p-2 border border-gray-300 rounded-md md:w-72"
@@ -38,10 +40,10 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ users, setUsers, onViewUser }
                     <table className="min-w-full bg-white">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="text-right py-3 px-4 font-semibold text-sm">الاسم</th>
-                                <th className="text-right py-3 px-4 font-semibold text-sm">البريد الإلكتروني</th>
-                                <th className="text-right py-3 px-4 font-semibold text-sm">نوع الحساب</th>
-                                <th className="text-right py-3 px-4 font-semibold text-sm">الإجراءات</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">{isEnglishAdmin ? 'Name' : 'الاسم'}</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">{isEnglishAdmin ? 'Email' : 'البريد الإلكتروني'}</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">{isEnglishAdmin ? 'Type' : 'نوع الحساب'}</th>
+                                <th className="text-right py-3 px-4 font-semibold text-sm">{isEnglishAdmin ? 'Actions' : 'الإجراءات'}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,8 +53,8 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ users, setUsers, onViewUser }
                                     <td className="py-3 px-4 text-gray-600">{user.email}</td>
                                     <td className="py-3 px-4 text-gray-600">{user.userType}</td>
                                     <td className="py-3 px-4 whitespace-nowrap">
-                                        <button onClick={() => onViewUser(user)} className="text-blue-500 hover:underline mr-4">عرض</button>
-                                        <button onClick={() => handleRemoveUser(user.id)} className="text-red-500 hover:underline">حذف</button>
+                                        <button onClick={() => onViewUser(user)} className="text-blue-500 hover:underline mr-4">{isEnglishAdmin ? 'View' : 'عرض'}</button>
+                                        {!isEnglishAdmin && <button onClick={() => handleRemoveUser(user.id)} className="text-red-500 hover:underline">{isEnglishAdmin ? 'Delete' : 'حذف'}</button>}
                                     </td>
                                 </tr>
                             ))}

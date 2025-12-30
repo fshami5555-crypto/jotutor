@@ -20,6 +20,20 @@ const users: UserProfile[] = [
         curriculum: 'المنهج الوطني الأردني',
         subjects: ['الرياضيات', 'الفيزياء'],
         dob: '2008-05-10',
+    },
+    {
+        id: '2',
+        username: "سارة أحمد",
+        email: "sara@example.com",
+        phone: "0781234567",
+        password: "password123",
+        userType: 'Student',
+        serviceType: 'اللغات',
+        educationStage: 'جامعي',
+        grade: 'سنة ثانية',
+        curriculum: 'دولي',
+        subjects: ['اللغة الإنجليزية'],
+        dob: '2004-03-15',
     }
 ];
 
@@ -29,8 +43,61 @@ const staff: StaffMember[] = [
 ];
 
 const payments: Payment[] = [
-    { id: '101', date: new Date('2023-10-26T10:00:00Z').toISOString(), userId: '1', userName: 'طالب جديد', courseId: 'c1', courseName: 'باقة الرياضيات للمرحلة الابتدائية', amount: 179, currency: 'JOD', status: 'Success' },
-    { id: '102', date: new Date('2023-10-25T14:30:00Z').toISOString(), userId: '2', userName: 'مستخدم آخر', courseId: 'c3', courseName: 'باقة اللغة الإنجليزية المتقدمة', amount: 247, currency: 'JOD', status: 'Failed' },
+    { 
+        id: '101', 
+        date: '2023-10-26T10:00:00.000Z', 
+        userId: '1', 
+        userName: 'طالب جديد', 
+        courseId: 'c1', 
+        courseName: 'باقة الرياضيات للمرحلة الابتدائية', 
+        amount: 179, 
+        currency: 'JOD', 
+        status: 'Success',
+        paymentMethod: 'Credit Card',
+        gatewayOrderId: 'ORD-1698314400-101',
+        transactionId: 'TXN-8829102-SUCCESS'
+    },
+    { 
+        id: '102', 
+        date: '2023-10-25T14:30:00.000Z', 
+        userId: '2', 
+        userName: 'مستخدم آخر', 
+        courseId: 'c3', 
+        courseName: 'باقة اللغة الإنجليزية المتقدمة', 
+        amount: 247, 
+        currency: 'JOD', 
+        status: 'Failed',
+        paymentMethod: 'Credit Card',
+        gatewayOrderId: 'ORD-1698244200-102',
+        transactionId: 'TXN-9912301-FAIL'
+    },
+    { 
+        id: '103', 
+        date: new Date().toISOString(), 
+        userId: '2', 
+        userName: 'سارة أحمد', 
+        courseId: 'c32', 
+        courseName: 'Secondary to High Std 8Sessions X 2Hours', 
+        amount: 247, 
+        currency: 'JOD', 
+        status: 'Pending',
+        paymentMethod: 'CliQ',
+        gatewayOrderId: 'MANUAL-CLIQ-103',
+    },
+    { 
+        id: '104', 
+        date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+        userId: '1', 
+        userName: 'طالب جديد', 
+        courseId: 'c74', 
+        courseName: 'Special Courses Prm+ 8Sessions X 2Hours', 
+        amount: 337, 
+        currency: 'USD', 
+        status: 'Success',
+        paymentMethod: 'Credit Card',
+        gatewayOrderId: 'ORD-INTL-5521',
+        transactionId: 'TXN-INTL-5521-OK'
+    }
 ];
 
 const teachers: Teacher[] = [
@@ -270,7 +337,7 @@ const onboardingOptions: OnboardingOptions = {
 };
 
 const siteContent: SiteContent = {
-    geminiApiKey: 'AIzaSyA9Mik-C-2DwTZ90IRZ-9YhBLB-YoR5zFE', // Added API Key
+    geminiApiKey: '', // Removed for security - Input manually in Admin Dashboard
     homepage: homepageContent,
     about: aboutContent,
     faq: [

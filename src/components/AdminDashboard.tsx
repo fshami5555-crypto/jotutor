@@ -45,10 +45,13 @@ interface AdminDashboardProps {
     onActivateCourse: (paymentId: string) => Promise<void>;
     strings: { [key: string]: string };
     language: Language;
+    isEnglishAdmin?: boolean; 
+    isSuperAdmin?: boolean; // New Prop
+    onToggleEnglishMode?: () => void; // New Prop
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
-    const [activeView, setActiveView] = useState<AdminView>('whatsapp-courses'); // Default to new view
+    const [activeView, setActiveView] = useState<AdminView>('content'); // Default view
     const [viewingUser, setViewingUser] = useState<UserProfile | null>(null);
 
     const handleViewUser = (user: UserProfile) => {
@@ -66,30 +69,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
 
         switch (activeView) {
             case 'content':
-                return <ManageContent content={props.content} onUpdate={props.setContent} />;
+                return <ManageContent content={props.content} onUpdate={props.setContent} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'onboarding':
-                return <ManageOnboarding options={props.onboardingOptions} onUpdate={props.setOnboardingOptions} />;
+                return <ManageOnboarding options={props.onboardingOptions} onUpdate={props.setOnboardingOptions} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'users':
-                return <ManageUsers users={props.users} setUsers={props.setUsers} onViewUser={handleViewUser} />;
+                return <ManageUsers users={props.users} setUsers={props.setUsers} onViewUser={handleViewUser} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'staff':
                 return <ManageStaff staff={props.staff} setStaff={props.setStaff} />;
              case 'payments':
                 return <ManagePayments payments={props.payments} />;
             case 'teachers':
-                return <ManageTeachers teachers={props.teachers} setTeachers={props.setTeachers} />;
+                return <ManageTeachers teachers={props.teachers} setTeachers={props.setTeachers} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'courses':
                 return <ManageCourses 
                             courses={props.courses} 
                             setCourses={props.setCourses} 
                             courseCategories={props.onboardingOptions.serviceTypes} 
                             curriculums={props.onboardingOptions.curriculums}
+                            isEnglishAdmin={props.isEnglishAdmin}
                         />;
             case 'testimonials':
-                return <ManageTestimonials testimonials={props.testimonials} setTestimonials={props.setTestimonials} />;
+                return <ManageTestimonials testimonials={props.testimonials} setTestimonials={props.setTestimonials} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'blog':
-                return <ManageBlog posts={props.blogPosts} setPosts={props.setBlogPosts} />;
+                return <ManageBlog posts={props.blogPosts} setPosts={props.setBlogPosts} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'heroImages':
-                return <ManageHeroSlides heroSlides={props.heroSlides} setHeroSlides={props.setHeroSlides} />;
+                return <ManageHeroSlides heroSlides={props.heroSlides} setHeroSlides={props.setHeroSlides} isEnglishAdmin={props.isEnglishAdmin} />;
             case 'whatsapp-courses':
                 return <ManageWhatsAppRequests payments={props.payments} onActivate={props.onActivateCourse} />;
             default:
@@ -106,6 +110,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
                         setActiveView={setActiveView}
                         onLogout={props.onLogout}
                         strings={props.strings}
+                        isEnglishAdmin={props.isEnglishAdmin}
+                        isSuperAdmin={props.isSuperAdmin}
+                        onSwitchMode={props.onToggleEnglishMode}
                     />
                     <main className="flex-1">
                         {renderMainContent()}

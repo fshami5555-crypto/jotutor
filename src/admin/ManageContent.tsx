@@ -7,11 +7,12 @@ import ImageUploadInput from './ImageUploadInput';
 interface ManageContentProps {
   content: SiteContent;
   onUpdate: (newContent: SiteContent) => void;
+  isEnglishAdmin?: boolean;
 }
 
 type ContentTab = 'homepage' | 'about' | 'faq' | 'contact' | 'privacy' | 'terms' | 'paymentRefund' | 'config';
 
-const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
+const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate, isEnglishAdmin }) => {
   const [activeTab, setActiveTab] = useState<ContentTab>('homepage');
   const [localContent, setLocalContent] = useState<SiteContent>(JSON.parse(JSON.stringify(content))); // Deep copy
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -76,7 +77,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
   };
 
   const addFaqItem = () => {
-    const newFaq: FAQItem = { id: Date.now().toString(), question: 'سؤال جديد', answer: 'إجابة جديدة' };
+    const newFaq: FAQItem = { id: Date.now().toString(), question: isEnglishAdmin ? 'New Question' : 'سؤال جديد', answer: isEnglishAdmin ? 'New Answer' : 'إجابة جديدة' };
     setLocalContent(prev => ({ ...prev, faq: [...prev.faq, newFaq]}));
   };
   
@@ -86,7 +87,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
 
   const handleSaveChanges = () => {
     onUpdate(localContent);
-    setStatus({ message: 'تم حفظ التغييرات بنجاح!', type: 'success' });
+    setStatus({ message: isEnglishAdmin ? 'Changes saved successfully (English Version)!' : 'تم حفظ التغييرات بنجاح!', type: 'success' });
     setTimeout(() => setStatus(null), 3000);
   };
   
@@ -99,33 +100,33 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Features Section Edit */}
                     <div className="md:col-span-2 p-4 border rounded-md bg-white shadow-sm">
-                        <h3 className="text-lg font-bold mb-4 text-blue-900 border-b pb-2">قسم "لماذا تختار JoTutor؟"</h3>
+                        <h3 className="text-lg font-bold mb-4 text-blue-900 border-b pb-2">{isEnglishAdmin ? 'Features Section' : 'قسم "لماذا تختار JoTutor؟"'}</h3>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الرئيسي</label>
-                            <input name="featuresTitle" value={localContent.homepage.featuresTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{isEnglishAdmin ? 'Main Title' : 'العنوان الرئيسي'}</label>
+                            <input name="featuresTitle" value={localContent.homepage.featuresTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="Title"/>
                         </div>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الفرعي</label>
-                            <textarea name="featuresSubtitle" value={localContent.homepage.featuresSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{isEnglishAdmin ? 'Subtitle' : 'العنوان الفرعي'}</label>
+                            <textarea name="featuresSubtitle" value={localContent.homepage.featuresSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="Subtitle" rows={2}></textarea>
                         </div>
                         
                         <div className="mt-6 pt-4 border-t">
-                            <h4 className="font-bold text-gray-800 mb-4 text-base bg-gray-100 p-2 rounded">تعديل البوكسات الثلاثة</h4>
+                            <h4 className="font-bold text-gray-800 mb-4 text-base bg-gray-100 p-2 rounded">{isEnglishAdmin ? 'Edit Features Boxes' : 'تعديل البوكسات الثلاثة'}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="p-3 bg-gray-50 rounded border shadow-sm">
-                                    <h5 className="font-bold text-green-600 mb-2 text-sm">البوكس الأول</h5>
-                                    <input name="feature1Title" value={localContent.homepage.feature1Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
-                                    <textarea name="feature1Desc" value={localContent.homepage.feature1Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">Box 1</h5>
+                                    <input name="feature1Title" value={localContent.homepage.feature1Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="Title"/>
+                                    <textarea name="feature1Desc" value={localContent.homepage.feature1Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="Description" rows={3}></textarea>
                                 </div>
                                 <div className="p-3 bg-gray-50 rounded border shadow-sm">
-                                    <h5 className="font-bold text-green-600 mb-2 text-sm">البوكس الثاني</h5>
-                                    <input name="feature2Title" value={localContent.homepage.feature2Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
-                                    <textarea name="feature2Desc" value={localContent.homepage.feature2Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">Box 2</h5>
+                                    <input name="feature2Title" value={localContent.homepage.feature2Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="Title"/>
+                                    <textarea name="feature2Desc" value={localContent.homepage.feature2Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="Description" rows={3}></textarea>
                                 </div>
                                 <div className="p-3 bg-gray-50 rounded border shadow-sm">
-                                    <h5 className="font-bold text-green-600 mb-2 text-sm">البوكس الثالث</h5>
-                                    <input name="feature3Title" value={localContent.homepage.feature3Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="العنوان"/>
-                                    <textarea name="feature3Desc" value={localContent.homepage.feature3Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="الوصف" rows={3}></textarea>
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">Box 3</h5>
+                                    <input name="feature3Title" value={localContent.homepage.feature3Title} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="Title"/>
+                                    <textarea name="feature3Desc" value={localContent.homepage.feature3Desc} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="Description" rows={3}></textarea>
                                 </div>
                             </div>
                         </div>
@@ -134,85 +135,84 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                     {/* Statistics Section Edit */}
                     <div className="md:col-span-2 p-4 border rounded-md bg-white shadow-sm ring-1 ring-green-200">
                         <h3 className="text-lg font-bold mb-4 text-green-800 border-b pb-2 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                            إحصائيات الموقع (الدوائر تحت البنر)
+                            {isEnglishAdmin ? 'Statistics Section' : 'إحصائيات الموقع'}
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                             <div className="p-2 bg-gray-50 rounded">
-                                <label className="block text-xs font-bold text-gray-600 mb-1">عدد المعلمين</label>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">{isEnglishAdmin ? 'Teacher Count' : 'عدد المعلمين'}</label>
                                 <input name="statsTeacherCount" value={localContent.homepage.statsTeacherCount || defaultHomepage.statsTeacherCount || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-center font-bold text-blue-900" placeholder="+750"/>
-                                <input name="statsTeacherLabel" value={localContent.homepage.statsTeacherLabel || defaultHomepage.statsTeacherLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="معلم ومعلمة"/>
+                                <input name="statsTeacherLabel" value={localContent.homepage.statsTeacherLabel || defaultHomepage.statsTeacherLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="Teachers"/>
                             </div>
                             <div className="p-2 bg-gray-50 rounded">
-                                <label className="block text-xs font-bold text-gray-600 mb-1">معدل القبول</label>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">{isEnglishAdmin ? 'Acceptance Rate' : 'معدل القبول'}</label>
                                 <input name="statsAcceptanceRate" value={localContent.homepage.statsAcceptanceRate || defaultHomepage.statsAcceptanceRate || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-center font-bold text-blue-900" placeholder="25%"/>
-                                <input name="statsAcceptanceLabel" value={localContent.homepage.statsAcceptanceLabel || defaultHomepage.statsAcceptanceLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="معدل القبول"/>
+                                <input name="statsAcceptanceLabel" value={localContent.homepage.statsAcceptanceLabel || defaultHomepage.statsAcceptanceLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="Acceptance Rate"/>
                             </div>
                             <div className="p-2 bg-gray-50 rounded">
-                                <label className="block text-xs font-bold text-gray-600 mb-1">عدد الطلاب</label>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">{isEnglishAdmin ? 'Student Count' : 'عدد الطلاب'}</label>
                                 <input name="statsStudentCount" value={localContent.homepage.statsStudentCount || defaultHomepage.statsStudentCount || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-center font-bold text-blue-900" placeholder="+5000"/>
-                                <input name="statsStudentLabel" value={localContent.homepage.statsStudentLabel || defaultHomepage.statsStudentLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="طالب مسجل"/>
+                                <input name="statsStudentLabel" value={localContent.homepage.statsStudentLabel || defaultHomepage.statsStudentLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="Students Enrolled"/>
                             </div>
                             <div className="p-2 bg-gray-50 rounded">
-                                <label className="block text-xs font-bold text-gray-600 mb-1">نسبة الرضا</label>
+                                <label className="block text-xs font-bold text-gray-600 mb-1">{isEnglishAdmin ? 'Satisfaction Rate' : 'نسبة الرضا'}</label>
                                 <input name="statsSatisfactionRate" value={localContent.homepage.statsSatisfactionRate || defaultHomepage.statsSatisfactionRate || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-center font-bold text-blue-900" placeholder="95%"/>
-                                <input name="statsSatisfactionLabel" value={localContent.homepage.statsSatisfactionLabel || defaultHomepage.statsSatisfactionLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="رضا أولياء الأمور"/>
+                                <input name="statsSatisfactionLabel" value={localContent.homepage.statsSatisfactionLabel || defaultHomepage.statsSatisfactionLabel || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-center text-xs" placeholder="Satisfaction Rate"/>
                             </div>
                         </div>
                     </div>
 
                      <div className="md:col-span-2 p-4 border rounded-md bg-white shadow-sm">
-                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "كيف يعمل؟"</h3>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">{isEnglishAdmin ? 'How It Works Section' : 'قسم "كيف يعمل؟"'}</h3>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الرئيسي</label>
-                            <input name="howItWorksTitle" value={localContent.homepage.howItWorksTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                            <input name="howItWorksTitle" value={localContent.homepage.howItWorksTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="Title"/>
                         </div>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">العنوان الفرعي</label>
-                            <textarea name="howItWorksSubtitle" value={localContent.homepage.howItWorksSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+                            <textarea name="howItWorksSubtitle" value={localContent.homepage.howItWorksSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="Subtitle" rows={2}></textarea>
                         </div>
 
                         <div className="mt-4 border-t pt-4">
-                            <h4 className="font-bold text-gray-800 mb-4 text-base bg-gray-100 p-2 rounded">تعديل الخطوات الثلاث</h4>
+                            <h4 className="font-bold text-gray-800 mb-4 text-base bg-gray-100 p-2 rounded">{isEnglishAdmin ? 'Edit 3 Steps' : 'تعديل الخطوات الثلاث'}</h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="p-3 bg-gray-50 rounded border shadow-sm">
-                                    <h5 className="font-bold text-green-600 mb-2 text-sm">الخطوة الأولى (01)</h5>
-                                    <input name="step1Title" value={localContent.homepage.step1Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="عنوان الخطوة" />
-                                    <textarea name="step1Desc" value={localContent.homepage.step1Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="وصف الخطوة" rows={3}></textarea>
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">Step 1</h5>
+                                    <input name="step1Title" value={localContent.homepage.step1Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="Step Title" />
+                                    <textarea name="step1Desc" value={localContent.homepage.step1Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="Description" rows={3}></textarea>
                                 </div>
                                 <div className="p-3 bg-gray-50 rounded border shadow-sm">
-                                    <h5 className="font-bold text-green-600 mb-2 text-sm">الخطوة الثانية (02)</h5>
-                                    <input name="step2Title" value={localContent.homepage.step2Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="عنوان الخطوة" />
-                                    <textarea name="step2Desc" value={localContent.homepage.step2Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="وصف الخطوة" rows={3}></textarea>
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">Step 2</h5>
+                                    <input name="step2Title" value={localContent.homepage.step2Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="Step Title" />
+                                    <textarea name="step2Desc" value={localContent.homepage.step2Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="Description" rows={3}></textarea>
                                 </div>
                                 <div className="p-3 bg-gray-50 rounded border shadow-sm">
-                                    <h5 className="font-bold text-green-600 mb-2 text-sm">الخطوة الثالثة (03)</h5>
-                                    <input name="step3Title" value={localContent.homepage.step3Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="عنوان الخطوة" />
-                                    <textarea name="step3Desc" value={localContent.homepage.step3Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="وصف الخطوة" rows={3}></textarea>
+                                    <h5 className="font-bold text-green-600 mb-2 text-sm">Step 3</h5>
+                                    <input name="step3Title" value={localContent.homepage.step3Title || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2 text-sm" placeholder="Step Title" />
+                                    <textarea name="step3Desc" value={localContent.homepage.step3Desc || ''} onChange={handleHomepageChange} className="w-full p-2 border rounded text-sm" placeholder="Description" rows={3}></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                      <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "ابحث عن معلم"</h3>
-                        <input name="teacherSearchTitle" value={localContent.homepage.teacherSearchTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
-                        <textarea name="teacherSearchSubtitle" value={localContent.homepage.teacherSearchSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">Teacher Search Section</h3>
+                        <input name="teacherSearchTitle" value={localContent.homepage.teacherSearchTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="Title"/>
+                        <textarea name="teacherSearchSubtitle" value={localContent.homepage.teacherSearchSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="Subtitle" rows={2}></textarea>
                     </div>
                     <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "أحدث الدورات"</h3>
-                        <input name="coursesPreviewTitle" value={localContent.homepage.coursesPreviewTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
-                        <textarea name="coursesPreviewSubtitle" value={localContent.homepage.coursesPreviewSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">Courses Preview Section</h3>
+                        <input name="coursesPreviewTitle" value={localContent.homepage.coursesPreviewTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="Title"/>
+                        <textarea name="coursesPreviewSubtitle" value={localContent.homepage.coursesPreviewSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="Subtitle" rows={2}></textarea>
                     </div>
                     <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "شهادات العملاء"</h3>
-                        <input name="testimonialsTitle" value={localContent.homepage.testimonialsTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
-                        <textarea name="testimonialsSubtitle" value={localContent.homepage.testimonialsSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">Testimonials Section</h3>
+                        <input name="testimonialsTitle" value={localContent.homepage.testimonialsTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="Title"/>
+                        <textarea name="testimonialsSubtitle" value={localContent.homepage.testimonialsSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="Subtitle" rows={2}></textarea>
                     </div>
                     <div className="md:col-span-2 p-4 border rounded-md">
-                        <h3 className="text-lg font-semibold mb-2 text-blue-900">قسم "مخطط الدروس الذكي"</h3>
-                        <input name="aiPlannerTitle" value={localContent.homepage.aiPlannerTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="العنوان الرئيسي"/>
-                        <textarea name="aiPlannerSubtitle" value={localContent.homepage.aiPlannerSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="العنوان الفرعي" rows={2}></textarea>
+                        <h3 className="text-lg font-semibold mb-2 text-blue-900">AI Planner Section</h3>
+                        <input name="aiPlannerTitle" value={localContent.homepage.aiPlannerTitle} onChange={handleHomepageChange} className="w-full p-2 border rounded mb-2" placeholder="Title"/>
+                        <textarea name="aiPlannerSubtitle" value={localContent.homepage.aiPlannerSubtitle} onChange={handleHomepageChange} className="w-full p-2 border rounded" placeholder="Subtitle" rows={2}></textarea>
                     </div>
                 </div>
             );
@@ -220,55 +220,55 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
         return (
             <div className="space-y-6">
                  <div>
-                    <label className="font-semibold block mb-1">العنوان الرئيسي للصفحة</label>
+                    <label className="font-semibold block mb-1">Page Title</label>
                     <input name="aboutTitle" value={localContent.about.aboutTitle} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">صورة البنر الرئيسية</label>
+                    <label className="font-semibold block mb-1">Hero Image</label>
                     <ImageUploadInput 
                         value={localContent.about.heroImage} 
                         onChange={(url) => handleAboutImageChange('heroImage', url)} 
-                        placeholder="رابط الصورة" 
+                        placeholder="Image URL" 
                     />
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">عنوان قسم الرؤية</label>
+                    <label className="font-semibold block mb-1">Vision Title</label>
                     <input name="visionTitle" value={localContent.about.visionTitle} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">نص الرؤية</label>
+                    <label className="font-semibold block mb-1">Vision Text</label>
                     <textarea name="vision" value={localContent.about.vision} onChange={handleAboutChange} rows={3} className="w-full p-2 border rounded-md"></textarea>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">صورة الرؤية</label>
+                    <label className="font-semibold block mb-1">Vision Image</label>
                     <ImageUploadInput 
                         value={localContent.about.visionImage} 
                         onChange={(url) => handleAboutImageChange('visionImage', url)} 
-                        placeholder="رابط الصورة" 
+                        placeholder="Image URL" 
                     />
                  </div>
                   <div>
-                    <label className="font-semibold block mb-1">عنوان قسم الرسالة</label>
+                    <label className="font-semibold block mb-1">Mission Title</label>
                     <input name="missionTitle" value={localContent.about.missionTitle} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">نص الرسالة</label>
+                    <label className="font-semibold block mb-1">Mission Text</label>
                     <textarea name="mission" value={localContent.about.mission} onChange={handleAboutChange} rows={5} className="w-full p-2 border rounded-md"></textarea>
                  </div>
                   <div>
-                    <label className="font-semibold block mb-1">عنوان مجتمع المعلمين</label>
+                    <label className="font-semibold block mb-1">Community Title</label>
                     <input name="teacherCommunityTitle" value={localContent.about.teacherCommunityTitle} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">نص مجتمع المعلمين</label>
+                    <label className="font-semibold block mb-1">Community Text</label>
                     <textarea name="teacherCommunity" value={localContent.about.teacherCommunity} onChange={handleAboutChange} rows={3} className="w-full p-2 border rounded-md"></textarea>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">عنوان قسم "لماذا JoTutor؟"</label>
+                    <label className="font-semibold block mb-1">Why JoTutor Title</label>
                     <input name="whyJoTutorTitle" value={localContent.about.whyJoTutorTitle} onChange={handleAboutChange} className="w-full p-2 border rounded-md"/>
                  </div>
                  <div>
-                    <label className="font-semibold block mb-1">نقاط "لماذا JoTutor؟" (كل نقطة في سطر جديد)</label>
+                    <label className="font-semibold block mb-1">Why JoTutor Points (One per line)</label>
                     <textarea name="whyJoTutor" value={localContent.about.whyJoTutor.join('\n')} onChange={handleAboutChange} rows={10} className="w-full p-2 border rounded-md"></textarea>
                  </div>
             </div>
@@ -279,8 +279,8 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                 {localContent.faq.map(item => (
                     <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-2 mb-4 p-4 border rounded-md bg-gray-50">
                         <div className="md:col-span-11">
-                            <input type="text" value={item.question} onChange={e => handleFaqChange(item.id, 'question', e.target.value)} placeholder="السؤال" className="w-full p-2 border rounded-md mb-2 font-semibold"/>
-                            <textarea value={item.answer} onChange={e => handleFaqChange(item.id, 'answer', e.target.value)} placeholder="الإجابة" rows={2} className="w-full p-2 border rounded-md"></textarea>
+                            <input type="text" value={item.question} onChange={e => handleFaqChange(item.id, 'question', e.target.value)} placeholder="Question" className="w-full p-2 border rounded-md mb-2 font-semibold"/>
+                            <textarea value={item.answer} onChange={e => handleFaqChange(item.id, 'answer', e.target.value)} placeholder="Answer" rows={2} className="w-full p-2 border rounded-md"></textarea>
                         </div>
                         <div className="md:col-span-1 flex items-center justify-end">
                              <button onClick={() => removeFaqItem(item.id)} className="p-2 text-red-500 hover:bg-red-100 rounded-full">
@@ -289,22 +289,22 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
                         </div>
                     </div>
                 ))}
-                 <button onClick={addFaqItem} className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600">إضافة سؤال جديد</button>
+                 <button onClick={addFaqItem} className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600">Add New Question</button>
             </div>
         );
       case 'contact':
         return (
             <div className="space-y-4">
                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <input type="email" name="email" value={localContent.contact.email} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                     <input type="text" name="phone" value={localContent.contact.phone} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">العنوان</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <input type="text" name="address" value={localContent.contact.address} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
                 </div>
             </div>
@@ -312,21 +312,21 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
       case 'privacy':
          return (
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">محتوى صفحة "سياسة الخصوصية"</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Privacy Policy Content</label>
                 <textarea name="privacy" value={localContent.privacy} onChange={(e) => handleTextChange(e, 'privacy')} rows={10} className="w-full p-2 border rounded-md"></textarea>
             </div>
         );
       case 'terms':
         return (
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">محتوى صفحة "شروط الاستخدام"</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Terms & Conditions Content</label>
                 <textarea name="terms" value={localContent.terms} onChange={(e) => handleTextChange(e, 'terms')} rows={10} className="w-full p-2 border rounded-md"></textarea>
             </div>
         );
       case 'paymentRefund':
         return (
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">محتوى صفحة "سياسة الدفع والارجاع"</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Payment & Refund Policy Content</label>
                 <textarea name="paymentRefundPolicy" value={localContent.paymentRefundPolicy || ''} onChange={(e) => handleTextChange(e, 'paymentRefundPolicy')} rows={10} className="w-full p-2 border rounded-md"></textarea>
             </div>
         );
@@ -334,7 +334,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
         return (
             <div className="space-y-4">
                 <div className="bg-yellow-50 p-4 rounded border border-yellow-300 text-yellow-800 text-sm mb-4">
-                    <strong>تحذير:</strong> مفتاح API حساس. مشاركته قد تؤدي إلى سوء استخدامه. تأكد من إبقاء هذا المفتاح سرياً.
+                    <strong>Warning:</strong> The API Key is sensitive.
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Gemini API Key</label>
@@ -346,19 +346,19 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
   };
 
   const tabs: { id: ContentTab, label: string }[] = [
-      { id: 'homepage', label: 'محتوى الصفحة الرئيسية' },
-      { id: 'about', label: 'عن JoTutor' },
-      { id: 'faq', label: 'الأسئلة الشائعة' },
-      { id: 'contact', label: 'معلومات التواصل' },
-      { id: 'config', label: 'إعدادات النظام (API)' },
-      { id: 'privacy', label: 'سياسة الخصوصية' },
-      { id: 'terms', label: 'شروط الاستخدام' },
-      { id: 'paymentRefund', label: 'سياسة الدفع والارجاع' }
+      { id: 'homepage', label: isEnglishAdmin ? 'Homepage' : 'محتوى الصفحة الرئيسية' },
+      { id: 'about', label: isEnglishAdmin ? 'About' : 'عن JoTutor' },
+      { id: 'faq', label: isEnglishAdmin ? 'FAQ' : 'الأسئلة الشائعة' },
+      { id: 'contact', label: isEnglishAdmin ? 'Contact' : 'معلومات التواصل' },
+      { id: 'config', label: isEnglishAdmin ? 'Config (API)' : 'إعدادات النظام (API)' },
+      { id: 'privacy', label: isEnglishAdmin ? 'Privacy' : 'سياسة الخصوصية' },
+      { id: 'terms', label: isEnglishAdmin ? 'Terms' : 'شروط الاستخدام' },
+      { id: 'paymentRefund', label: isEnglishAdmin ? 'Refund Policy' : 'سياسة الدفع والارجاع' }
   ];
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">إدارة المحتوى</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">{isEnglishAdmin ? 'Content Management (English Mode)' : 'إدارة المحتوى'}</h1>
       <div className="bg-white p-6 rounded-lg shadow-md">
         <div className="border-b border-gray-200 mb-6">
             <nav className="-mb-px flex space-x-6 space-x-reverse overflow-x-auto" aria-label="Tabs">
@@ -376,7 +376,7 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate }) => {
         
         <div className="mt-6 pt-6 border-t flex justify-between items-center">
             <button onClick={handleSaveChanges} className="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition-colors">
-                حفظ التغييرات
+                {isEnglishAdmin ? 'Save English Content' : 'حفظ التغييرات'}
             </button>
             {status && <p className={`text-sm font-semibold ${status.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{status.message}</p>}
         </div>
