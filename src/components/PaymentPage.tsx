@@ -11,7 +11,7 @@ interface PaymentPageProps {
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, onEnroll }) => {
-    if (!course) return <div>Course not found</div>;
+    if (!course) return <div className="py-20 text-center font-bold text-xl text-gray-600">Course not found</div>;
 
     let price = 0;
     let currencySymbol = '';
@@ -107,6 +107,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                 });
             } else {
                 let errorMsg = data.error?.explanation || `Gateway Error: ${data.response?.gatewayCode || 'Unknown'}`;
+                // Fallback for demo cards
                 if (cardNumber.replace(/\s/g, '').startsWith('512345') || cardNumber.replace(/\s/g, '').startsWith('411111')) {
                      onEnroll(course, 'Success', { orderId, transactionId, paymentMethod: 'Credit Card' });
                      return;

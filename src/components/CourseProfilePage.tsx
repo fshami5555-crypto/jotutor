@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course, Currency, Language } from '../types';
 
@@ -12,7 +11,7 @@ interface CourseProfilePageProps {
 }
 
 const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, strings }) => {
-    if (!course) return <div>Course not found</div>;
+    if (!course) return <div className="py-20 text-center font-bold text-xl">Course not found</div>;
 
     let price = 0;
     let currencySymbol = '';
@@ -28,8 +27,8 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
         currencySymbol = strings.jod;
     }
 
-    const safePrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
-    const displayPrice = safePrice.toFixed(2);
+    const safePriceValue = (typeof price === 'number' && !isNaN(price)) ? price : 0;
+    const displayPrice = safePriceValue.toFixed(2);
 
     return (
         <div className="py-12 bg-white">
@@ -58,8 +57,8 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
                                 <li className="flex justify-between"><strong>{strings.courseLevel}:</strong> <span>{course.level}</span></li>
                                 <li className="flex justify-between"><strong>{strings.subject}:</strong> <span>{course.category}</span></li>
                                 {course.curriculum && <li className="flex justify-between"><strong>المنهاج:</strong> <span>{course.curriculum}</span></li>}
-                                {course.sessionCount && <li className="flex justify-between"><strong>{strings.sessions}:</strong> <span>{course.sessionCount}</span></li>}
-                                {course.totalHours && <li className="flex justify-between"><strong>{strings.hours}:</strong> <span>{course.totalHours}</span></li>}
+                                {course.sessionCount ? <li className="flex justify-between"><strong>{strings.sessions}:</strong> <span>{course.sessionCount}</span></li> : null}
+                                {course.totalHours ? <li className="flex justify-between"><strong>{strings.hours}:</strong> <span>{course.totalHours}</span></li> : null}
                             </ul>
                         </div>
                     </div>
