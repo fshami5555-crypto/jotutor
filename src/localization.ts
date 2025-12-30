@@ -1,3 +1,4 @@
+
 // This file contains all the string resources for the application.
 
 export const arStrings = {
@@ -216,14 +217,13 @@ export const arStrings = {
   paymentSuccess: 'تم الدفع بنجاح!',
 
   // Chatbot
-  chatbotTooltip: 'مرحباً! هل تحتاج إلى مساعدة في العثور على دورة؟ أنا هنا للمساعدة!',
-  chatbotWelcome: 'أهلاً بك في مساعد JoTutor! كيف يمكنني مساعدتك في العثور على الدورة المثالية اليوم؟',
-  chatbotTitle: 'مساعد JoTutor',
+  chatbotTooltip: 'مرحباً! أنا Mr.Pincel. هل تحتاج إلى مساعدة؟',
+  chatbotWelcome: 'أهلاً بك! أنا Mr.Pincel، مساعدك التعليمي الذكي. كيف يمكنني مساعدتك اليوم؟',
+  chatbotTitle: 'Mr.Pincel - المساعد التعليمي',
   chatbotRecommendedCourses: 'دورات مقترحة لك:',
-  chatbotTyping: 'أكتب...',
-  chatbotPlaceholder: 'اسأل عن دورة...',
+  chatbotTyping: 'Mr.Pincel يكتب...',
+  chatbotPlaceholder: 'اسأل Mr.Pincel...',
   chatbotSend: 'إرسال',
-  chatbotSoon: 'سيكون متاحاً قريباً لخدمة طلابنا',
 
   // Admin
   adminPanelTitle: 'لوحة تحكم المشرف',
@@ -434,7 +434,6 @@ export const enStrings = {
   chatbotTyping: 'Typing...',
   chatbotPlaceholder: 'Ask about a course...',
   chatbotSend: 'Send',
-  chatbotSoon: 'Will be available soon to serve our students',
 
   // Admin
   adminPanelTitle: 'Admin Control Panel',

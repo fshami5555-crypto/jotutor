@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 
 interface ImageUploadInputProps {
@@ -20,9 +21,8 @@ const ImageUploadInput: React.FC<ImageUploadInputProps> = ({ value, onChange, pl
         formData.append('image', file);
 
         try {
-            // Using the environment variable for ImgBB API Key
-            const apiKey = process.env.VITE_IMGBB_KEY;
-            const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+            // Using the provided ImgBB API Key
+            const response = await fetch('https://api.imgbb.com/1/upload?key=8651c8d21d91d90c780590fa34ee35aa', {
                 method: 'POST',
                 body: formData,
             });

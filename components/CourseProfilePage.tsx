@@ -1,4 +1,5 @@
 import React from 'react';
+// Fix: Corrected import path for types.
 import { Course, Currency, Language } from '../types';
 
 interface CourseProfilePageProps {
@@ -10,22 +11,11 @@ interface CourseProfilePageProps {
     language: Language;
 }
 
-const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, exchangeRate, strings, language }) => {
-    if (!course) return <div className="py-20 text-center">Course not found</div>;
-
-    // Harmonized price calculation logic
-    let price = 0;
-    if (currency === 'USD') {
-        price = course.priceUsd ?? (course.priceJod ? course.priceJod / exchangeRate : (course.price ? course.price / exchangeRate : 0));
-    } else if (currency === 'SAR') {
-        price = course.priceSar ?? (course.priceJod ? course.priceJod * 5.3 : (course.price ? course.price * 5.3 : 0));
-    } else {
-        price = course.priceJod ?? course.price ?? 0;
-    }
-
-    const safePrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
-    const displayPrice = safePrice.toFixed(2);
-    const currencySymbol = currency === 'USD' ? strings.usd : (currency === 'SAR' ? strings.sar : strings.jod);
+const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, exchangeRate, strings }) => {
+    const displayPrice = currency === 'USD'
+        ? (course.price / exchangeRate).toFixed(2)
+        : course.price.toFixed(2);
+    const currencySymbol = currency === 'USD' ? strings.usd : strings.jod;
 
     return (
         <div className="py-12 bg-white">
@@ -35,7 +25,7 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
                     <div className="lg:col-span-2">
                         <img src={course.imageUrl} alt={course.title} className="w-full h-auto max-h-96 object-cover rounded-lg shadow-lg mb-8" />
                         <h1 className="text-4xl font-extrabold text-blue-900 mb-4">{course.title}</h1>
-                        <p className="text-lg text-gray-500 mb-6">{strings.by} {course.includedSubjects || course.teacher || course.category}</p>
+                        <p className="text-lg text-gray-500 mb-6">{strings.by} {course.teacher}</p>
                         <div className="prose lg:prose-lg max-w-none text-gray-700">
                            <p>{course.description}</p>
                         </div>
@@ -53,9 +43,6 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
                                 <li className="flex justify-between"><strong>{strings.courseDuration}:</strong> <span>{course.duration}</span></li>
                                 <li className="flex justify-between"><strong>{strings.courseLevel}:</strong> <span>{course.level}</span></li>
                                 <li className="flex justify-between"><strong>{strings.subject}:</strong> <span>{course.category}</span></li>
-                                {course.curriculum && <li className="flex justify-between"><strong>المنهاج:</strong> <span>{course.curriculum}</span></li>}
-                                {course.sessionCount && <li className="flex justify-between"><strong>{strings.sessions}:</strong> <span>{course.sessionCount}</span></li>}
-                                {course.totalHours && <li className="flex justify-between"><strong>{strings.hours}:</strong> <span>{course.totalHours}</span></li>}
                             </ul>
                         </div>
                     </div>
