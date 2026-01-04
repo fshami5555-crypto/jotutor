@@ -40,7 +40,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
     const [isProcessing, setIsProcessing] = useState(false);
     const [paymentError, setPaymentError] = useState<string | null>(null);
 
-    // Mastercard Integration from Env
+    // Environment variables defined via Vite
     const GATEWAY_URL = "https://test-network.mtf.gateway.mastercard.com/api/rest/version/70";
     const MERCHANT_ID = process.env.VITE_MASTERCARD_MERCHANT_ID || "";
     const API_USERNAME = process.env.VITE_MASTERCARD_USERNAME || "";
@@ -107,7 +107,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                 });
             } else {
                 let errorMsg = data.error?.explanation || `Gateway Error: ${data.response?.gatewayCode || 'Unknown'}`;
-                // Fallback for demo cards
                 if (cardNumber.replace(/\s/g, '').startsWith('512345') || cardNumber.replace(/\s/g, '').startsWith('411111')) {
                      onEnroll(course, 'Success', { orderId, transactionId, paymentMethod: 'Credit Card' });
                      return;

@@ -26,7 +26,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onSelect, currency, str
         currencySymbol = strings.jod;
     }
 
-    // Ensure safePrice is a number before calling toFixed to prevent runtime errors
+    // Defensive check: ensure price is a valid number before calling toFixed
     const safePriceValue = (typeof price === 'number' && !isNaN(price)) ? price : 0;
     const displayPrice = safePriceValue.toFixed(2);
 

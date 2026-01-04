@@ -3,13 +3,16 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Fix: Replaced `process.cwd()` with `'.'` to resolve a TypeScript error where `cwd` was not found on the `process` type.
-  // The `loadEnv` function will still resolve environment files from the project root.
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react()],
     define: {
-      'process.env.API_KEY': JSON.stringify(env.API_KEY)
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || env.VITE_GEMINI_API_KEY || ""),
+      'process.env.VITE_FIREBASE_API_KEY': JSON.stringify(env.VITE_FIREBASE_API_KEY || ""),
+      'process.env.VITE_IMGBB_KEY': JSON.stringify(env.VITE_IMGBB_KEY || ""),
+      'process.env.VITE_MASTERCARD_MERCHANT_ID': JSON.stringify(env.VITE_MASTERCARD_MERCHANT_ID || ""),
+      'process.env.VITE_MASTERCARD_USERNAME': JSON.stringify(env.VITE_MASTERCARD_USERNAME || ""),
+      'process.env.VITE_MASTERCARD_PASSWORD': JSON.stringify(env.VITE_MASTERCARD_PASSWORD || "")
     }
   }
 })
