@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { HeroSlide, HomepageContent } from '../types';
 
 interface HeroSectionProps {
   onSignupClick: () => void;
   heroSlides: HeroSlide[];
-  content?: HomepageContent;
+  content?: HomepageContent; // تم التأكد من إضافة هذا الحقل
   strings: { [key: string]: string };
 }
 
@@ -30,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
     const lastWord = words.pop();
     const mainText = words.join(' ');
     return (
-        <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.4)' }}>
             {mainText} <span className="text-green-400">{lastWord}</span>
         </h1>
     );
@@ -59,7 +58,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
     },
     {
       value: content?.statsSatisfactionRate || '98%',
-      label: content?.statsSatisfactionLabel || 'نسبة نجاح طلابنا',
+      label: content?.statsSatisfactionLabel || 'نسب نجاح طلابنا',
       color: 'from-orange-500 to-yellow-400',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -118,7 +117,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
         {/* Decorative Wave */}
         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-10">
             <svg className="relative block w-full h-12 md:h-24" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V46.35C54.7,64.35,123.93,73.12,192,67.64,242.06,63.64,286,59.39,321.39,56.44Z" className="fill-blue-900/90"></path>
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V46.35C54.7,64.35,123.93,73.12,192,67.64,242.06,63.64,286,59.39,321.39,56.44Z" className="fill-blue-100"></path>
             </svg>
         </div>
       </section>
@@ -130,11 +129,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
             {stats.map((stat, index) => (
               <div 
                 key={index} 
-                className="group relative flex flex-col items-center justify-center animate-fade-in-up" 
-                style={{ animationDelay: `${index * 150}ms` }}
+                className="group relative flex flex-col items-center justify-center" 
               >
                 {/* Outer Circle Ring */}
-                <div className={`w-32 h-32 md:w-48 md:h-48 rounded-full bg-white p-1 shadow-2xl transition-all duration-500 transform group-hover:scale-110 group-hover:rotate-6`}>
+                <div className={`w-32 h-32 md:w-48 md:h-48 rounded-full bg-white p-1 shadow-2xl transition-all duration-500 transform group-hover:scale-110 group-hover:rotate-6 ring-4 ring-white/50 backdrop-blur-sm`}>
                    {/* Gradient Inner Border */}
                    <div className={`w-full h-full rounded-full bg-gradient-to-tr ${stat.color} p-1`}>
                       {/* Main Circle Content */}
@@ -146,7 +144,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
                       </div>
                    </div>
                 </div>
-                {/* Text Label Below Circle with Floating effect */}
+                {/* Text Label Below Circle */}
                 <div className="mt-4 bg-blue-900 text-white py-1.5 px-4 rounded-full shadow-lg transform transition-all duration-300 group-hover:-translate-y-1">
                    <p className="text-[10px] md:text-sm font-bold whitespace-nowrap">{stat.label}</p>
                 </div>
