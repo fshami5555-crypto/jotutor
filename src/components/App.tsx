@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { arStrings, enStrings } from '../localization';
 import { JOD_TO_USD_RATE } from '../constants';
@@ -246,7 +247,7 @@ const App: React.FC = () => {
                     <HeroSection 
                         onSignupClick={() => { setAuthModalView('signup'); setAuthModalOpen(true); }} 
                         heroSlides={heroSlides} 
-                        content={siteContent.homepage} // تأكد من وجود هذا السطر
+                        content={siteContent.homepage} 
                         strings={strings} 
                     />
                     <FeaturesSection content={siteContent.homepage} strings={strings} />
@@ -327,6 +328,15 @@ const App: React.FC = () => {
                     </div>
                 </div>
             )}
+            {/* FAB Chat Component Integration */}
+            <Chatbot 
+                courses={displayedCourses} 
+                onSelectCourse={(id) => handleNavigate('course-profile', id)} 
+                strings={strings} 
+                language={language}
+                isOpen={isChatOpen}
+                setIsOpen={setIsChatOpen}
+            />
         </div>
     );
 };

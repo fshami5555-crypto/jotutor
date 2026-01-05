@@ -1,4 +1,3 @@
-
 // This file contains all the string resources for the application.
 
 export const arStrings = {
@@ -194,7 +193,7 @@ export const arStrings = {
   sortDefault: 'افتراضي',
   sortPriceAsc: 'السعر: من الأقل إلى الأعلى',
   sortPriceDesc: 'السعر: من الأعلى إلى الأقل',
-  noCoursesFound: 'لم يتم العثور على دورات.',
+  noCoursesFound: 'لم يتم العور على دورات.',
   noCoursesFoundDesc: 'حاول تعديل فلاتر البحث للعثور على ما تبحث عنه.',
   bookCourse: 'احجز الدورة الآن',
   courseTeacher: 'المعلم',
@@ -217,7 +216,7 @@ export const arStrings = {
   paymentSuccess: 'تم الدفع بنجاح!',
 
   // Chatbot
-  chatbotTooltip: 'مرحباً! أنا Mr.Pincel. هل تحتاج إلى مساعدة؟',
+  chatbotTooltip: 'المساعد الآلي لا يعمل حالياً يجري تطويره وسيكون متاحاً قريباً',
   chatbotWelcome: 'أهلاً بك! أنا Mr.Pincel، مساعدك التعليمي الذكي. كيف يمكنني مساعدتك اليوم؟',
   chatbotTitle: 'Mr.Pincel - المساعد التعليمي',
   chatbotRecommendedCourses: 'دورات مقترحة لك:',
@@ -427,7 +426,7 @@ export const enStrings = {
   cvv: 'CVV',
   confirmPayment: 'Confirm Payment',
   paymentSuccess: 'Payment successful!',
-  chatbotTooltip: "Hi! Need help finding a course? I'm here to assist!",
+  chatbotTooltip: "Automation Assistant is currently unavailable and is being developed. It will be available soon.",
   chatbotWelcome: 'Welcome to the JoTutor Assistant! How can I help you find the perfect course today?',
   chatbotTitle: 'JoTutor Assistant',
   chatbotRecommendedCourses: 'Recommended courses for you:',
