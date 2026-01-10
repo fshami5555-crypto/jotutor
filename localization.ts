@@ -16,7 +16,16 @@ export const arStrings = {
   welcome: 'أهلاً',
   dashboard: 'لوحة التحكم',
   logout: 'تسجيل الخروج',
+  // Fix: Added missing 'back' key.
+  back: 'رجوع',
   
+  // Language Confirmation
+  // Fix: Added missing language confirmation keys.
+  langConfirmTitle: 'تغيير اللغة',
+  langConfirmMessage: 'عند تغيير اللغة يمكن ان تلاحظ تغيير في المحتوى وذلك لضمان الوصول لافضل معرفة بناءاً على اللغة. هل انت متاكد من تغيير اللغة؟',
+  langConfirmYes: 'نعم، غير اللغة',
+  langConfirmNo: 'لا، استمر بنفس اللغة الحالية',
+
   // Hero Section
   heroButton: 'ابدأ رحلتك التعليمية',
 
@@ -118,7 +127,7 @@ export const arStrings = {
   onboardingStep8Desc: 'هل أنت مستعد لبدء رحلتك التعليمية؟',
   verificationMessage: 'سنقوم بمراجعة طلبك وسيتواصل معك أحد مستشارينا التعليميين خلال 24 ساعة.',
   agreeToTerms: 'أوافق على الشروط والأحكام وسياسة الخصوصية.',
-  back: 'رجوع',
+  // Fix: Removed duplicate 'back' property that was causing object literal error on line 131.
   next: 'التالي',
   finishSignup: 'إنهاء التسجيل',
   errorGradeRequired: 'الرجاء إدخال الصف الدراسي.',
@@ -131,6 +140,8 @@ export const arStrings = {
   errorAgreeToTerms: 'يجب الموافقة على الشروط والأحكام.',
   errorEmailInUse: 'هذا البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر.',
   errorSignupGeneric: 'حدث خطأ غير متوقع أثناء التسجيل. يرجى المحاولة مرة أخرى.',
+  // Fix: Added missing error keys.
+  errorInvalidCredentials: 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
 
   // Dashboard
   myCourses: 'دوراتي',
@@ -140,10 +151,16 @@ export const arStrings = {
   suggestedCoursesDesc: 'دورات مقترحة لك بناءً على اهتماماتك.',
   noSuggestedCourses: 'لا توجد دورات مقترحة حاليًا.',
   noSuggestedCoursesDesc: 'استكشف مكتبة الدورات لدينا للعثور على ما يناسبك.',
+  // Fix: Added missing dashboard keys.
+  dashboardProfile: 'الملف الشخصي',
+  dashboardWallet: 'المحفظة',
+  dashboardAI: 'المساعد الذكي',
 
   // Pages
   privacyTitle: 'سياسة الخصوصية',
   termsTitle: 'شروط الاستخدام',
+  // Fix: Added missing policy key.
+  paymentRefundTitle: 'سياسة الدفع والإرجاع',
   contactTitle: 'تواصل معنا',
   contactInfo: 'معلومات التواصل',
   contactFormTitle: 'أرسل لنا رسالة',
@@ -162,6 +179,9 @@ export const arStrings = {
   faqTitle: 'الأسئلة الشائعة',
   blogTitle: 'مدونة JoTutor',
   by: 'بواسطة',
+  // Fix: Added missing course metadata keys.
+  sessions: 'حصص',
+  hours: 'ساعة/لكل حصة',
   readMore: 'اقرأ المزيد',
   backToBlog: 'العودة إلى المدونة',
   videosTitle: 'فيديوهات تعليمية قصيرة',
@@ -188,6 +208,7 @@ export const arStrings = {
   courseLevel: 'المستوى',
   jod: 'د.أ',
   usd: '$',
+  sar: 'ر.س',
 
   // Payment
   paymentTitle: 'إتمام عملية الدفع',
@@ -209,6 +230,21 @@ export const arStrings = {
   chatbotTyping: 'أكتب...',
   chatbotPlaceholder: 'اسأل عن دورة...',
   chatbotSend: 'إرسال',
+
+  // Admin
+  // Fix: Added missing admin navigation keys.
+  adminPanelTitle: 'لوحة تحكم المشرف',
+  adminNavContent: 'إدارة المحتوى',
+  adminNavHero: 'إدارة بنر الرئيسية',
+  adminNavOnboarding: 'مراحل التسجيل',
+  adminNavUsers: 'إدارة المستخدمين',
+  adminNavStaff: 'إدارة الموظفين',
+  adminNavPayments: 'إدارة الدفعات',
+  adminNavTeachers: 'إدارة المعلمين',
+  adminNavCourses: 'إدارة الدورات',
+  adminNavTestimonials: 'إدارة الشهادات',
+  adminNavBlog: 'إدارة المدونة',
+  adminNavWhatsapp: 'الدورات عبر واتساب',
 };
 
 // Abridged English strings for fallback
@@ -225,6 +261,13 @@ export const enStrings = {
   welcome: 'Welcome',
   dashboard: 'Dashboard',
   logout: 'Logout',
+  back: 'Back',
+  
+  langConfirmTitle: 'Change Language',
+  langConfirmMessage: 'When changing the language, you may notice a change in content to ensure access to the best knowledge based on the language. Are you sure you want to change the language?',
+  langConfirmYes: 'Yes, change language',
+  langConfirmNo: 'No, keep current language',
+
   heroButton: 'Start Your Learning Journey',
   featuresTitle: 'Why Choose JoTutor?',
   featuresSubtitle: 'We offer a unique learning experience tailored to your needs.',
@@ -311,7 +354,6 @@ export const enStrings = {
   onboardingStep8Desc: "Are you ready to start your learning journey?",
   verificationMessage: "We will review your application and one of our educational consultants will contact you within 24 hours.",
   agreeToTerms: "I agree to the Terms & Conditions and Privacy Policy.",
-  back: "Back",
   next: "Next",
   finishSignup: "Finish Signup",
   errorGradeRequired: "Please enter your grade.",
@@ -324,6 +366,7 @@ export const enStrings = {
   errorAgreeToTerms: "You must agree to the terms and conditions.",
   errorEmailInUse: 'This email address is already in use by another account.',
   errorSignupGeneric: 'An unexpected error occurred during signup. Please try again.',
+  errorInvalidCredentials: 'Invalid email or password.',
   myCourses: 'My Courses',
   enrolledCoursesTitle: 'Enrolled Courses',
   noEnrolledCourses: "You are not currently enrolled in any courses.",
@@ -331,8 +374,12 @@ export const enStrings = {
   suggestedCoursesDesc: 'Courses suggested for you based on your interests.',
   noSuggestedCourses: 'No suggested courses at the moment.',
   noSuggestedCoursesDesc: 'Explore our course library to find what suits you.',
+  dashboardProfile: 'Profile',
+  dashboardWallet: 'Wallet',
+  dashboardAI: 'AI Assistant',
   privacyTitle: 'Privacy Policy',
   termsTitle: 'Terms of Service',
+  paymentRefundTitle: 'Payment & Refund Policy',
   contactTitle: 'Contact Us',
   contactInfo: 'Contact Information',
   contactFormTitle: 'Send Us a Message',
@@ -351,6 +398,9 @@ export const enStrings = {
   faqTitle: 'Frequently Asked Questions',
   blogTitle: 'JoTutor Blog',
   by: 'By',
+  // Fix: Added missing keys for sync.
+  sessions: 'Sessions',
+  hours: 'Hrs/Session',
   readMore: 'Read More',
   backToBlog: 'Back to Blog',
   videosTitle: 'Short Educational Videos',
@@ -375,6 +425,7 @@ export const enStrings = {
   courseLevel: 'Level',
   jod: 'JOD',
   usd: 'USD',
+  sar: 'SAR',
   paymentTitle: 'Complete Your Payment',
   courseSummary: 'Course Summary',
   totalAmount: 'Total Amount',
@@ -385,11 +436,24 @@ export const enStrings = {
   cvv: 'CVV',
   confirmPayment: 'Confirm Payment',
   paymentSuccess: 'Payment successful!',
-  chatbotTooltip: 'Hi! Need help finding a course? I am here to assist!',
+  chatbotTooltip: "Hi! Need help finding a course? I'm here to assist!",
   chatbotWelcome: 'Welcome to the JoTutor Assistant! How can I help you find the perfect course today?',
   chatbotTitle: 'JoTutor Assistant',
   chatbotRecommendedCourses: 'Recommended courses for you:',
   chatbotTyping: 'Typing...',
   chatbotPlaceholder: 'Ask about a course...',
   chatbotSend: 'Send',
+
+  adminPanelTitle: 'Admin Control Panel',
+  adminNavContent: 'Content Management',
+  adminNavHero: 'Home Banner',
+  adminNavOnboarding: 'Onboarding Steps',
+  adminNavUsers: 'User Management',
+  adminNavStaff: 'Staff Management',
+  adminNavPayments: 'Payments',
+  adminNavTeachers: 'Teacher Management',
+  adminNavCourses: 'Course Management',
+  adminNavTestimonials: 'Testimonials',
+  adminNavBlog: 'Blog Management',
+  adminNavWhatsapp: 'WhatsApp Courses',
 };

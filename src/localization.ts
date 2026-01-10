@@ -97,7 +97,7 @@ export const arStrings = {
   onboardingStep2Desc: 'سيساعدنا هذا في تخصيص تجربتك.',
   serviceType1Desc: 'لتقوية المهارات الأساسية في القراءة والكتابة والرياضيات.',
   serviceType2Desc: 'للمساعدة في الواجبات المدرسية والاستعداد للامتحانات.',
-  serviceType3Desc: 'للحصول على دعم إضافي في مواد معينة.',
+  serviceType3Desc: 'للحصول على دعم إتباعي في مواد معينة.',
   serviceType4Desc: 'للاستعداد لامتحانات الشهادات الدولية والجامعية.',
   serviceType5Desc: 'لتعلم لغات جديدة أو تحسين مهاراتك اللغوية.',
   onboardingStep3Title: 'في أي مرحلة دراسية؟',
@@ -216,7 +216,7 @@ export const arStrings = {
   paymentSuccess: 'تم الدفع بنجاح!',
 
   // Chatbot
-  chatbotTooltip: 'المساعد الآلي لا يعمل حالياً يجري تطويره وسيكون متاحاً قريباً',
+  chatbotTooltip: 'مرحباً! أنا Mr.Pincel. هل تحتاج إلى مساعدة؟',
   chatbotWelcome: 'أهلاً بك! أنا Mr.Pincel، مساعدك التعليمي الذكي. كيف يمكنني مساعدتك اليوم؟',
   chatbotTitle: 'Mr.Pincel - المساعد التعليمي',
   chatbotRecommendedCourses: 'دورات مقترحة لك:',
@@ -239,7 +239,6 @@ export const arStrings = {
   adminNavWhatsapp: 'الدورات عبر واتساب',
 };
 
-// Abridged English strings for fallback
 export const enStrings = {
   navHome: 'Home',
   navTeachers: 'Teachers',
@@ -254,13 +253,10 @@ export const enStrings = {
   dashboard: 'Dashboard',
   logout: 'Logout',
   back: 'Back',
-  
-  // Language Confirmation
   langConfirmTitle: 'Change Language',
   langConfirmMessage: 'When changing the language, you may notice a change in content to ensure access to the best knowledge based on the language. Are you sure you want to change the language?',
   langConfirmYes: 'Yes, change language',
   langConfirmNo: 'No, keep current language',
-
   heroButton: 'Start Your Learning Journey',
   featuresTitle: 'Why Choose JoTutor?',
   featuresSubtitle: 'We offer a unique learning experience tailored to your needs.',
@@ -391,6 +387,8 @@ export const enStrings = {
   faqTitle: 'Frequently Asked Questions',
   blogTitle: 'JoTutor Blog',
   by: 'By',
+  sessions: 'Sessions',
+  hours: 'Hrs/Session',
   readMore: 'Read More',
   backToBlog: 'Back to Blog',
   videosTitle: 'Short Educational Videos',
@@ -426,15 +424,13 @@ export const enStrings = {
   cvv: 'CVV',
   confirmPayment: 'Confirm Payment',
   paymentSuccess: 'Payment successful!',
-  chatbotTooltip: "Automation Assistant is currently unavailable and is being developed. It will be available soon.",
+  chatbotTooltip: "Hi! Need help finding a course? I'm here to assist!",
   chatbotWelcome: 'Welcome to the JoTutor Assistant! How can I help you find the perfect course today?',
   chatbotTitle: 'JoTutor Assistant',
   chatbotRecommendedCourses: 'Recommended courses for you:',
   chatbotTyping: 'Typing...',
   chatbotPlaceholder: 'Ask about a course...',
   chatbotSend: 'Send',
-
-  // Admin
   adminPanelTitle: 'Admin Control Panel',
   adminNavContent: 'Content Management',
   adminNavHero: 'Home Banner',

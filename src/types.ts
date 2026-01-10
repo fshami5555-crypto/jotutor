@@ -1,4 +1,3 @@
-
 export type Page = 
   'home' | 'teachers' | 'teacher-profile' | 'courses' | 'course-profile' | 
   'payment' | 'videos' | 'short-player' | 'blog' | 'article' | 'about' | 
@@ -15,7 +14,6 @@ export interface HeroSlide {
   title: string;
   description: string;
   imageUrl: string;
-  // English fields
   title_en?: string;
   description_en?: string;
 }
@@ -24,16 +22,14 @@ export interface Teacher {
   id: string;
   name: string;
   avatarUrl: string;
-  level: string; // e.g., "ابتدائي ومتوسط"
-  experience: number; // years
+  level: string;
+  experience: number;
   specialties: string[];
   rating: number;
   reviews: number;
   pricePerHour: number;
   bio: string;
   qualifications: string[];
-  
-  // English fields
   name_en?: string;
   level_en?: string;
   bio_en?: string;
@@ -44,11 +40,9 @@ export interface Teacher {
 export interface Testimonial {
   id: string;
   name: string;
-  role: string; // e.g., "ولي أمر"
+  role: string;
   avatarUrl: string;
   quote: string;
-  
-  // English fields
   name_en?: string;
   role_en?: string;
   quote_en?: string;
@@ -59,26 +53,20 @@ export interface Course {
     title: string;
     description: string;
     teacher: string;
-    // Price fields (made optional to prevent crashes if missing)
     price?: number; 
     priceJod?: number;
     priceUsd?: number;
     priceSar?: number;
-    
     duration: string;
     level: string;
     imageUrl: string;
     category: string;
     curriculum?: string;
     isFeatured?: boolean;
-    
-    // New fields
     sessionCount?: number;
-    totalHours?: number; // Duration of each session
-    includedSubjects?: string; // The subjects included text
-    targetGrades?: string[]; // Array of grades this course is suitable for
-
-    // English Localization Fields
+    totalHours?: number;
+    includedSubjects?: string;
+    targetGrades?: string[];
     title_en?: string;
     description_en?: string;
     level_en?: string;
@@ -89,18 +77,18 @@ export interface Course {
 }
 
 export interface UserProfile {
-    id: string; // Firebase UID
+    id: string;
     username: string;
     email: string;
     phone: string;
-    password?: string; // Only used for signup, not stored in DB
+    password?: string;
     userType: 'Student' | 'Parent';
     serviceType: string;
     educationStage: string;
     grade: string;
     curriculum: string;
     subjects: string[];
-    dob: string; // YYYY-MM-DD
+    dob: string;
     enrolledCourses?: string[];
 }
 
@@ -110,8 +98,6 @@ export interface OnboardingOptions {
     curriculums: string[];
     subjects: string[];
     languages: string[];
-    
-    // English fields
     serviceTypes_en?: string[];
     educationStages_en?: string[];
     curriculums_en?: string[];
@@ -128,15 +114,13 @@ export interface BlogPost {
   id: string;
   title: string;
   author: string;
-  date: string; // ISO string
+  date: string;
   excerpt: string;
   content: string;
   imageUrl: string;
   tags: string[];
   type: 'article' | 'short';
   youtubeVideoId?: string;
-  
-  // English fields
   title_en?: string;
   excerpt_en?: string;
   content_en?: string;
@@ -176,7 +160,6 @@ export interface HomepageContent {
   testimonialsSubtitle: string;
   aiPlannerTitle: string;
   aiPlannerSubtitle: string;
-  // Statistics Section
   statsTeacherCount?: string;
   statsTeacherLabel?: string;
   statsAcceptanceRate?: string;
@@ -229,7 +212,7 @@ export interface StaffMember {
 
 export interface Payment {
     id: string;
-    date: string; // ISO String
+    date: string;
     userId: string;
     userName: string;
     courseId: string;
@@ -237,7 +220,6 @@ export interface Payment {
     amount: number;
     currency: Currency;
     status: 'Success' | 'Failed' | 'Pending';
-    // New fields for gateway tracking
     paymentMethod?: 'Credit Card' | 'CliQ' | 'Manual';
     gatewayOrderId?: string;
     transactionId?: string;

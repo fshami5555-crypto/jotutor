@@ -10,26 +10,28 @@ interface CourseProfilePageProps {
     language: Language;
 }
 
-const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, strings }) => {
-    if (!course) return <div className="py-20 text-center font-bold text-xl">Course not found</div>;
+const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, currency, exchangeRate, strings }) => {
+    if (!course) return <div className="py-20 text-center">Course not found</div>;
 
     let price = 0;
     let currencySymbol = '';
 
+    // Fix: Updated to use price fields from Course type and handle SAR currency correctly.
     if (currency === 'USD') {
-        price = course.priceUsd ?? (course.price ? course.price * 1.41 : 0);
-        currencySymbol = strings.usd;
+        const basePrice = course.priceUsd ?? (course.price ? course.price * (1/exchangeRate) : 0);
+        price = (typeof basePrice === 'number' && !isNaN(basePrice)) ? basePrice : 0;
+        currencySymbol = strings.usd || '$';
     } else if (currency === 'SAR') {
-        price = course.priceSar ?? (course.price ? course.price * 5.3 : 0);
-        currencySymbol = strings.sar;
+        const basePrice = course.priceSar ?? (course.price ? course.price * 5.3 : 0);
+        price = (typeof basePrice === 'number' && !isNaN(basePrice)) ? basePrice : 0;
+        currencySymbol = strings.sar || 'ر.س';
     } else {
-        price = course.priceJod ?? course.price ?? 0;
-        currencySymbol = strings.jod;
+        const basePrice = course.priceJod ?? course.price ?? 0;
+        price = (typeof basePrice === 'number' && !isNaN(basePrice)) ? basePrice : 0;
+        currencySymbol = strings.jod || 'د.أ';
     }
 
-    // Defensive check: ensure price is a valid number before calling toFixed
-    const safePriceValue = (typeof price === 'number' && !isNaN(price)) ? price : 0;
-    const displayPrice = safePriceValue.toFixed(2);
+    const displayPrice = price.toFixed(2);
 
     return (
         <div className="py-12 bg-white">
@@ -37,9 +39,9 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                     {/* Main Content */}
                     <div className="lg:col-span-2">
-                        <img src={course.imageUrl} alt={course.title} className="w-full h-auto max-h-96 object-cover rounded-lg shadow-lg mb-8" />
+                        <img src={course.imageUrl || 'https://via.placeholder.com/800x400?text=No+Image'} alt={course.title} className="w-full h-auto max-h-96 object-cover rounded-lg shadow-lg mb-8" />
                         <h1 className="text-4xl font-extrabold text-blue-900 mb-4">{course.title}</h1>
-                        <p className="text-lg text-gray-500 mb-6">{strings.by} {course.includedSubjects || course.category}</p>
+                        <p className="text-lg text-gray-500 mb-6">{strings.by} {course.teacher}</p>
                         <div className="prose lg:prose-lg max-w-none text-gray-700">
                            <p>{course.description}</p>
                         </div>
@@ -57,9 +59,6 @@ const CourseProfilePage: React.FC<CourseProfilePageProps> = ({ course, onBook, c
                                 <li className="flex justify-between"><strong>{strings.courseDuration}:</strong> <span>{course.duration}</span></li>
                                 <li className="flex justify-between"><strong>{strings.courseLevel}:</strong> <span>{course.level}</span></li>
                                 <li className="flex justify-between"><strong>{strings.subject}:</strong> <span>{course.category}</span></li>
-                                {course.curriculum && <li className="flex justify-between"><strong>المنهاج:</strong> <span>{course.curriculum}</span></li>}
-                                {course.sessionCount && <li className="flex justify-between"><strong>{strings.sessions}:</strong> <span>{course.sessionCount}</span></li>}
-                                {course.totalHours && <li className="flex justify-between"><strong>{strings.hours}:</strong> <span>{course.totalHours}</span></li>}
                             </ul>
                         </div>
                     </div>

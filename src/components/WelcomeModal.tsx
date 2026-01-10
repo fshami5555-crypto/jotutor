@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 
 interface WelcomeModalProps {
     onStartChat: () => void;
@@ -6,67 +7,51 @@ interface WelcomeModalProps {
 }
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartChat, onClose }) => {
-    const [showComingSoon, setShowComingSoon] = useState(false);
     const mrPincelImage = "https://i.ibb.co/sd7GkLLT/image-removebg-preview.png";
-
-    const handleAiClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        setShowComingSoon(true);
-        // Hide notification after 4 seconds
-        setTimeout(() => setShowComingSoon(false), 4000);
-    };
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-blue-900/85 backdrop-blur-md" onClick={onClose}></div>
+            <div className="absolute inset-0 bg-blue-900/80 backdrop-blur-sm" onClick={onClose}></div>
 
             {/* Modal Content */}
-            <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl p-8 md:p-10 text-center transform transition-all scale-100 animate-fade-in-up border-8 border-green-500/20">
-                <div className="absolute -top-20 left-1/2 transform -translate-x-1/2">
-                    <div className="w-36 h-36 bg-white rounded-full border-4 border-green-500 flex items-center justify-center shadow-2xl ring-8 ring-white">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 text-center transform transition-all scale-100 animate-fade-in-up border-4 border-green-500">
+                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                    <div className="w-32 h-32 bg-white rounded-full border-4 border-green-500 flex items-center justify-center shadow-lg">
                         <img 
                             src={mrPincelImage} 
                             alt="Mr. Pincel" 
-                            className="w-28 h-28 object-contain"
+                            className="w-24 h-24 object-contain"
                         />
                     </div>
                 </div>
 
                 <div className="mt-16">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-blue-900 mb-2">
+                    <h2 className="text-3xl font-extrabold text-blue-900 mb-2">
                         أهلاً بك في JoTutor!
                     </h2>
-                    <h3 className="text-xl font-bold text-green-600 mb-8">
+                    <h3 className="text-xl font-bold text-green-600 mb-6">
                         دعني أساعدك في اختيار الدورة المناسبة لك
                     </h3>
                     
-                    <p className="text-gray-600 mb-10 text-lg md:text-xl leading-relaxed">
-                        أنا <span className="font-bold text-blue-900">Mr. Pincel</span>، مساعدك الذكي. يمكنني تحليل احتياجاتك واقتراح أفضل المعلمين والدورات لك في ثوانٍ.
+                    <p className="text-gray-600 mb-8 text-lg">
+                        أنا <span className="font-bold">Mr. Pincel</span>، مساعدك الذكي. يمكنني تحليل احتياجاتك واقتراح أفضل المعلمين والدورات لك في ثوانٍ.
                     </p>
 
-                    <div className="space-y-8 relative">
-                        {/* Cloud Notification */}
-                        {showComingSoon && (
-                            <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-8 py-4 rounded-[40px] shadow-2xl animate-bounce z-50 whitespace-nowrap border-4 border-white flex items-center gap-2">
-                                <span className="font-black text-lg">سيكون متاحاً قريباً لخدمة طلابنا ☁️✨</span>
-                                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-blue-600"></div>
-                            </div>
-                        )}
-
+                    <div className="space-y-4">
                         <button 
-                            onClick={handleAiClick}
-                            className="w-full bg-gray-100 text-gray-400 text-xl font-bold py-5 px-8 rounded-2xl shadow-inner flex items-center justify-center gap-3 border-2 border-gray-200 opacity-70 cursor-not-allowed group transition-all"
+                            onClick={onStartChat}
+                            className="w-full bg-green-500 hover:bg-green-600 text-white text-lg font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2"
                         >
                             <span>أكمل بمساعدة المساعد الذكي Mr.Pincel</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
                         </button>
 
                         <button 
                             onClick={onClose}
-                            className="w-full text-blue-900 font-black text-3xl md:text-4xl hover:text-green-600 transition-all transform hover:scale-105 py-4 underline decoration-4 underline-offset-8 block"
+                            className="text-gray-400 hover:text-gray-600 font-medium text-sm hover:underline transition-colors"
                         >
                             تابع للموقع بدون مساعدة Mr.Pincel
                         </button>

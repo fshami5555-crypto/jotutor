@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-// Fix: Corrected import path for types.
 import { Course, Currency, Language } from '../types';
 import CourseCard from './CourseCard';
 
@@ -21,7 +20,7 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
   const levels = useMemo(() => ['all', ...Array.from(new Set(courses.map(c => c.level)))], [courses]);
 
   const filteredAndSortedCourses = useMemo(() => {
-    let result = [...courses]; // Create a copy to avoid mutating the original prop
+    let result = [...courses]; 
 
     if (selectedCategory !== 'all') {
       result = result.filter(course => course.category === selectedCategory);
@@ -31,14 +30,24 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
       result = result.filter(course => course.level === selectedLevel);
     }
 
+    const getSafePrice = (c: Course) => {
+        let p = 0;
+        // Fix: c.priceUsd, c.priceSar, and c.priceJod are now part of the Course interface.
+        // The comparison to 'SAR' is now valid because 'SAR' was added to the Currency type.
+        if (currency === 'USD') p = c.priceUsd ?? (c.price ? c.price * (1/exchangeRate) : 0);
+        else if (currency === 'SAR') p = c.priceSar ?? (c.price ? c.price * 5.3 : 0);
+        else p = c.priceJod ?? c.price ?? 0;
+        return (typeof p === 'number' && !isNaN(p)) ? p : 0;
+    };
+
     if (sortBy === 'price-asc') {
-      result.sort((a, b) => a.price - b.price);
+      result.sort((a, b) => getSafePrice(a) - getSafePrice(b));
     } else if (sortBy === 'price-desc') {
-      result.sort((a, b) => b.price - a.price);
+      result.sort((a, b) => getSafePrice(b) - getSafePrice(a));
     }
 
     return result;
-  }, [courses, selectedCategory, selectedLevel, sortBy]);
+  }, [courses, selectedCategory, selectedLevel, sortBy, currency, exchangeRate]);
 
   return (
     <div className="py-20 bg-gray-100">
@@ -48,10 +57,8 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
           <p className="mt-4 text-lg text-gray-600">{strings.coursesSubtitle}</p>
         </div>
 
-        {/* Filters and Sorting */}
         <div className="bg-white p-4 rounded-lg shadow-md mb-12 max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Category Filter */}
                 <div>
                     <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700">{strings.category}</label>
                     <select
@@ -64,7 +71,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
                         {categories.filter(c => c !== 'all').map(cat => <option key={cat} value={cat}>{cat}</option>)}
                     </select>
                 </div>
-                {/* Level Filter */}
                 <div>
                     <label htmlFor="level-filter" className="block text-sm font-medium text-gray-700">{strings.level}</label>
                     <select
@@ -77,7 +83,6 @@ const CoursesPage: React.FC<CoursesPageProps> = ({ courses, onSelectCourse, curr
                         {levels.filter(l => l !== 'all').map(lvl => <option key={lvl} value={lvl}>{lvl}</option>)}
                     </select>
                 </div>
-                {/* Sort By */}
                 <div>
                     <label htmlFor="sort-by" className="block text-sm font-medium text-gray-700">{strings.sortBy}</label>
                     <select

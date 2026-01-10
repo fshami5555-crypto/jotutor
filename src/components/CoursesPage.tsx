@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Course, Currency, Language } from '../types';
 import CourseCard from './CourseCard';
