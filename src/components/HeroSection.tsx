@@ -91,15 +91,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onSignupClick, heroSlides = [
             <div className="absolute inset-0 bg-black/40"></div>
           </div>
 
-        <div className="container mx-auto px-6 py-20 lg:py-32 flex flex-col lg:flex-row items-center relative z-10">
-          <div className="lg:w-2/3 text-center lg:text-right">
+        <div className="container mx-auto px-6 py-20 lg:py-32 flex flex-col items-center justify-center relative z-10">
+          <div className="w-full max-w-4xl text-center">
             {currentSlide && <Title text={currentSlide.title} />}
             {currentSlide && (
-              <p className="mt-6 text-lg text-gray-200 max-w-2xl mx-auto lg:mx-0" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+              <p className="mt-6 text-lg text-gray-200 max-w-2xl mx-auto" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
                 {currentSlide.description}
               </p>
             )}
-            <div className="mt-8 flex justify-center lg:justify-start">
+            <div className="mt-8 flex justify-center">
               <button onClick={onSignupClick} className="bg-green-500 text-white font-bold text-lg py-3 px-8 rounded-full hover:bg-green-600 transition-transform duration-300 transform hover:scale-105 shadow-xl flex items-center space-x-2 space-x-reverse">
                 <span>{strings.heroButton}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

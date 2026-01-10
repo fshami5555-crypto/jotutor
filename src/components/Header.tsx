@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Page, Currency, Language } from '../types';
 
@@ -24,9 +23,9 @@ const Header: React.FC<HeaderProps> = ({
     onNavigate, onLoginClick, onSignupClick, isLoggedIn, isAdmin, username, onLogout, 
     currency, onCurrencyChange, language, onLanguageChange, isTranslating, onBack, canGoBack, strings 
 }) => {
-    // Only show "Home" link if language is Arabic
+    // Only show "Home" link if language is English (Deleted for Arabic as requested)
     const navLinks = [
-        ...(language === 'ar' ? [{ label: strings.navHome, page: 'home' as Page }] : []),
+        ...(language === 'en' ? [{ label: strings.navHome, page: 'home' as Page }] : []),
         { label: strings.navTeachers, page: 'teachers' as Page },
         { label: strings.navCourses, page: 'courses' as Page },
         { label: strings.navVideos, page: 'videos' as Page },
@@ -41,7 +40,6 @@ const Header: React.FC<HeaderProps> = ({
                 <button onClick={() => onNavigate('home')} className="flex items-center space-x-2 space-x-reverse">
                     <img src="https://i.ibb.co/XxGsLR3D/15.png" alt="JoTutor Logo" className="h-14 w-auto" />
                 </button>
-                {/* Updated className: Increased space to space-x-8 and made space-x-reverse conditional */}
                 <nav className={`hidden md:flex items-center space-x-8 ${language === 'ar' ? 'space-x-reverse' : ''}`}>
                     {navLinks.map(link => (
                         <button key={link.page} onClick={() => onNavigate(link.page)} className="text-gray-600 hover:text-green-500 font-semibold transition-colors">
