@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Course, Currency, Language } from '../types';
 
 interface PaymentPageProps {
@@ -27,9 +27,8 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // Mastercard API Config (Version 72)
-    const API_VERSION = "72"; 
-    const GATEWAY_URL = `https://test-network.mtf.gateway.mastercard.com/api/rest/version/${API_VERSION}`;
+    // Mastercard API Config (Version 72 - Test Environment)
+    const GATEWAY_URL = `https://test-network.mtf.gateway.mastercard.com/api/rest/version/72`;
     const MERCHANT_ID = "test12122024";
     const API_USERNAME = "merchant.test12122024";
     const API_PASSWORD = "0cb74bdcb05329641aa7bed1caff4e8a";
@@ -39,8 +38,9 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                          (course.priceJod ?? 0)).toFixed(2);
 
     /**
-     * تنفيذ عملية الدفع عبر البوابة
-     * تم إزالة كائن interaction نهائياً لأنه المسبب للخطأ في عملية الـ PAY
+     * تنفيذ عملية الدفع المباشرة
+     * ملاحظة: تم تجريد الطلب من أي بارامترات 'interaction' أو 'browserPayment' 
+     * لتجنب تعارض القواعد في بوابة Mastercard (MPGS).
      */
     const initiateGatewayPayment = async () => {
         setIsProcessing(true);
@@ -56,19 +56,17 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
             const [month, year] = expiryParts;
             const fullYear = year.length === 2 ? `20${year}` : year;
 
-            // الطلب المحدث والمتوافق مع عملية PAY المباشرة
+            // الطلب الأدنى المطلوب لعملية PAY مع 3DS في الإصدار 72
             const payload = {
                 apiOperation: "PAY",
                 authentication: {
                     acceptVersions: "3DS1,3DS2",
-                    channel: "BROWSER",
-                    purpose: "PAYMENT_TRANSACTION"
+                    channel: "BROWSER"
                 },
                 order: {
                     amount: displayPrice,
                     currency: currency,
-                    description: `JoTutor: ${course.title}`,
-                    reference: course.id
+                    description: `JoTutor Enrollment: ${course.title}`
                 },
                 sourceOfFunds: {
                     provided: {
@@ -82,10 +80,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                         }
                     },
                     type: "CARD"
-                },
-                // تم نقل رابط العودة إلى browserPayment بدلاً من interaction
-                browserPayment: {
-                    returnUrl: window.location.origin
                 }
             };
 
@@ -100,20 +94,21 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
 
             const data = await response.json();
 
-            // معالجة الردود
+            // 1. نجاح العملية فوراً (إذا كان البنك لا يتطلب 3DS أو البطاقة مفعلة)
             if (response.ok && data.result === 'SUCCESS') {
                 onEnroll(course, 'Success', { orderId, transactionId, paymentMethod: 'Credit Card' });
             } 
-            // التحقق من وجود HTML إعادة التوجيه لـ 3DS (استدعاء البنك)
+            // 2. البنك يطلب التحقق (3DS) - سنستلم كود HTML للتوجيه
             else if (data.authentication?.redirectHtml) {
                 setBankHtml(data.authentication.redirectHtml);
                 setShowBankPage(true);
                 setIsProcessing(false);
             }
+            // 3. وجود خطأ في البيانات أو رفض من البنك
             else {
-                // استخراج رسالة الخطأ من البوابة
-                const errorMsg = data.error?.explanation || data.response?.gatewayCode || "العملية مرفوضة من قبل البنك";
-                throw new Error(errorMsg);
+                // محاولة استخراج رسالة الخطأ الأدق من رد البوابة
+                const errorInfo = data.error?.explanation || data.response?.gatewayCode || "العملية مرفوضة. يرجى التأكد من بيانات البطاقة.";
+                throw new Error(errorInfo);
             }
 
         } catch (error: any) {
@@ -148,11 +143,11 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                             </div>
                         </div>
                         <div className="bg-blue-900 p-5 rounded-2xl text-white">
-                            <div className="flex items-center gap-2 mb-2 text-sm">
-                                <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                                <span className="font-bold">دفع آمن بالكامل</span>
+                            <div className="flex items-center gap-2 mb-2 text-sm text-green-400">
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                                <span className="font-black">Mastercard Secure Pay</span>
                             </div>
-                            <p className="text-[10px] text-blue-200">يتم معالجة بياناتك مباشرة عبر بوابة Mastercard Payment Gateway العالمية.</p>
+                            <p className="text-[10px] text-blue-200 leading-relaxed">بوابة الدفع آمنة وتدعم بروتوكول 3D Secure للحماية من الاحتيال. يتم تشفير بياناتك بالكامل.</p>
                         </div>
                     </div>
 
@@ -160,45 +155,55 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                     <div className="lg:col-span-3 bg-white p-8 rounded-2xl shadow-xl">
                         <div className="flex gap-4 mb-8">
                             <button type="button" onClick={() => setPaymentMethod('visa')} className={`flex-1 py-3 rounded-xl border-2 font-bold transition-all ${paymentMethod === 'visa' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-100 text-gray-400'}`}>بطاقة بنكية</button>
-                            <button type="button" onClick={() => setPaymentMethod('cliq')} className={`flex-1 py-3 rounded-xl border-2 font-bold transition-all ${paymentMethod === 'cliq' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-100 text-gray-400'}`}>دفع محلي</button>
+                            <button type="button" onClick={() => setPaymentMethod('cliq')} className={`flex-1 py-3 rounded-xl border-2 font-bold transition-all ${paymentMethod === 'cliq' ? 'border-green-500 bg-green-50 text-green-700' : 'border-gray-100 text-gray-400'}`}>CliQ / زين كاش</button>
                         </div>
 
                         <form onSubmit={handleFormSubmit} className="space-y-5">
                             {paymentMethod === 'visa' ? (
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-xs font-black text-gray-400 mb-1 uppercase">حامل البطاقة</label>
-                                        <input type="text" value={cardHolder} onChange={e => setCardHolder(e.target.value)} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold" placeholder="NAME ON CARD" required />
+                                        <label className="block text-xs font-black text-gray-400 mb-1 uppercase tracking-wider">الاسم على البطاقة</label>
+                                        <input type="text" value={cardHolder} onChange={e => setCardHolder(e.target.value)} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold" placeholder="FULL NAME" required />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-black text-gray-400 mb-1 uppercase">رقم البطاقة</label>
+                                        <label className="block text-xs font-black text-gray-400 mb-1 uppercase tracking-wider">رقم البطاقة</label>
                                         <input type="text" value={cardNumber} onChange={e => setCardNumber(e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim())} maxLength={19} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-mono text-lg" placeholder="0000 0000 0000 0000" required />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-xs font-black text-gray-400 mb-1 uppercase">تاريخ الانتهاء</label>
+                                            <label className="block text-xs font-black text-gray-400 mb-1 uppercase tracking-wider">التاريخ</label>
                                             <input type="text" value={expiry} onChange={e => setExpiry(e.target.value.replace(/\D/g, '').replace(/(.{2})/, '$1/').trim())} maxLength={5} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-center font-bold" placeholder="MM/YY" required />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-black text-gray-400 mb-1 uppercase">CVV</label>
+                                            <label className="block text-xs font-black text-gray-400 mb-1 uppercase tracking-wider">رمز CVV</label>
                                             <input type="password" value={cvv} onChange={e => setCvv(e.target.value.replace(/\D/g, ''))} maxLength={4} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-center font-bold" placeholder="•••" required />
                                         </div>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="bg-blue-50 p-4 rounded-xl text-blue-800 text-sm font-bold border border-blue-100">
-                                    سيتم تزويدك ببيانات تحويل CliQ فور الضغط على زر التأكيد أدناه.
+                                <div className="bg-green-50 p-4 rounded-xl text-green-800 text-sm font-bold border border-green-100 flex items-center gap-3">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                                    سيتم تزويدك ببيانات التحويل فور تأكيد الطلب.
                                 </div>
                             )}
 
-                            {errorMessage && <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-100">{errorMessage}</div>}
+                            {errorMessage && (
+                                <div className="p-3 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-100 animate-shake">
+                                    {errorMessage}
+                                </div>
+                            )}
 
-                            <button type="submit" disabled={isProcessing} className="w-full bg-blue-900 text-white font-black py-4 rounded-xl shadow-xl hover:bg-blue-800 transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-wait">
-                                {isProcessing ? 'جاري التحقق...' : strings.confirmPayment}
+                            <button type="submit" disabled={isProcessing} className="w-full bg-blue-900 text-white font-black py-4 rounded-xl shadow-xl hover:bg-blue-800 transition-all active:scale-95 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                {isProcessing ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        جاري المعالجة...
+                                    </div>
+                                ) : strings.confirmPayment}
                             </button>
                         </form>
 
-                        <div className="mt-8 flex justify-center gap-4 grayscale opacity-40">
+                        <div className="mt-8 flex justify-center gap-6 grayscale opacity-40">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-4" alt="Visa" />
                             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-6" alt="Mastercard" />
                         </div>
@@ -206,22 +211,25 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                 </div>
             </div>
 
-            {/* صفحة التحقق من البنك (3DS) */}
+            {/* شاشة الـ 3D Secure المستدعاة من البنك (ACS Redirect) */}
             {showBankPage && bankHtml && (
-                <div className="fixed inset-0 z-[200] bg-white flex flex-col">
+                <div className="fixed inset-0 z-[200] bg-white flex flex-col animate-fade-in">
                     <div className="bg-gray-100 p-4 border-b flex justify-between items-center">
                         <div className="flex items-center gap-2">
                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                             <span className="font-bold text-gray-600 text-sm">التحقق الآمن عبر البنك المصدر (3D Secure)</span>
+                             <span className="font-bold text-gray-700 text-sm">تحقق البنك المصدر (العملية مؤمنة)</span>
                         </div>
-                        <button onClick={() => setShowBankPage(false)} className="text-red-500 font-bold text-sm bg-red-50 px-3 py-1 rounded-md">إلغاء</button>
+                        <button onClick={() => setShowBankPage(false)} className="text-red-500 font-bold text-xs bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">إلغاء وإغلاق</button>
                     </div>
                     <div className="flex-1 w-full bg-white">
                         <iframe 
                             title="Bank Verification"
                             srcDoc={bankHtml} 
-                            className="w-full h-full border-none"
+                            className="w-full h-full border-none shadow-inner"
                         />
+                    </div>
+                    <div className="p-2 bg-gray-50 text-center text-[9px] text-gray-400">
+                        Securely processed by Mastercard Payment Gateway Services.
                     </div>
                 </div>
             )}
