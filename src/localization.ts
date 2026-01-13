@@ -16,6 +16,7 @@ export const arStrings = {
   welcome: 'أهلاً',
   dashboard: 'لوحة التحكم',
   logout: 'تسجيل الخروج',
+  // Fix: Added missing 'back' key.
   back: 'رجوع',
   
   // Language Confirmation
@@ -119,7 +120,7 @@ export const arStrings = {
   onboardingStep7Title: 'معلوماتك الشخصية',
   onboardingStep7Desc: 'لن يستغرق الأمر سوى دقيقة.',
   fullName: 'الاسم الكامل',
-  dob: 'تاريخ الميلاد',
+  age: 'العمر',
   phone: 'رقم الهاتف',
   onboardingStep8Title: 'الخطوة الأخيرة!',
   onboardingStep8Desc: 'هل أنت مستعد لبدء رحلتك التعليمية؟',
@@ -130,7 +131,7 @@ export const arStrings = {
   errorGradeRequired: 'الرجاء إدخال الصف الدراسي.',
   errorSubjectsRequired: 'الرجاء اختيار مادة واحدة على الأقل.',
   errorFullNameRequired: 'الرجاء إدخال الاسم الكامل.',
-  errorDobRequired: 'الرجاء إدخال تاريخ الميلاد.',
+  errorAgeRequired: 'الرجاء إدخال العمر.',
   errorPhoneRequired: 'الرجاء إدخال رقم الهاتف.',
   errorEmailInvalid: 'الرجاء إدخال بريد إلكتروني صحيح.',
   errorPasswordInvalid: 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
@@ -337,7 +338,7 @@ export const enStrings = {
   onboardingStep7Title: "Your Personal Information",
   onboardingStep7Desc: "It will only take a minute.",
   fullName: "Full Name",
-  dob: "Date of Birth",
+  age: "Age",
   phone: "Phone Number",
   onboardingStep8Title: "Final Step!",
   onboardingStep8Desc: "Are you ready to start your learning journey?",
@@ -348,7 +349,7 @@ export const enStrings = {
   errorGradeRequired: "Please enter your grade.",
   errorSubjectsRequired: "Please select at least one subject.",
   errorFullNameRequired: "Please enter your full name.",
-  errorDobRequired: "Please enter your date of birth.",
+  errorAgeRequired: "Please enter your age.",
   errorPhoneRequired: "Please enter your phone number.",
   errorEmailInvalid: "Please enter a valid email.",
   errorPasswordInvalid: "Password must be at least 6 characters.",
@@ -387,6 +388,7 @@ export const enStrings = {
   faqTitle: 'Frequently Asked Questions',
   blogTitle: 'JoTutor Blog',
   by: 'By',
+  // Fix: Added missing keys for sync.
   sessions: 'Sessions',
   hours: 'Hrs/Session',
   readMore: 'Read More',

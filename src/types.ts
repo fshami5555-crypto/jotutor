@@ -88,7 +88,7 @@ export interface UserProfile {
     grade: string;
     curriculum: string;
     subjects: string[];
-    dob: string;
+    age: string;
     enrolledCourses?: string[];
 }
 

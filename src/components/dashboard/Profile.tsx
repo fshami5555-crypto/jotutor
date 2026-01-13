@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserProfile } from '../../types';
 
@@ -25,8 +24,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ userProfile }) => {
                         <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.userType}</p>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500">تاريخ الميلاد</label>
-                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.dob}</p>
+                        <label className="block text-sm font-medium text-gray-500">العمر</label>
+                        <p className="text-lg font-semibold text-gray-800 mt-1">{userProfile.age}</p>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-500">الخدمة المطلوبة</label>

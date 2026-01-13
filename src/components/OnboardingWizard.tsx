@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserProfile, OnboardingOptions, Language } from '../types';
 
@@ -68,8 +67,8 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                     setError(strings.errorFullNameRequired);
                     return false;
                 }
-                if (!formData.dob) {
-                    setError(strings.errorDobRequired);
+                if (!formData.age?.trim()) {
+                    setError(strings.errorAgeRequired);
                     return false;
                 }
                 if (!formData.phone?.trim()) {
@@ -162,7 +161,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
             grade: formData.grade || '',
             curriculum: formData.curriculum || '',
             subjects: formData.subjects || [],
-            dob: formData.dob || '',
+            age: formData.age || '',
         };
         const errorMessage = await onSignupSuccess(finalProfile);
         if (errorMessage) {
@@ -316,7 +315,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep7Title}</h3>
                         <p className="text-center text-gray-600 mb-4">{strings.onboardingStep7Desc}</p>
                         <input type="text" placeholder={strings.fullName} onChange={e => handleSelect('username', e.target.value)} value={formData.username || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
-                        <input type="date" placeholder={strings.dob} onChange={e => handleSelect('dob', e.target.value)} value={formData.dob || ''} className="w-full p-3 border border-gray-300 rounded-md text-gray-700" required />
+                        <input type="number" placeholder={strings.age} onChange={e => handleSelect('age', e.target.value)} value={formData.age || ''} className="w-full p-3 border border-gray-300 rounded-md text-gray-700" required min="1" max="100" />
                         <input type="tel" placeholder={strings.phone} onChange={e => handleSelect('phone', e.target.value)} value={formData.phone || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
                         <input type="email" placeholder={strings.email} onChange={e => handleSelect('email', e.target.value)} value={formData.email || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
                         <input type="password" placeholder={strings.password} onChange={e => handleSelect('password', e.target.value)} value={formData.password || ''} className="w-full p-3 border border-gray-300 rounded-md" required minLength={6} />

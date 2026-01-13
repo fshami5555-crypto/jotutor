@@ -35,7 +35,7 @@ const AdminUserView: React.FC<AdminUserViewProps> = ({ user, onBack }) => {
                     <DetailItem label="البريد الإلكتروني" value={user.email} />
                     <DetailItem label="رقم الهاتف" value={user.phone} />
                     <DetailItem label="نوع الحساب" value={user.userType} />
-                    <DetailItem label="تاريخ الميلاد" value={user.dob} />
+                    <DetailItem label="العمر" value={user.age} />
                     <DetailItem label="الخدمة المطلوبة" value={user.serviceType} />
                     <DetailItem label="المرحلة التعليمية" value={user.educationStage} />
                     <DetailItem label="الصف الدراسي" value={user.grade} />

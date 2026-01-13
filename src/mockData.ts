@@ -13,7 +13,7 @@ const users: UserProfile[] = [
         grade: 'الصف التاسع',
         curriculum: 'المنهج الوطني الأردني',
         subjects: ['الرياضيات', 'الفيزياء'],
-        dob: '2008-05-10',
+        age: '15',
     }
 ];
 
