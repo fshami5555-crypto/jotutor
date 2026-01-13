@@ -12,6 +12,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- Mastercard Hosted Session Script (Version 72) -->
+    <script src="https://test-network.mtf.gateway.mastercard.com/form/version/72/merchant/test12122024/session.js"></script>
+
     <!-- Tailwind CSS & Config -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,14 +23,14 @@
           extend: {
             colors: {
               blue: {
-                800: '#00152e', // Darker shade for hover interactions
-                900: '#002146', // Requested Navy Blue
+                800: '#00152e',
+                900: '#002146',
               },
               green: {
-                50:  '#f4faec', // Very light tint of the new green
-                100: '#e4f3d0', // Light tint for backgrounds
-                500: '#84bc35', // Requested Green
-                600: '#6a992a', // Darker shade for hover interactions
+                50:  '#f4faec',
+                100: '#e4f3d0',
+                500: '#84bc35',
+                600: '#6a992a',
               }
             },
             fontFamily: {
@@ -44,6 +47,14 @@
       }
       body {
         font-family: 'Cairo', sans-serif;
+      }
+      /* تنسيق حقول Mastercard Hosted Session */
+      .mpgs-field {
+        height: 48px;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #f9fafb;
       }
     </style>
 <script type="importmap">
