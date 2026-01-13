@@ -29,20 +29,33 @@ const Stepper: React.FC<{ currentStep: number; totalSteps: number }> = ({ curren
 
 const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSuccess, onClose, strings, language = 'ar' }) => {
     const [step, setStep] = useState(1);
+    const [countryCode, setCountryCode] = useState('+962'); // Default to Jordan
     const [formData, setFormData] = useState<Partial<UserProfile>>({
         userType: 'Student',
         subjects: [],
         serviceType: options.serviceTypes?.[0],
         educationStage: options.educationStages?.[0],
-        curriculum: '', // Initialize empty
+        curriculum: '', 
         phone: '',
     });
     const [termsAgreed, setTermsAgreed] = useState(false);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Country Codes List
+    const countryCodes = [
+        { code: '+962', flag: '🇯🇴', name: 'الأردن' },
+        { code: '+966', flag: '🇸🇦', name: 'السعودية' },
+        { code: '+971', flag: '🇦🇪', name: 'الإمارات' },
+        { code: '+965', flag: '🇰🇼', name: 'الكويت' },
+        { code: '+974', flag: '🇶🇦', name: 'قطر' },
+        { code: '+973', flag: '🇧🇭', name: 'البحرين' },
+        { code: '+20', flag: '🇪🇬', name: 'مصر' },
+        { code: '+970', flag: '🇵🇸', name: 'فلسطين' },
+    ];
+
     const validateStep = (currentStep: number): boolean => {
-        setError(''); // Clear previous errors
+        setError('');
         switch (currentStep) {
             case 4: // Grade
                 if (!formData.grade?.trim()) {
@@ -75,7 +88,6 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                     setError(strings.errorPhoneRequired);
                     return false;
                 }
-                // Simple email regex
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!formData.email?.trim() || !emailRegex.test(formData.email)) {
                     setError(strings.errorEmailInvalid);
@@ -87,7 +99,6 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                 }
                 break;
             default:
-                // No validation needed for other steps as they have defaults
                 break;
         }
         return true;
@@ -100,17 +111,17 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
         }
     };
     const handleBack = () => {
-        setError(''); // Clear errors when going back
+        setError('');
         setStep(prev => prev - 1);
     };
 
     const handleSelect = (key: keyof UserProfile, value: any) => {
-        setError(''); // Clear error on input change
+        setError('');
         setFormData(prev => ({ ...prev, [key]: value }));
     };
 
     const handleSubjectToggle = (subject: string) => {
-        setError(''); // Clear error on input change
+        setError('');
         setFormData(prev => {
             const subjects = prev.subjects || [];
             const newSubjects = subjects.includes(subject)
@@ -120,7 +131,6 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
         });
     };
 
-    // Handle multi-selection for curriculum and store as string
     const handleCurriculumToggle = (curr: string) => {
         setError('');
         setFormData(prev => {
@@ -143,17 +153,17 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
             return;
         }
         
-        // Re-validate the final step before submitting
-        if (!validateStep(7)) {
-            return;
-        }
+        if (!validateStep(7)) return;
 
         setIsSubmitting(true);
+        // Combine country code with phone number
+        const fullPhone = `${countryCode}${formData.phone?.replace(/^0+/, '')}`;
+
         const finalProfile: UserProfile = {
-            id: Date.now().toString(), // Will be replaced by Firebase UID in App.tsx
+            id: Date.now().toString(),
             username: formData.username || '',
             email: formData.email || '',
-            phone: formData.phone || '',
+            phone: fullPhone,
             password: formData.password || '',
             userType: formData.userType || 'Student',
             serviceType: formData.serviceType || '',
@@ -167,7 +177,6 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
         if (errorMessage) {
             setError(errorMessage);
         }
-        // On success, the app navigates away, so no 'else' is needed.
         setIsSubmitting(false);
     };
 
@@ -191,7 +200,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
 
     const renderStepContent = () => {
         switch (step) {
-            case 1: // User Type
+            case 1:
                 return (
                     <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep1Title}</h3>
@@ -205,7 +214,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         </div>
                     </div>
                 );
-            case 2: // Service Type
+            case 2:
                 return (
                     <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep2Title}</h3>
@@ -220,7 +229,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         </div>
                     </div>
                 );
-            case 3: // Education Stage
+            case 3:
                 return (
                      <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep3Title}</h3>
@@ -235,20 +244,9 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         </div>
                     </div>
                 );
-            case 4: // Grade
-                const gradesEn = [
-                    'KG1', 'KG2',
-                    '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade',
-                    '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade',
-                    'College'
-                ];
-                const gradesAr = [
-                    'روضة 1', 'روضة 2',
-                    'الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس',
-                    'الصف السابع', 'الصف الثامن', 'الصف التاسع', 'الصف العاشر', 'الصف الحادي عشر', 'الصف الثاني عشر (توجيهي)',
-                    'جامعي'
-                ];
-                
+            case 4:
+                const gradesEn = ['KG1', 'KG2', '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade', 'College'];
+                const gradesAr = ['روضة 1', 'روضة 2', 'الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس', 'الصف السابع', 'الصف الثامن', 'الصف التاسع', 'الصف العاشر', 'الصف الحادي عشر', 'الصف الثاني عشر (توجيهي)', 'جامعي'];
                 const grades = language === 'ar' ? gradesAr : gradesEn;
 
                 return (
@@ -257,19 +255,14 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         <p className="text-center text-gray-600 mb-6">{strings.onboardingStep4Desc}</p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto pr-2">
                              {grades.map(grade => (
-                                <button
-                                    key={grade}
-                                    type="button"
-                                    onClick={() => handleSelect('grade', grade)}
-                                    className={`p-2 border rounded-lg text-sm font-medium transition-all duration-200 ${formData.grade === grade ? 'bg-green-100 border-green-500 ring-2 ring-green-500 text-green-800' : 'bg-white hover:border-green-400 text-gray-700'}`}
-                                >
+                                <button key={grade} type="button" onClick={() => handleSelect('grade', grade)} className={`p-2 border rounded-lg text-sm font-medium transition-all duration-200 ${formData.grade === grade ? 'bg-green-100 border-green-500 ring-2 ring-green-500 text-green-800' : 'bg-white hover:border-green-400 text-gray-700'}`}>
                                     {grade}
                                 </button>
                              ))}
                         </div>
                     </div>
                 );
-            case 5: // Curriculum
+            case 5:
                  const selectedCurriculums = formData.curriculum ? formData.curriculum.split(', ') : [];
                  return (
                      <div>
@@ -277,12 +270,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         <p className="text-center text-gray-600 mb-6">{strings.onboardingStep5Desc} (يمكنك اختيار أكثر من منهاج)</p>
                         <div className="space-y-3">
                             {options.curriculums.map(c => (
-                                <button 
-                                    key={c} 
-                                    type="button" 
-                                    onClick={() => handleCurriculumToggle(c)} 
-                                    className={`w-full text-right p-3 border rounded-lg transition-all duration-200 flex justify-between items-center ${selectedCurriculums.includes(c) ? 'bg-green-100 border-green-500 ring-2 ring-green-500' : 'bg-white hover:border-green-400'}`}
-                                >
+                                <button key={c} type="button" onClick={() => handleCurriculumToggle(c)} className={`w-full text-right p-3 border rounded-lg transition-all duration-200 flex justify-between items-center ${selectedCurriculums.includes(c) ? 'bg-green-100 border-green-500 ring-2 ring-green-500' : 'bg-white hover:border-green-400'}`}>
                                     <span className="font-semibold text-blue-900">{c}</span>
                                     {selectedCurriculums.includes(c) && <span className="text-green-600 font-bold">✓</span>}
                                 </button>
@@ -290,8 +278,8 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         </div>
                     </div>
                 );
-            case 6: // Subjects or Languages
-                const isLearningLanguages = formData.serviceType === options.serviceTypes[4]; // "اللغات"
+            case 6:
+                const isLearningLanguages = formData.serviceType === options.serviceTypes[4];
                 const title = isLearningLanguages ? strings.onboardingStep6Title_languages : strings.onboardingStep6Title;
                 const description = isLearningLanguages ? strings.onboardingStep6Desc_languages : strings.onboardingStep6Desc;
                 const itemsToShow = isLearningLanguages ? (options.languages || []) : options.subjects;
@@ -309,19 +297,42 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
                         </div>
                     </div>
                 );
-            case 7: // Personal Info
+            case 7:
                 return (
                     <div className="space-y-4">
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep7Title}</h3>
                         <p className="text-center text-gray-600 mb-4">{strings.onboardingStep7Desc}</p>
-                        <input type="text" placeholder={strings.fullName} onChange={e => handleSelect('username', e.target.value)} value={formData.username || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
-                        <input type="number" placeholder={strings.age} onChange={e => handleSelect('age', e.target.value)} value={formData.age || ''} className="w-full p-3 border border-gray-300 rounded-md text-gray-700" required min="1" max="100" />
-                        <input type="tel" placeholder={strings.phone} onChange={e => handleSelect('phone', e.target.value)} value={formData.phone || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
-                        <input type="email" placeholder={strings.email} onChange={e => handleSelect('email', e.target.value)} value={formData.email || ''} className="w-full p-3 border border-gray-300 rounded-md" required />
-                        <input type="password" placeholder={strings.password} onChange={e => handleSelect('password', e.target.value)} value={formData.password || ''} className="w-full p-3 border border-gray-300 rounded-md" required minLength={6} />
+                        <input type="text" placeholder={strings.fullName} onChange={e => handleSelect('username', e.target.value)} value={formData.username || ''} className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none" required />
+                        <input type="number" placeholder={strings.age} onChange={e => handleSelect('age', e.target.value)} value={formData.age || ''} className="w-full p-3 border border-gray-300 rounded-md text-gray-700 focus:ring-2 focus:ring-green-500 outline-none" required min="1" max="100" />
+                        
+                        {/* Phone with Country Code Select */}
+                        <div className="flex gap-2">
+                            <select 
+                                value={countryCode} 
+                                onChange={(e) => setCountryCode(e.target.value)}
+                                className="p-3 border border-gray-300 rounded-md bg-white font-medium text-sm focus:ring-2 focus:ring-green-500 outline-none min-w-[100px]"
+                            >
+                                {countryCodes.map((c) => (
+                                    <option key={c.code} value={c.code}>
+                                        {c.flag} {c.code}
+                                    </option>
+                                ))}
+                            </select>
+                            <input 
+                                type="tel" 
+                                placeholder={strings.phone} 
+                                onChange={e => handleSelect('phone', e.target.value)} 
+                                value={formData.phone || ''} 
+                                className="flex-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none" 
+                                required 
+                            />
+                        </div>
+
+                        <input type="email" placeholder={strings.email} onChange={e => handleSelect('email', e.target.value)} value={formData.email || ''} className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none" required />
+                        <input type="password" placeholder={strings.password} onChange={e => handleSelect('password', e.target.value)} value={formData.password || ''} className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none" required minLength={6} />
                     </div>
                 );
-            case 8: // Verification
+            case 8:
                 return (
                      <div>
                         <h3 className="text-xl font-semibold text-center mb-2">{strings.onboardingStep8Title}</h3>
@@ -344,12 +355,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ options, onSignupSu
 
     return (
         <div className="bg-white rounded-lg shadow-2xl relative p-2 md:p-4">
-            {/* Close Button */}
-            <button 
-                onClick={onClose} 
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
-                aria-label="Close"
-            >
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10" aria-label="Close">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
