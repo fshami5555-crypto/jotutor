@@ -38,9 +38,8 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                          (course.priceJod ?? 0)).toFixed(2);
 
     /**
-     * تنفيذ عملية الدفع المباشرة
-     * ملاحظة: تم تجريد الطلب من أي بارامترات 'interaction' أو 'browserPayment' 
-     * لتجنب تعارض القواعد في بوابة Mastercard (MPGS).
+     * تنفيذ عملية الدفع المتوافقة مع v72
+     * تم إزالة 'authentication.acceptVersions' لأنه بارامتر غير متوقع في عملية PAY المباشرة.
      */
     const initiateGatewayPayment = async () => {
         setIsProcessing(true);
@@ -56,17 +55,15 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
             const [month, year] = expiryParts;
             const fullYear = year.length === 2 ? `20${year}` : year;
 
-            // الطلب الأدنى المطلوب لعملية PAY مع 3DS في الإصدار 72
+            // الهيكل الصحيح لطلب PAY في إصدار 72
+            // ملاحظة: لإتمام التحقق (3DS) في طلب واحد، نستخدم البارامترات المعتمدة فقط
             const payload = {
                 apiOperation: "PAY",
-                authentication: {
-                    acceptVersions: "3DS1,3DS2",
-                    channel: "BROWSER"
-                },
                 order: {
                     amount: displayPrice,
                     currency: currency,
-                    description: `JoTutor Enrollment: ${course.title}`
+                    description: `JoTutor Enrollment: ${course.title}`,
+                    reference: orderId
                 },
                 sourceOfFunds: {
                     provided: {
@@ -80,6 +77,11 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                         }
                     },
                     type: "CARD"
+                },
+                // إذا أردت تفعيل 3DS، يجب أن يتم ذلك عبر إعدادات التاجر (Always Authenticate) 
+                // أو عبر عملية AUTHENTICATE منفصلة. لغرض الإصلاح، نرسل البيانات الأساسية للدفع.
+                transaction: {
+                    reference: transactionId
                 }
             };
 
@@ -94,21 +96,20 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
 
             const data = await response.json();
 
-            // 1. نجاح العملية فوراً (إذا كان البنك لا يتطلب 3DS أو البطاقة مفعلة)
+            // معالجة الرد
             if (response.ok && data.result === 'SUCCESS') {
                 onEnroll(course, 'Success', { orderId, transactionId, paymentMethod: 'Credit Card' });
             } 
-            // 2. البنك يطلب التحقق (3DS) - سنستلم كود HTML للتوجيه
+            // في حال كان البنك يتطلب 3DS وكانت البوابة مهيئة للرد بـ HTML التوجيه
             else if (data.authentication?.redirectHtml) {
                 setBankHtml(data.authentication.redirectHtml);
                 setShowBankPage(true);
                 setIsProcessing(false);
             }
-            // 3. وجود خطأ في البيانات أو رفض من البنك
             else {
-                // محاولة استخراج رسالة الخطأ الأدق من رد البوابة
-                const errorInfo = data.error?.explanation || data.response?.gatewayCode || "العملية مرفوضة. يرجى التأكد من بيانات البطاقة.";
-                throw new Error(errorInfo);
+                // استخراج رسالة الخطأ من البوابة بشكل دقيق
+                const gatewayError = data.error?.explanation || data.response?.gatewayCode || "العملية مرفوضة. يرجى التأكد من بيانات البطاقة.";
+                throw new Error(gatewayError);
             }
 
         } catch (error: any) {
@@ -145,9 +146,9 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                         <div className="bg-blue-900 p-5 rounded-2xl text-white">
                             <div className="flex items-center gap-2 mb-2 text-sm text-green-400">
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                                <span className="font-black">Mastercard Secure Pay</span>
+                                <span className="font-black">بوابة دفع آمنة</span>
                             </div>
-                            <p className="text-[10px] text-blue-200 leading-relaxed">بوابة الدفع آمنة وتدعم بروتوكول 3D Secure للحماية من الاحتيال. يتم تشفير بياناتك بالكامل.</p>
+                            <p className="text-[10px] text-blue-200 leading-relaxed">تتم معالجة بيانات بطاقتك بشكل آمن عبر بروتوكولات التشفير العالمية التابعة لـ Mastercard.</p>
                         </div>
                     </div>
 
@@ -163,7 +164,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-xs font-black text-gray-400 mb-1 uppercase tracking-wider">الاسم على البطاقة</label>
-                                        <input type="text" value={cardHolder} onChange={e => setCardHolder(e.target.value)} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold" placeholder="FULL NAME" required />
+                                        <input type="text" value={cardHolder} onChange={e => setCardHolder(e.target.value)} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-bold uppercase" placeholder="FULL NAME" required />
                                     </div>
                                     <div>
                                         <label className="block text-xs font-black text-gray-400 mb-1 uppercase tracking-wider">رقم البطاقة</label>
@@ -211,14 +212,11 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                 </div>
             </div>
 
-            {/* شاشة الـ 3D Secure المستدعاة من البنك (ACS Redirect) */}
+            {/* شاشة الـ 3D Secure في حال طلبها البنك */}
             {showBankPage && bankHtml && (
                 <div className="fixed inset-0 z-[200] bg-white flex flex-col animate-fade-in">
                     <div className="bg-gray-100 p-4 border-b flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                             <span className="font-bold text-gray-700 text-sm">تحقق البنك المصدر (العملية مؤمنة)</span>
-                        </div>
+                        <span className="font-bold text-gray-700 text-sm">تحقق البنك المصدر</span>
                         <button onClick={() => setShowBankPage(false)} className="text-red-500 font-bold text-xs bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 hover:bg-red-100 transition-colors">إلغاء وإغلاق</button>
                     </div>
                     <div className="flex-1 w-full bg-white">
@@ -228,7 +226,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ course, currency, strings, on
                             className="w-full h-full border-none shadow-inner"
                         />
                     </div>
-                    <div className="p-2 bg-gray-50 text-center text-[9px] text-gray-400">
+                    <div className="p-2 bg-gray-50 text-center text-[9px] text-gray-400 uppercase tracking-widest">
                         Securely processed by Mastercard Payment Gateway Services.
                     </div>
                 </div>
