@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Mastercard Hosted Session Script (Version 72) -->
+    <!-- ملاحظة: التاجر test12122024 مستخدم في الرابط أدناه -->
     <script src="https://test-network.mtf.gateway.mastercard.com/form/version/72/merchant/test12122024/session.js"></script>
 
     <!-- Tailwind CSS & Config -->
@@ -48,19 +49,21 @@
       body {
         font-family: 'Cairo', sans-serif;
       }
-      /* تنسيق حقول Mastercard Hosted Session */
+      /* تنسيق إجباري لحقول Mastercard لضمان ظهورها */
       .mpgs-field {
-        height: 48px;
-        width: 100%;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        background: #f9fafb;
-        padding: 0; /* Mastercard handles padding inside the iframe */
-        display: block;
-        position: relative;
-        overflow: hidden;
+        height: 48px !important;
+        width: 100% !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        display: block !important;
+        overflow: hidden !important;
       }
-      /* ضمان أن الـ iFrame يأخذ كامل مساحة الحاوية */
+      .mpgs-field:focus-within {
+        border-color: #84bc35 !important;
+        ring: 2px #84bc35;
+      }
+      /* تنسيق الـ iframe الذي يتم حقنه بواسطة Mastercard */
       .mpgs-field iframe {
         width: 100% !important;
         height: 100% !important;
