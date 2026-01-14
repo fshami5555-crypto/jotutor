@@ -10,6 +10,7 @@ import AIAssistantView from './dashboard/AIAssistant';
 interface DashboardProps {
     userProfile: UserProfile;
     onLogout: () => void;
+    onUpdateProfile: (updatedProfile: UserProfile) => Promise<boolean>;
     initialView?: DashboardView;
     onViewHandled?: () => void; // Callback to signal that the initial view has been handled
     courses: Course[];
@@ -23,6 +24,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ 
     userProfile, 
     onLogout, 
+    onUpdateProfile,
     initialView = 'profile',
     onViewHandled,
     courses,
@@ -45,7 +47,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     const renderContent = () => {
         switch (activeView) {
             case 'profile':
-                return <ProfileView userProfile={userProfile} />;
+                return <ProfileView userProfile={userProfile} onUpdate={onUpdateProfile} />;
             case 'courses':
                 return <CoursesView 
                             userProfile={userProfile} 
@@ -60,7 +62,7 @@ const Dashboard: React.FC<DashboardProps> = ({
             case 'ai-assistant':
                 return <AIAssistantView />;
             default:
-                return <ProfileView userProfile={userProfile} />;
+                return <ProfileView userProfile={userProfile} onUpdate={onUpdateProfile} />;
         }
     };
 

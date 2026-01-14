@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { arStrings, enStrings } from '../localization';
 import { JOD_TO_USD_RATE } from '../constants';
@@ -417,6 +418,20 @@ const App: React.FC = () => {
         if (auth) auth.signOut();
         handleNavigate('home');
     };
+
+    /**
+     * تحديث الملف الشخصي للمستخدم
+     */
+    const handleUpdateUserProfile = async (updatedProfile: UserProfile) => {
+        try {
+            await setDocument('Users', updatedProfile.id, updatedProfile);
+            setUserProfile(updatedProfile);
+            return true;
+        } catch (error) {
+            console.error("Failed to update profile:", error);
+            return false;
+        }
+    };
     
     const handleToggleEnglishAdminMode = () => {
         if (!isSuperAdmin) return;
@@ -565,7 +580,7 @@ const App: React.FC = () => {
             case 'privacy': return <PrivacyPolicyPage content={currentSiteContent.privacy} strings={strings} />;
             case 'terms': return <TermsPage content={currentSiteContent.terms} strings={strings} />;
             case 'payment-refund': return <PaymentRefundPage content={currentSiteContent.paymentRefundPolicy || ''} strings={strings} />;
-            case 'dashboard': return userProfile ? <Dashboard userProfile={userProfile} onLogout={handleLogout} courses={displayedCourses} onSelectCourse={(id) => handleNavigate('course-profile', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language} initialView={initialDashboardView} onViewHandled={() => setInitialDashboardView(undefined)}/> : <p>Please log in.</p>;
+            case 'dashboard': return userProfile ? <Dashboard userProfile={userProfile} onLogout={handleLogout} onUpdateProfile={handleUpdateUserProfile} courses={displayedCourses} onSelectCourse={(id) => handleNavigate('course-profile', id)} currency={currency} exchangeRate={JOD_TO_USD_RATE} strings={strings} language={language} initialView={initialDashboardView} onViewHandled={() => setInitialDashboardView(undefined)}/> : <p>Please log in.</p>;
             case 'admin-dashboard': return isAdmin ? <AdminDashboard onLogout={handleLogout} content={currentSiteContent} setContent={handleSetSiteContent} heroSlides={heroSlides} setHeroSlides={handleSetHeroSlides} onboardingOptions={onboardingOptions} setOnboardingOptions={handleSetOnboardingOptions} users={users} setUsers={handleSetUsers} staff={staff} setStaff={handleSetStaff} payments={payments} setPayments={handleSetPayments} teachers={teachers} setTeachers={handleSetTeachers} courses={courses} setCourses={handleSetCourses} subjects={onboardingOptions?.subjects || []} testimonials={testimonials} setTestimonials={handleSetTestimonials} blogPosts={blogPosts} setBlogPosts={handleSetBlogPosts} onActivateCourse={handleActivateCourse} strings={strings} language={language} isEnglishAdmin={isEnglishAdmin} isSuperAdmin={isSuperAdmin} onToggleEnglishMode={handleToggleEnglishAdminMode}/> : <p>Access denied.</p>;
             default: return <h2>Page not found</h2>;
         }
