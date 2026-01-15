@@ -52,8 +52,60 @@ import {
 } from '../googleSheetService';
 
 const App: React.FC = () => {
-    const [page, setPage] = useState<Page>('home');
-    const [selectedId, setSelectedId] = useState<string | null>(null);
+    // --- Routing Helpers ---
+    const getPathFromState = (page: Page, id: string | null): string => {
+        switch (page) {
+            case 'home': return '/';
+            case 'teachers': return '/teachers';
+            case 'teacher-profile': return `/teachers/${id}`;
+            case 'courses': return '/courses';
+            case 'course-profile': return `/courses/${id}`;
+            case 'payment': return `/payment/${id}`;
+            case 'videos': return '/videos';
+            case 'short-player': return `/videos/${id}`;
+            case 'blog': return '/blog';
+            case 'article': return `/blog/${id}`;
+            case 'about': return '/about';
+            case 'contact': return '/contact';
+            case 'faq': return '/faq';
+            case 'privacy': return '/privacy';
+            case 'terms': return '/terms';
+            case 'payment-refund': return '/payment-refund';
+            case 'dashboard': return '/dashboard';
+            case 'admin-dashboard': return '/admin-dashboard';
+            default: return '/';
+        }
+    };
+
+    const getStateFromPath = (path: string): { page: Page, id: string | null } => {
+        const parts = path.split('/').filter(Boolean);
+        if (parts.length === 0) return { page: 'home', id: null };
+        
+        const segment = parts[0];
+        const id = parts[1] || null;
+
+        switch (segment) {
+            case 'teachers': return id ? { page: 'teacher-profile', id } : { page: 'teachers', id: null };
+            case 'courses': return id ? { page: 'course-profile', id } : { page: 'courses', id: null };
+            case 'payment': return { page: 'payment', id };
+            case 'videos': return id ? { page: 'short-player', id } : { page: 'videos', id: null };
+            case 'blog': return id ? { page: 'article', id } : { page: 'blog', id: null };
+            case 'about': return { page: 'about', id: null };
+            case 'contact': return { page: 'contact', id: null };
+            case 'faq': return { page: 'faq', id: null };
+            case 'privacy': return { page: 'privacy', id: null };
+            case 'terms': return { page: 'terms', id: null };
+            case 'payment-refund': return { page: 'payment-refund', id: null };
+            case 'dashboard': return { page: 'dashboard', id: null };
+            case 'admin-dashboard': return { page: 'admin-dashboard', id: null };
+            default: return { page: 'home', id: null };
+        }
+    };
+
+    // --- State Management ---
+    const initialRoute = getStateFromPath(window.location.pathname);
+    const [page, setPage] = useState<Page>(initialRoute.page);
+    const [selectedId, setSelectedId] = useState<string | null>(initialRoute.id);
     const [navHistory, setNavHistory] = useState<{page: Page, id: string | null}[]>([]);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -85,6 +137,17 @@ const App: React.FC = () => {
     const [isAuthLoading, setIsAuthLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [initialDashboardView, setInitialDashboardView] = useState<DashboardView | undefined>();
+
+    // Sync state with browser back/forward buttons
+    useEffect(() => {
+        const handlePopState = () => {
+            const { page: newPage, id: newId } = getStateFromPath(window.location.pathname);
+            setPage(newPage);
+            setSelectedId(newId);
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
 
     const displayedCourses = useMemo(() => {
         if (language === 'ar') {
@@ -366,6 +429,11 @@ const App: React.FC = () => {
 
     const handleNavigate = (newPage: Page, id: string | null = null) => {
         if (page === newPage && selectedId === id) return;
+        
+        // Update URL and browser history
+        const newPath = getPathFromState(newPage, id);
+        window.history.pushState({ page: newPage, id }, '', newPath);
+        
         setNavHistory(prev => [...prev, { page, id: selectedId }]);
         setPage(newPage);
         setSelectedId(id);
@@ -373,12 +441,11 @@ const App: React.FC = () => {
     };
 
     const handleBack = () => {
-        if (navHistory.length === 0) return;
-        const prevState = navHistory[navHistory.length - 1];
-        setNavHistory(prev => prev.slice(0, -1));
-        setPage(prevState.page);
-        setSelectedId(prevState.id);
-        window.scrollTo(0, 0);
+        if (navHistory.length === 0) {
+            window.history.back();
+            return;
+        }
+        window.history.back();
     };
 
     const handleBookCourse = (courseId: string) => {
