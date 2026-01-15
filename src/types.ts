@@ -1,3 +1,4 @@
+
 export type Page = 
   'home' | 'teachers' | 'teacher-profile' | 'courses' | 'course-profile' | 
   'payment' | 'videos' | 'short-player' | 'blog' | 'article' | 'about' | 
@@ -131,6 +132,10 @@ export interface ContactContent {
   email: string;
   phone: string;
   address: string;
+  facebook?: string;
+  instagram?: string;
+  youtube?: string;
+  linkedin?: string;
 }
 
 export interface HomepageContent {

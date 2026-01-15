@@ -295,18 +295,45 @@ const ManageContent: React.FC<ManageContentProps> = ({ content, onUpdate, isEngl
       case 'contact':
         return (
             <div className="space-y-4">
-                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" name="email" value={localContent.contact.email} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                    <input type="text" name="phone" value={localContent.contact.phone} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                    <input type="text" name="address" value={localContent.contact.address} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
-                </div>
+                 <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                     <h4 className="font-bold text-blue-900 mb-4">{isEnglishAdmin ? 'Contact & Social Links' : 'بيانات التواصل وروابط السوشيال ميديا'}</h4>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" name="email" value={localContent.contact.email} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                            <input type="text" name="phone" value={localContent.contact.phone} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                            <input type="text" name="address" value={localContent.contact.address} onChange={handleContactChange} className="w-full p-2 border rounded-md"/>
+                        </div>
+                     </div>
+                 </div>
+
+                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 className="font-bold text-gray-800 mb-4">{isEnglishAdmin ? 'Social Media Links' : 'روابط مواقع التواصل الاجتماعي'}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-blue-700 mb-1">Facebook</label>
+                            <input type="text" name="facebook" value={localContent.contact.facebook || ''} onChange={handleContactChange} className="w-full p-2 border rounded-md font-mono text-xs" placeholder="https://facebook.com/..."/>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-pink-700 mb-1">Instagram</label>
+                            <input type="text" name="instagram" value={localContent.contact.instagram || ''} onChange={handleContactChange} className="w-full p-2 border rounded-md font-mono text-xs" placeholder="https://instagram.com/..."/>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-red-700 mb-1">YouTube</label>
+                            <input type="text" name="youtube" value={localContent.contact.youtube || ''} onChange={handleContactChange} className="w-full p-2 border rounded-md font-mono text-xs" placeholder="https://youtube.com/..."/>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-blue-800 mb-1">LinkedIn</label>
+                            <input type="text" name="linkedin" value={localContent.contact.linkedin || ''} onChange={handleContactChange} className="w-full p-2 border rounded-md font-mono text-xs" placeholder="https://linkedin.com/..."/>
+                        </div>
+                    </div>
+                 </div>
             </div>
         );
       case 'privacy':

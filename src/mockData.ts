@@ -1,3 +1,4 @@
+
 import { UserProfile, Course, Teacher, Testimonial, BlogPost, HeroSlide, StaffMember, Payment, SiteContent, OnboardingOptions, AboutContent, HomepageContent } from './types';
 
 const users: UserProfile[] = [
@@ -129,7 +130,15 @@ const siteContent: SiteContent = {
     homepage: homepageContent,
     about: aboutContent,
     faq: [{ id: '1', question: 'كيف أحجز؟', answer: 'عبر الموقع بسهولة.' }],
-    contact: { email: 'contact@jotutor.com', phone: '+962 79 123 4567', address: 'عمان, الأردن' },
+    contact: { 
+        email: 'contact@jotutor.com', 
+        phone: '+962 79 123 4567', 
+        address: 'عمان, الأردن',
+        facebook: '#',
+        instagram: '#',
+        youtube: '#',
+        linkedin: '#'
+    },
     privacy: 'نص سياسة الخصوصية',
     terms: 'نص الشروط'
 };
